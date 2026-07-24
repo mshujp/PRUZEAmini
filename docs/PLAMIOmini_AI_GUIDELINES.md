@@ -485,14 +485,14 @@ Use `SaveData` for ordinary key-value save data:
 - Progress
 - Game settings
 
-Because `GameMini` has no `getId()`, define a stable game ID constant inside the game:
+Use `getId()` for all application-specific saved data.
 
 ```cpp
-static constexpr const char* GAME_ID = "my_game";
-static constexpr const char* SAVE_FILE = "save.ini";
+SaveData saveData;
+saveData.load(storage, getId(), "save.ini");
+saveData.setUInt32("high_score", highScore);
+saveData.save(storage, getId(), "save.ini");
 ```
-
-Use lowercase letters, digits, `_`, or `-` for the game ID, and keep it stable after release.
 
 Always check whether storage is available when failure matters. Saving may legitimately fail on `StorageStub` or unavailable hardware.
 

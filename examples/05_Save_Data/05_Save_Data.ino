@@ -91,7 +91,7 @@ private:
     {
         saveData.clear();
 
-        if (!saveData.load(storage, GAME_ID, SAVE_FILE))
+        if (!saveData.load(storage, getId(), SAVE_FILE))
         {
             score = 0;
             savedScore = 0;
@@ -117,7 +117,7 @@ private:
             return;
         }
 
-        if (!saveData.save(storage, GAME_ID, SAVE_FILE))
+        if (!saveData.save(storage, getId(), SAVE_FILE))
         {
             statusText = "SAVE FAILED";
             statusColor = Graphics::RED;
