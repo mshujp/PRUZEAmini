@@ -79,6 +79,11 @@ static constexpr int GPS_RX_PIN = -1;
 static constexpr int GPS_TX_PIN = -1;
 static constexpr uint32_t GPS_BAUD_RATE = 9600;
 
+// Set true to preview the sample without a GPS module connected.
+static constexpr bool GPS_DEMO_MODE = true;
+static constexpr double DEMO_BASE_LATITUDE = 33.589800;
+static constexpr double DEMO_BASE_LONGITUDE = 130.420700;
+
 // =============================================================================
 // Application
 // =============================================================================
@@ -116,6 +121,12 @@ private:
     uint32_t lastRecordMsec = 0;
     uint32_t receivedCharacters = 0;
 
+    double demoLatitude = DEMO_BASE_LATITUDE;
+    double demoLongitude = DEMO_BASE_LONGITUDE;
+    double demoAltitude = 8.4;
+    double demoSpeedKmh = 4.2;
+    unsigned long demoSatellites = 9;
+
     bool hasPreviousDistancePoint = false;
     double previousLatitude = 0.0;
     double previousLongitude = 0.0;
@@ -124,8 +135,52 @@ private:
     const char* statusText = "WAITING FOR GPS";
     Graphics::Color statusColor = Graphics::YELLOW;
 
+    double currentLatitude()
+    {
+        return GPS_DEMO_MODE ? demoLatitude : gps.location.lat();
+    }
+
+    double currentLongitude()
+    {
+        return GPS_DEMO_MODE ? demoLongitude : gps.location.lng();
+    }
+
+    double currentAltitude()
+    {
+        return GPS_DEMO_MODE ? demoAltitude
+                             : (gps.altitude.isValid() ? gps.altitude.meters() : 0.0);
+    }
+
+    double currentSpeedKmh()
+    {
+        return GPS_DEMO_MODE ? demoSpeedKmh
+                             : (gps.speed.isValid() ? gps.speed.kmph() : 0.0);
+    }
+
+    unsigned long currentSatellites()
+    {
+        return GPS_DEMO_MODE ? demoSatellites
+                             : (gps.satellites.isValid() ? gps.satellites.value() : 0ul);
+    }
+
+    void updateDemoPosition()
+    {
+        const float timeSec = Platform::getMsec() * 0.001f;
+        // A small walking loop around Hakata Station for display and logging tests.
+        demoLatitude = DEMO_BASE_LATITUDE + sinf(timeSec * 0.08f) * 0.000060;
+        demoLongitude = DEMO_BASE_LONGITUDE + cosf(timeSec * 0.08f) * 0.000075;
+        demoAltitude = 8.4 + sinf(timeSec * 0.12f) * 0.6;
+        demoSpeedKmh = 4.2 + sinf(timeSec * 0.18f) * 0.7;
+        receivedCharacters += 6;
+    }
+
     bool beginGpsSerial()
     {
+        if (GPS_DEMO_MODE)
+        {
+            return true;
+        }
+
         if (GPS_RX_PIN < 0)
         {
             return false;
@@ -146,6 +201,12 @@ private:
 
     void receiveGps()
     {
+        if (GPS_DEMO_MODE)
+        {
+            updateDemoPosition();
+            return;
+        }
+
         if (!gpsSerialAvailable)
         {
             return;
@@ -160,11 +221,15 @@ private:
 
     bool hasFix() const
     {
-        return gps.location.isValid() && gps.location.age() < FIX_MAX_AGE_MSEC;
+        return GPS_DEMO_MODE || (gps.location.isValid() && gps.location.age() < FIX_MAX_AGE_MSEC);
     }
 
     const char* getFixText() const
     {
+        if (GPS_DEMO_MODE)
+        {
+            return "DEMO FIX";
+        }
         if (!gpsSerialAvailable)
         {
             return "NO SERIAL";
@@ -229,9 +294,9 @@ private:
         }
 
         const uint32_t now = Platform::getMsec();
-        const double altitude = gps.altitude.isValid() ? gps.altitude.meters() : 0.0;
-        const double speed = gps.speed.isValid() ? gps.speed.kmph() : 0.0;
-        const unsigned long satellites = gps.satellites.isValid() ? gps.satellites.value() : 0ul;
+        const double altitude = currentAltitude();
+        const double speed = currentSpeedKmh();
+        const unsigned long satellites = currentSatellites();
 
         int length;
         if (prefix != nullptr)
@@ -241,8 +306,8 @@ private:
                 "%s,%lu,%.6f,%.6f,%.1f,%.1f,%lu",
                 prefix,
                 static_cast<unsigned long>(now),
-                gps.location.lat(),
-                gps.location.lng(),
+                currentLatitude(),
+                currentLongitude(),
                 altitude,
                 speed,
                 satellites);
@@ -253,8 +318,8 @@ private:
                 line, lineSize,
                 "%lu,%.6f,%.6f,%.1f,%.1f,%lu",
                 static_cast<unsigned long>(now),
-                gps.location.lat(),
-                gps.location.lng(),
+                currentLatitude(),
+                currentLongitude(),
                 altitude,
                 speed,
                 satellites);
@@ -301,8 +366,8 @@ private:
 
     void addDistancePoint()
     {
-        const double latitude = gps.location.lat();
-        const double longitude = gps.location.lng();
+        const double latitude = currentLatitude();
+        const double longitude = currentLongitude();
 
         if (hasPreviousDistancePoint)
         {
@@ -362,24 +427,24 @@ private:
 
         if (hasFix())
         {
-            snprintf(text, sizeof(text), "%.6f", gps.location.lat());
+            snprintf(text, sizeof(text), "%.6f", currentLatitude());
             drawValue(graphics, "LATITUDE", text, 45, Graphics::CYAN);
 
-            snprintf(text, sizeof(text), "%.6f", gps.location.lng());
+            snprintf(text, sizeof(text), "%.6f", currentLongitude());
             drawValue(graphics, "LONGITUDE", text, 71, Graphics::CYAN);
 
             snprintf(text, sizeof(text), "%lu",
-                     gps.satellites.isValid() ? gps.satellites.value() : 0ul);
+                     currentSatellites());
             drawValue(graphics, "SATELLITES", text, 97,
-                      gps.satellites.isValid() && gps.satellites.value() >= 4
+                      currentSatellites() >= 4
                           ? Graphics::GREEN : Graphics::YELLOW);
 
             snprintf(text, sizeof(text), "%.1f m",
-                     gps.altitude.isValid() ? gps.altitude.meters() : 0.0);
+                     currentAltitude());
             drawValue(graphics, "ALTITUDE", text, 123);
 
             snprintf(text, sizeof(text), "%.1f km/h",
-                     gps.speed.isValid() ? gps.speed.kmph() : 0.0);
+                     currentSpeedKmh());
             drawValue(graphics, "SPEED", text, 149);
 
             if (distanceMeters < 1000.0)
@@ -518,7 +583,8 @@ protected:
                             Graphics::VerticalAlign::MIDDLE);
 
         char header[48];
-        snprintf(header, sizeof(header), "%s  LOG:%lu",
+        snprintf(header, sizeof(header), "%s%s  LOG:%lu",
+                 GPS_DEMO_MODE ? "DEMO " : "",
                  recording ? "REC" : "STOP",
                  static_cast<unsigned long>(logCount));
         graphics.drawString(header, 308, 17,
@@ -553,7 +619,7 @@ protected:
     void onTerminate(Storage& storage) override
     {
         (void)storage;
-        if (gpsSerialAvailable)
+        if (gpsSerialAvailable && !GPS_DEMO_MODE)
         {
             Serial1.end();
         }

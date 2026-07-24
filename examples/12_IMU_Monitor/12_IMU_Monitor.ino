@@ -71,6 +71,9 @@ static constexpr int IMU_SDA_PIN = -1;
 static constexpr int IMU_SCL_PIN = -1;
 static constexpr uint8_t IMU_I2C_ADDRESS = 0x68;
 
+// Set true to preview the sample without an IMU connected.
+static constexpr bool IMU_DEMO_MODE = true;
+
 // =============================================================================
 // Application
 // =============================================================================
@@ -199,6 +202,29 @@ private:
         maxTilt = maximum(maxTilt, maximum(fabsf(pitch - zeroPitch), fabsf(roll - zeroRoll)));
     }
 
+
+    void readDemoSensor()
+    {
+        // Fixed values make screenshots repeatable.
+        pitch = -12.4f;
+        roll = 3.8f;
+
+        accX = 3.4f;
+        accY = -5.2f;
+        accZ = 9.1f;
+
+        gyroX = 1.2f;
+        gyroY = -0.4f;
+        gyroZ = 0.1f;
+
+        filterInitialized = true;
+
+        // Maximum absolute acceleration on any axis. Gravity is included.
+        maxAcc = maximum(maxAcc, maximum(fabsf(accX), maximum(fabsf(accY), fabsf(accZ))));
+        maxGyro = maximum(maxGyro, maximum(fabsf(gyroX), maximum(fabsf(gyroY), fabsf(gyroZ))));
+        maxTilt = maximum(maxTilt, maximum(fabsf(pitch - zeroPitch), fabsf(roll - zeroRoll)));
+    }
+
     void drawBar(
         Graphics& graphics,
         const char* label,
@@ -239,9 +265,9 @@ private:
         const float shownRoll = roll - zeroRoll;
 
         snprintf(text, sizeof(text), "PITCH %7.1f deg", shownPitch);
-        graphics.drawString(text, 12, 45, Graphics::CYAN, Graphics::SIZE_18);
+        graphics.drawString(text, 12, 45, Graphics::CYAN, Graphics::SIZE_13);
         snprintf(text, sizeof(text), "ROLL  %7.1f deg", shownRoll);
-        graphics.drawString(text, 174, 45, Graphics::CYAN, Graphics::SIZE_18);
+        graphics.drawString(text, 174, 45, Graphics::CYAN, Graphics::SIZE_13);
 
         drawBar(graphics, "ACC X", accX, 19.62f, 76, Graphics::GREEN);
         drawBar(graphics, "ACC Y", accY, 19.62f, 96, Graphics::GREEN);
@@ -283,9 +309,9 @@ private:
 
         char text[32];
         snprintf(text, sizeof(text), "PITCH %6.1f", shownPitch);
-        graphics.drawString(text, 12, 54, Graphics::CYAN, Graphics::SIZE_18);
+        graphics.drawString(text, 12, 54, Graphics::CYAN, Graphics::SIZE_13);
         snprintf(text, sizeof(text), "ROLL %6.1f", shownRoll);
-        graphics.drawString(text, 308, 54, Graphics::CYAN, Graphics::SIZE_18,
+        graphics.drawString(text, 308, 54, Graphics::CYAN, Graphics::SIZE_13,
                             Graphics::HorizontalAlign::RIGHT,
                             Graphics::VerticalAlign::TOP);
 
@@ -299,7 +325,15 @@ protected:
     void onInit(Storage& storage) override
     {
         (void)storage;
-        imuAvailable = beginImu();
+        if (IMU_DEMO_MODE)
+        {
+            imuAvailable = true;
+            filterInitialized = true;
+        }
+        else
+        {
+            imuAvailable = beginImu();
+        }
 
         resetMaximums();
         dirty = true;
@@ -312,7 +346,7 @@ protected:
 
         if (!imuAvailable)
         {
-            if (input.justPressed(Input::A))
+            if (!IMU_DEMO_MODE && input.justPressed(Input::A))
             {
                 imuAvailable = beginImu();
                 resetMaximums();
@@ -321,7 +355,14 @@ protected:
             return;
         }
 
-        readSensor(deltaSec);
+        if (IMU_DEMO_MODE)
+        {
+            readDemoSensor();
+        }
+        else
+        {
+            readSensor(deltaSec);
+        }
 
         if (input.justPressed(Input::START))
         {
@@ -357,7 +398,7 @@ protected:
                             Graphics::HorizontalAlign::LEFT,
                             Graphics::VerticalAlign::MIDDLE);
 
-        graphics.drawString(viewMode == VIEW_MONITOR ? "MONITOR" : "LEVEL",
+        graphics.drawString(IMU_DEMO_MODE ? "DEMO" : (viewMode == VIEW_MONITOR ? "MONITOR" : "LEVEL"),
                             308, 17, Graphics::YELLOW, Graphics::SIZE_13,
                             Graphics::HorizontalAlign::RIGHT,
                             Graphics::VerticalAlign::MIDDLE);
@@ -390,7 +431,7 @@ protected:
                             imuAvailable
                                 ? "START: ZERO   A: VIEW   B: RESET MAX"
                                 : "A: RETRY IMU INITIALIZATION",
-                            160, 231, Graphics::WHITE, Graphics::SIZE_10,
+                            160, 220, Graphics::WHITE, Graphics::SIZE_10,
                             Graphics::HorizontalAlign::CENTER,
                             Graphics::VerticalAlign::MIDDLE);
 
