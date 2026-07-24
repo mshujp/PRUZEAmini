@@ -335,7 +335,7 @@ void start(const GraphicsConfig& graphicsConfig, const InputConfig& inputConfig,
 
     if (std::holds_alternative<StorageEEPROMConfig>(storageConfig))
     {
-        static StorageEEPROM instance(std::get<StorageEEPROMConfig>(storageConfig));
+        static StorageEEPROM instance(std::get<StorageEEPROMConfig>(storageConfig), game.getId());
         storageDriver = &instance;
     }
     else if (std::holds_alternative<StorageSDConfig>(storageConfig))

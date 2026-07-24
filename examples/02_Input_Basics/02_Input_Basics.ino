@@ -62,6 +62,9 @@ StorageConfig storageConfig = StorageStubConfig{};
 
 class InputBasicsGame : public GameMini
 {
+public:
+    const char* getId() const override { return "input_basics"; }
+
 private:
     static constexpr float MOVE_SPEED = 120.0f;
     static constexpr int16_t PLAYER_SIZE = 28;

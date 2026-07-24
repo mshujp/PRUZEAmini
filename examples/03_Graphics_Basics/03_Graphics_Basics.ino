@@ -60,6 +60,9 @@ StorageConfig storageConfig = StorageStubConfig{};
 
 class GraphicsBasicsGame : public GameMini
 {
+public:
+    const char* getId() const override { return "graphics_basics"; }
+
 private:
     static constexpr uint8_t PAGE_COUNT = 3;
 

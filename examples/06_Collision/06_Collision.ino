@@ -61,6 +61,9 @@ StorageConfig storageConfig = StorageStubConfig{};
 
 class CollisionGame : public GameMini
 {
+public:
+    const char* getId() const override { return "collision"; }
+
 private:
     enum Target : uint8_t
     {

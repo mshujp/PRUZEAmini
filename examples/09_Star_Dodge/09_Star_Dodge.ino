@@ -69,6 +69,9 @@ StorageConfig storageConfig = StorageStubConfig{};
 
 class StarDodgeGame : public GameMini
 {
+public:
+    const char* getId() const override { return "star_dodge"; }
+
 private:
     enum Mode : uint8_t
     {

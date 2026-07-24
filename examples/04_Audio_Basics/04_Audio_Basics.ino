@@ -99,6 +99,9 @@ static const Audio::Music DEMO_MUSIC = {
 
 class AudioBasicsGame : public GameMini
 {
+public:
+    const char* getId() const override { return "audio_basics"; }
+
 private:
     static constexpr uint8_t SE_COUNT = 13;
 

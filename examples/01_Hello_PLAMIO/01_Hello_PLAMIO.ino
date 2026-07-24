@@ -56,6 +56,9 @@ StorageConfig storageConfig = StorageStubConfig{};
 
 class HelloPLAMIOGame : public GameMini
 {
+public:
+    const char* getId() const override { return "hello_plamio"; }
+
 private:
     bool greeted = false;
 

@@ -1,4 +1,4 @@
-﻿# PLAMIO mini
+# PLAMIO mini
 
 > **AI-Friendly Game / UI Framework for Arduino IDE**
 
@@ -103,6 +103,7 @@ Your game class should inherit from the `PLAMIOmini::GameMini` class.
 
 Most games implement their game logic in:
 
+- `getId()`
 - `onInit()`
 - `onUpdate()`
 - `onDraw()`

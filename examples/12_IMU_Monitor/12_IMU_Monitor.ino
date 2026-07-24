@@ -80,6 +80,9 @@ static constexpr bool IMU_DEMO_MODE = true;
 
 class ImuMonitor : public GameMini
 {
+public:
+    const char* getId() const override { return "imu_monitor"; }
+
 private:
     enum ViewMode : uint8_t
     {

@@ -33,7 +33,7 @@ class StorageEEPROM : public StorageBase
 {
 public:
     StorageEEPROM() = default;
-    explicit StorageEEPROM(const StorageEEPROMConfig& config) : config(config) {}
+    StorageEEPROM(const StorageEEPROMConfig& config, const char* appId);
 
     bool begin() override;
     void end() override;
@@ -66,16 +66,19 @@ private:
     {
         uint16_t magic;
         uint8_t version;
+        uint32_t appIdHash;
         Slot slots[SLOT_COUNT];
     };
 
     StorageEEPROMConfig config;
+    uint32_t currentAppIdHash = 0;
     Image image = {};
     bool ready = false;
     StorageEEPROMFile fileSlot;
 
     int find(const char* gameId, const char* fileName) const;
     int allocate(const char* gameId, const char* fileName);
+    static uint32_t hashString(const char* value);
     bool commit();
 };
 

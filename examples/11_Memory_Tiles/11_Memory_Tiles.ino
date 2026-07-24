@@ -76,6 +76,9 @@ static const Audio::Music MEMORY_BGM = {
 
 class MemoryTilesGame : public GameMini
 {
+public:
+    const char* getId() const override { return "memory_tiles"; }
+
 private:
     enum TileState : uint8_t
     {

@@ -204,6 +204,7 @@ StorageConfig storageConfig = StorageStubConfig{};
 class MyGame : public GameMini
 {
 public:
+    const char* getId() const override { return "hardware_setup"; }
     void onInit(Storage& storage) override {}
     void onUpdate(Input& input, Audio& audio, Storage& storage, float deltaSec) override {}
     bool onDraw(Graphics& graphics, bool requestFullRedraw) override

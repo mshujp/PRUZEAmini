@@ -6,6 +6,27 @@
 
 namespace PLAMIOmini {
 
+StorageEEPROM::StorageEEPROM(const StorageEEPROMConfig& config, const char* appId)
+    : config(config), currentAppIdHash(hashString(appId))
+{
+}
+
+uint32_t StorageEEPROM::hashString(const char* value)
+{
+    constexpr uint32_t FNV_OFFSET_BASIS = 2166136261u;
+    constexpr uint32_t FNV_PRIME = 16777619u;
+
+    uint32_t hash = FNV_OFFSET_BASIS;
+    if (value == nullptr) return hash;
+
+    while (*value != '\0')
+    {
+        hash ^= static_cast<uint8_t>(*value++);
+        hash *= FNV_PRIME;
+    }
+    return hash;
+}
+
 bool StorageEEPROMFile::isOpen() const
 {
     return mode != OpenMode::CLOSED && data != nullptr && length != nullptr;
@@ -124,11 +145,14 @@ bool StorageEEPROM::begin()
 #endif
 
     EEPROM.get(0, image);
-    if (image.magic != config.magic || image.version != config.version)
+    if (image.magic != config.magic ||
+        image.version != config.version ||
+        image.appIdHash != currentAppIdHash)
     {
         memset(&image, 0, sizeof(image));
         image.magic = config.magic;
         image.version = config.version;
+        image.appIdHash = currentAppIdHash;
         if (!commit()) return false;
     }
 

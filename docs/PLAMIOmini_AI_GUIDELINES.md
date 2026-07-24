@@ -130,7 +130,7 @@ PLAMIOmini does **not** provide these full-PLAMIO concepts unless they appear in
 
 - `PLAMIO::Game`
 - `GameState`
-- `getId()` / `getName()` / `getMenuName()` virtual functions
+- `getName()` / `getMenuName()` virtual functions
 - Logical-screen virtual functions on the game class
 - A launcher-controlled game transition returned from `onUpdate()`
 
@@ -212,6 +212,8 @@ protected:
     void onUpdate(Input& input, Audio& audio, Storage& storage, float deltaSec) override;
     bool onDraw(Graphics& graphics, bool requestFullRedraw) override;
     void onTerminate(Storage& storage) override;
+public:
+    const char* getId() const override;
 };
 ```
 

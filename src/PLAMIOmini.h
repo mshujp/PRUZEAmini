@@ -761,6 +761,11 @@ public:
     {
         onTerminate(storage);
     }
+
+    // Returns the game ID.
+    // The ID may contain only lowercase letters (a-z), digits (0-9), underscores (_), and hyphens (-), up to 32 characters.
+    // Used to identify the application's storage data.
+    virtual const char* getId() const = 0;
 };
 
 

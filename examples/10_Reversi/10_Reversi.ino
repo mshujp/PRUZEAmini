@@ -76,6 +76,9 @@ static const Audio::Music REVERSI_BGM = {
 
 class ReversiGame : public GameMini
 {
+public:
+    const char* getId() const override { return "reversi"; }
+
 private:
     enum Cell : uint8_t
     {

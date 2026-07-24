@@ -62,6 +62,9 @@ StorageConfig storageConfig = StorageEEPROMConfig{};
 
 class SaveDataGame : public GameMini
 {
+public:
+    const char* getId() const override { return GAME_ID; }
+
 private:
     static constexpr const char* GAME_ID = "save_data";
     static constexpr const char* SAVE_FILE = "save.ini";

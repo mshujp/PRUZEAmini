@@ -90,6 +90,9 @@ static constexpr double DEMO_BASE_LONGITUDE = 130.420700;
 
 class GpsLogger : public GameMini
 {
+public:
+    const char* getId() const override { return APP_ID; }
+
 private:
     static constexpr const char* APP_ID = "gps_logger";
     static constexpr const char* LOG_FILE = "gps_log.csv";

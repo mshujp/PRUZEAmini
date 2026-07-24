@@ -66,6 +66,9 @@ StorageConfig storageConfig = StorageStubConfig{};
 
 class BreakoutGame : public GameMini
 {
+public:
+    const char* getId() const override { return "breakout"; }
+
 private:
     enum Mode : uint8_t
     {

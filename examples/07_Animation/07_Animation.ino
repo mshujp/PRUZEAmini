@@ -65,6 +65,9 @@ StorageConfig storageConfig = StorageStubConfig{};
 
 class AnimationGame : public GameMini
 {
+public:
+    const char* getId() const override { return "animation"; }
+
 private:
     static constexpr uint8_t STAR_COUNT = 28;
     static constexpr uint8_t PARTICLE_COUNT = 24;
