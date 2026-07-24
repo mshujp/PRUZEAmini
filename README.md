@@ -39,7 +39,7 @@ For the full feature set, use PLAMIO instead.
 | ![](docs/images/ss03.png) | ![](docs/images/ss04.png) |
 | ![](docs/images/ss05.png) | ![](docs/images/ss06.png) |
 | ![](docs/images/ss07.png) | ![](docs/images/ss08.png) |
-| ![](docs/images/ss09.png) | |
+| ![](docs/images/ss09.png) | ![](docs/images/ss10.png) |
 
 ------------------------------------------------------------------------
 
