@@ -408,7 +408,7 @@ bool SaveData::save(Storage& storage, const char* gameId, const char* fileName)
     }
 
     saveCursor = 0;
-    const bool ok = storage.writeUserFile(gameId, fileName, &SaveData::writeLineHandler, this);
+    const bool ok = storage.writeSaveDataInternal(gameId, fileName, &SaveData::writeLineHandler, this);
     if (ok)
     {
         dirty = false;

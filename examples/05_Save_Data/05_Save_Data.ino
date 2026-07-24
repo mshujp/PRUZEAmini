@@ -2,6 +2,9 @@
 ===============================================================================
  PLAMIOmini Example
  05_Save_Data
+
+ SaveData works with both Emulated EEPROM and SD storage.
+ Emulated EEPROM is used here so the sample runs without an SD card.
 ===============================================================================
 
 This example shows how to save and load ordinary game data with SaveData.
@@ -54,7 +57,12 @@ InputConfig inputConfig = InputGpioButtonsConfig{
 };
 
 AudioConfig audioConfig = AudioStubConfig{};
-StorageConfig storageConfig = StorageEEPROMConfig{};
+
+StorageConfig storageConfig = StorageEEPROMConfig{
+    .magic      = 0x504d,
+    .version    = 1,
+    .eepromSize = 4096,
+};
 
 // =============================================================================
 // Game
