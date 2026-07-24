@@ -611,7 +611,7 @@ protected:
                             Graphics::VerticalAlign::MIDDLE);
 
         graphics.drawString("START: REC  A: MARKER  B: SCREEN",
-                            160, 230, Graphics::WHITE, Graphics::SIZE_10,
+                            160, 220, Graphics::WHITE, Graphics::SIZE_10,
                             Graphics::HorizontalAlign::CENTER,
                             Graphics::VerticalAlign::MIDDLE);
 
