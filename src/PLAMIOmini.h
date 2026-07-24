@@ -1,10 +1,10 @@
 // ============================================================================
 // PLAMIO mini
-// AI-Friendly Game Framework
+// AI-Friendly Game / UI Application Framework
 //
-// PLAMIO mini is a lightweight game framework designed for AI-assisted game development.
+// PLAMIO mini is a lightweight framework for creating games and UI applications with AI assistance.
 //
-// This header defines the public API available to games.
+// This header defines the public API available to application.
 // The runtime implementation is provided by the PLAMIO mini system.
 // 
 // Execution model
