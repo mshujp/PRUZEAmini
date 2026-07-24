@@ -201,7 +201,7 @@ StorageConfig storageConfig = StorageStubConfig{};
 // ----------------------------------------
 // ----------------------------------------
 
-class MyGame : public GameMini
+class MyApp : public App
 {
 public:
     const char* getId() const override { return "hardware_setup"; }
@@ -221,11 +221,11 @@ public:
     void onTerminate(Storage& storage) override {}
 };
 
-MyGame game;
+MyApp app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, game);
+    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

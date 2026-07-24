@@ -5,14 +5,14 @@
 
 using namespace PLAMIOmini;
 
-bool StorageBase::isValidGameId(const char* gameId)
+bool StorageBase::isValidAppId(const char* appId)
 {
-    if (gameId == nullptr || gameId[0] == '\0') return false;
+    if (appId == nullptr || appId[0] == '\0') return false;
 
     uint8_t len = 0;
-    for (const char* p = gameId; *p != '\0'; ++p)
+    for (const char* p = appId; *p != '\0'; ++p)
     {
-        if (++len > GAME_ID_MAX_LENGTH) return false;
+        if (++len > APP_ID_MAX_LENGTH) return false;
 
         const char c = *p;
         const bool lowerAlpha = c >= 'a' && c <= 'z';
@@ -25,11 +25,11 @@ bool StorageBase::isValidGameId(const char* gameId)
     return true;
 }
 
-bool StorageBase::userFileExists(const char* gameId, const char* fileName)
+bool StorageBase::userFileExists(const char* appId, const char* fileName)
 {
-    if (!isAvailable() || !isValidGameId(gameId) || fileName == nullptr || fileName[0] == '\0') return false;
+    if (!isAvailable() || !isValidAppId(appId) || fileName == nullptr || fileName[0] == '\0') return false;
 
-    File* file = openRead(gameId, fileName);
+    File* file = openRead(appId, fileName);
     if (file == nullptr) return false;
 
     const bool exists = file->isOpen();
@@ -37,14 +37,14 @@ bool StorageBase::userFileExists(const char* gameId, const char* fileName)
     return exists;
 }
 
-bool StorageBase::writeBinaryFile(const char* gameId, const char* fileName, BinaryFileWriterHandler writer, void* arg)
+bool StorageBase::writeBinaryFile(const char* appId, const char* fileName, BinaryFileWriterHandler writer, void* arg)
 {
-    if (!isAvailable() || !isValidGameId(gameId) || fileName == nullptr || fileName[0] == '\0' || writer == nullptr)
+    if (!isAvailable() || !isValidAppId(appId) || fileName == nullptr || fileName[0] == '\0' || writer == nullptr)
     {
         return false;
     }
 
-    StorageBaseFile* file = openWrite(gameId, fileName, false);
+    StorageBaseFile* file = openWrite(appId, fileName, false);
     if (file == nullptr) return false;
 
     const bool writeResult = writer(*file, arg);
@@ -52,26 +52,26 @@ bool StorageBase::writeBinaryFile(const char* gameId, const char* fileName, Bina
     return writeResult && closeResult;
 }
 
-bool StorageBase::writeUserFile(const char* gameId, const char* fileName, Storage::UserFileLineWriterHandler writer, void* arg)
+bool StorageBase::writeUserFile(const char* appId, const char* fileName, Storage::UserFileLineWriterHandler writer, void* arg)
 {
     if (!supportsUserFileWrite()) return false;
-    return writeLines(gameId, fileName, writer, arg, false);
+    return writeLines(appId, fileName, writer, arg, false);
 }
 
 bool StorageBase::writeSaveDataInternal(
-    const char* gameId,
+    const char* appId,
     const char* fileName,
     Storage::UserFileLineWriterHandler writer,
     void* arg)
 {
-    return writeLines(gameId, fileName, writer, arg, false);
+    return writeLines(appId, fileName, writer, arg, false);
 }
 
-bool StorageBase::writeLines(const char* gameId, const char* fileName, Storage::UserFileLineWriterHandler writer, void* arg, bool append)
+bool StorageBase::writeLines(const char* appId, const char* fileName, Storage::UserFileLineWriterHandler writer, void* arg, bool append)
 {
-    if (!isAvailable() || gameId == nullptr || fileName == nullptr || writer == nullptr) return false;
+    if (!isAvailable() || appId == nullptr || fileName == nullptr || writer == nullptr) return false;
 
-    StorageBaseFile* file = openWrite(gameId, fileName, append);
+    StorageBaseFile* file = openWrite(appId, fileName, append);
     if (file == nullptr) return false;
 
     bool ok = true;
@@ -104,7 +104,7 @@ bool StorageBase::writeLines(const char* gameId, const char* fileName, Storage::
 }
 
 bool StorageBase::writeUserFile(
-    const char* gameId,
+    const char* appId,
     const char* fileName,
     const char* data,
     bool append)
@@ -121,7 +121,7 @@ bool StorageBase::writeUserFile(
     };
 
     SingleWriteState state{data, false};
-    return writeLines(gameId, fileName, [](std::string& line, void* arg) -> bool {
+    return writeLines(appId, fileName, [](std::string& line, void* arg) -> bool {
         auto* state = static_cast<SingleWriteState*>(arg);
         if (state->written) return false;
 
@@ -131,11 +131,11 @@ bool StorageBase::writeUserFile(
     }, &state, append);
 }
 
-bool StorageBase::readUserFile(const char* gameId, const char* fileName, Storage::UserFileLineReaderHandler handler, void* arg)
+bool StorageBase::readUserFile(const char* appId, const char* fileName, Storage::UserFileLineReaderHandler handler, void* arg)
 {
-    if (!isAvailable() || gameId == nullptr || fileName == nullptr || handler == nullptr) return false;
+    if (!isAvailable() || appId == nullptr || fileName == nullptr || handler == nullptr) return false;
 
-    File* file = openRead(gameId, fileName);
+    File* file = openRead(appId, fileName);
     if (file == nullptr) return false;
 
     char readBuffer[TEXT_READ_BUFFER_SIZE];

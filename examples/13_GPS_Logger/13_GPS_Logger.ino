@@ -88,7 +88,7 @@ static constexpr double DEMO_BASE_LONGITUDE = 130.420700;
 // Application
 // =============================================================================
 
-class GpsLogger : public GameMini
+class GpsLogger : public App
 {
 public:
     const char* getId() const override { return APP_ID; }
@@ -629,11 +629,11 @@ protected:
     }
 };
 
-GpsLogger game;
+GpsLogger app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, game);
+    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

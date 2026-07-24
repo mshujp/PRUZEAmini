@@ -346,7 +346,7 @@ uint16_t SaveData::getFreeBytes() const
     return static_cast<uint16_t>(BUFFER_SIZE - usedBytes);
 }
 
-bool SaveData::load(Storage& storage, const char* gameId, const char* fileName)
+bool SaveData::load(Storage& storage, const char* appId, const char* fileName)
 {
     clear();
     dirty = false;
@@ -357,7 +357,7 @@ bool SaveData::load(Storage& storage, const char* gameId, const char* fileName)
     }
 
     LoadContext ctx{ this, false };
-    const bool ok = storage.readUserFile(gameId, fileName, &loadLineCallback, &ctx);
+    const bool ok = storage.readUserFile(appId, fileName, &loadLineCallback, &ctx);
 
     if (!ok)
     {
@@ -396,7 +396,7 @@ bool SaveData::writeLineHandler(std::string& line, void* arg)
     return true;
 }
 
-bool SaveData::save(Storage& storage, const char* gameId, const char* fileName)
+bool SaveData::save(Storage& storage, const char* appId, const char* fileName)
 {
     if (!dirty)
     {
@@ -408,7 +408,7 @@ bool SaveData::save(Storage& storage, const char* gameId, const char* fileName)
     }
 
     saveCursor = 0;
-    const bool ok = storage.writeSaveDataInternal(gameId, fileName, &SaveData::writeLineHandler, this);
+    const bool ok = storage.writeSaveDataInternal(appId, fileName, &SaveData::writeLineHandler, this);
     if (ok)
     {
         dirty = false;

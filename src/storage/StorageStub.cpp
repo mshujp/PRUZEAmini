@@ -16,12 +16,12 @@ Storage::File* StorageStub::openRead(const char* path)
     return nullptr;
 }
 
-Storage::File* StorageStub::openRead(const char* gameId, const char* fileName)
+Storage::File* StorageStub::openRead(const char* appId, const char* fileName)
 {
     return nullptr;
 }
 
-StorageBaseFile* StorageStub::openWrite(const char* gameId, const char* fileName, bool append)
+StorageBaseFile* StorageStub::openWrite(const char* appId, const char* fileName, bool append)
 {
     return nullptr;
 }

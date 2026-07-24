@@ -97,7 +97,7 @@ static const Audio::Music DEMO_MUSIC = {
 // Game
 // =============================================================================
 
-class AudioBasicsGame : public GameMini
+class AudioBasicsGame : public App
 {
 public:
     const char* getId() const override { return "audio_basics"; }
@@ -287,7 +287,7 @@ protected:
 // PLAMIOmini objects
 // =============================================================================
 
-AudioBasicsGame game;
+AudioBasicsGame app;
 
 
 // =============================================================================
@@ -296,7 +296,7 @@ AudioBasicsGame game;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, game);
+    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

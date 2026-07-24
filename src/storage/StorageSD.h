@@ -41,18 +41,18 @@ public:
     bool isAvailable() const override;
 
     File* openRead(const char* path) override;
-    File* openRead(const char* gameId, const char* fileName) override;
+    File* openRead(const char* appId, const char* fileName) override;
     bool directoryExists(const char* path) override;
     bool fileExists(const char* path) override;
 
 protected:
-    StorageBaseFile* openWrite(const char* gameId, const char* fileName, bool append) override;
+    StorageBaseFile* openWrite(const char* appId, const char* fileName, bool append) override;
 
 private:
     friend class StorageSDFile;
 
     static constexpr size_t PATH_MAX_LENGTH = 128;
-    static constexpr const char* ROOT_DIR = "/PLAMIO_Games";
+    static constexpr const char* ROOT_DIR = "/PLAMIO_Apps";
     static constexpr uint32_t AVAILABILITY_CACHE_MSEC = 1000;
 
     StorageSDConfig config;
@@ -68,7 +68,7 @@ private:
     bool mountCard();
     void unmountCard();
     void updateAvailabilityCache(bool available) const;
-    bool makeDataPath(char* output, size_t outputSize, const char* gameId, const char* fileName) const;
+    bool makeDataPath(char* output, size_t outputSize, const char* appId, const char* fileName) const;
     bool ensureDirectory(const char* path);
     static bool isValidFileName(const char* fileName);
 };

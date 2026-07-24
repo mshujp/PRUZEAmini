@@ -64,7 +64,7 @@ StorageConfig storageConfig = StorageStubConfig{};
 // Game
 // =============================================================================
 
-class BreakoutGame : public GameMini
+class BreakoutGame : public App
 {
 public:
     const char* getId() const override { return "breakout"; }
@@ -577,7 +577,7 @@ protected:
 // PLAMIOmini objects
 // =============================================================================
 
-BreakoutGame game;
+BreakoutGame app;
 
 
 // =============================================================================
@@ -586,7 +586,7 @@ BreakoutGame game;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, game);
+    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

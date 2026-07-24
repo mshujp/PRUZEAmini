@@ -100,31 +100,31 @@ bool StorageEEPROMFile::closeWrite()
     return owner->commit();
 }
 
-int StorageEEPROM::find(const char* gameId, const char* fileName) const
+int StorageEEPROM::find(const char* appId, const char* fileName) const
 {
-    if (gameId == nullptr || fileName == nullptr) return -1;
+    if (appId == nullptr || fileName == nullptr) return -1;
 
     for (int i = 0; i < SLOT_COUNT; ++i)
     {
         const Slot& slot = image.slots[i];
-        if (slot.gameId[0] != '\0' && strcmp(slot.gameId, gameId) == 0 &&
+        if (slot.appId[0] != '\0' && strcmp(slot.appId, appId) == 0 &&
             strcmp(slot.fileName, fileName) == 0) return i;
     }
     return -1;
 }
 
-int StorageEEPROM::allocate(const char* gameId, const char* fileName)
+int StorageEEPROM::allocate(const char* appId, const char* fileName)
 {
-    int index = find(gameId, fileName);
+    int index = find(appId, fileName);
     if (index >= 0) return index;
 
     for (index = 0; index < SLOT_COUNT; ++index)
     {
         Slot& slot = image.slots[index];
-        if (slot.gameId[0] == '\0')
+        if (slot.appId[0] == '\0')
         {
-            strncpy(slot.gameId, gameId, sizeof(slot.gameId) - 1);
-            slot.gameId[sizeof(slot.gameId) - 1] = '\0';
+            strncpy(slot.appId, appId, sizeof(slot.appId) - 1);
+            slot.appId[sizeof(slot.appId) - 1] = '\0';
             strncpy(slot.fileName, fileName, sizeof(slot.fileName) - 1);
             slot.fileName[sizeof(slot.fileName) - 1] = '\0';
             slot.length = 0;
@@ -177,11 +177,11 @@ Storage::File* StorageEEPROM::openRead(const char* path)
     return nullptr;
 }
 
-Storage::File* StorageEEPROM::openRead(const char* gameId, const char* fileName)
+Storage::File* StorageEEPROM::openRead(const char* appId, const char* fileName)
 {
-    if (!ready || !isValidGameId(gameId)) return nullptr;
+    if (!ready || !isValidAppId(appId)) return nullptr;
 
-    const int index = find(gameId, fileName);
+    const int index = find(appId, fileName);
     if (index < 0) return nullptr;
 
     Slot& slot = image.slots[index];
@@ -190,14 +190,14 @@ Storage::File* StorageEEPROM::openRead(const char* gameId, const char* fileName)
 }
 
 StorageBaseFile* StorageEEPROM::openWrite(
-    const char* gameId,
+    const char* appId,
     const char* fileName,
     bool append)
 {
     if (append) return nullptr;
-    if (!ready || !isValidGameId(gameId) || fileName == nullptr || fileName[0] == '\0') return nullptr;
+    if (!ready || !isValidAppId(appId) || fileName == nullptr || fileName[0] == '\0') return nullptr;
 
-    const int index = allocate(gameId, fileName);
+    const int index = allocate(appId, fileName);
     if (index < 0) return nullptr;
 
     Slot& slot = image.slots[index];

@@ -4,7 +4,7 @@
 
 This document defines the rules for generating `.ino` file for **PLAMIOmini**, the Arduino version of PLAMIO.
 
-PLAMIOmini is a small, statically configured game runtime for Arduino-compatible RP2040, RP2350, and ESP32 boards. A game derives from `PLAMIOmini::GameMini` and supplies hardware configuration objects to the runtime.
+PLAMIOmini is a small, statically configured game runtime for Arduino-compatible RP2040, RP2350, and ESP32 boards. A game derives from `PLAMIOmini::App` and supplies hardware configuration objects to the runtime.
 
 These rules are intended for AI-generated game code. Follow them strictly.
 
@@ -32,7 +32,7 @@ Do not rely on:
 
 Never invent an API. If a requested feature is not provided by PLAMIOmini, implement it inside the game class using fixed-size data structures.
 
-Before generating code, verify all overridden function signatures directly against the supplied `GameMini` declaration.
+Before generating code, verify all overridden function signatures directly against the supplied `App` declaration.
 
 ---
 
@@ -94,7 +94,7 @@ The generated sketch shall:
 
 - Create one configuration object for each selected hardware category.
 - Do not include or instantiate concrete hardware driver classes. The runtime owns them.
-- Create one GameMini-derived game instance.
+- Create one App-derived game instance.
 - Pass the four configuration objects and game to `PLAMIOmini::start()` from `setup()`.
 - Leave Arduino `loop()` empty.
 
@@ -120,7 +120,7 @@ Do not copy assumptions from the full PLAMIO framework.
 PLAMIOmini uses:
 
 - Namespace: `PLAMIOmini`
-- Base class: `GameMini`
+- Base class: `App`
 - Arduino sketch entry point
 - A fixed game instance passed to `PLAMIOmini::start()`
 - `void onUpdate(...)`
@@ -147,7 +147,7 @@ The normal structure is:
 - Required includes
 - `using namespace PLAMIOmini;`
 - Hardware configuration
-- Game class derived from `GameMini`
+- Game class derived from `App`
 - Global hardware configuration objects
 - Global game object
 - `setup()`
@@ -200,12 +200,12 @@ Do not move hardware initialization into the game class.
 
 ---
 
-## Required GameMini Overrides
+## Required App Overrides
 
-A game class must derive from `GameMini` and override all four functions with the exact signatures below:
+A game class must derive from `App` and override all four functions with the exact signatures below:
 
 ```cpp
-class MyGame : public GameMini
+class MyGame : public App
 {
 protected:
     void onInit(Storage& storage) override;
@@ -669,7 +669,7 @@ using namespace PLAMIOmini;
 // Game
 // ============================================================================
 
-class SampleGame : public GameMini
+class SampleGame : public App
 {
 protected:
     void onInit(Storage& storage) override
@@ -719,7 +719,7 @@ SampleGame game;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, storageConfig, audioConfig, game);
+    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()
@@ -763,7 +763,7 @@ When generating a complete Arduino sketch:
 Before presenting generated code, verify:
 
 1. The namespace is `PLAMIOmini`.
-2. The game derives from `GameMini`.
+2. The game derives from `App`.
 3. All four override signatures match exactly.
 4. `onUpdate()` returns `void`.
 5. No `GameState` or full-PLAMIO virtual metadata functions were invented.

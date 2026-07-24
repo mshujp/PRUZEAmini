@@ -68,13 +68,13 @@ StorageConfig storageConfig = StorageEEPROMConfig{
 // Game
 // =============================================================================
 
-class SaveDataGame : public GameMini
+class SaveDataGame : public App
 {
 public:
-    const char* getId() const override { return GAME_ID; }
+    const char* getId() const override { return APP_ID; }
 
 private:
-    static constexpr const char* GAME_ID = "save_data";
+    static constexpr const char* APP_ID = "save_data";
     static constexpr const char* SAVE_FILE = "save.ini";
     static constexpr const char* SCORE_KEY = "score";
 
@@ -307,7 +307,7 @@ protected:
 // PLAMIOmini objects
 // =============================================================================
 
-SaveDataGame game;
+SaveDataGame app;
 
 
 // =============================================================================
@@ -316,7 +316,7 @@ SaveDataGame game;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, game);
+    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

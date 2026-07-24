@@ -10,7 +10,7 @@
 namespace PLAMIOmini {
 namespace {
 
-constexpr const char* SCREENSHOT_GAME_ID = "screenshots";
+constexpr const char* SCREENSHOT_APP_ID = "screenshots";
 
 struct ScreenShotContext
 {
@@ -92,7 +92,7 @@ bool saveScreenShot(GraphicsBase& graphics, uint16_t width, uint16_t height,
         for (uint16_t index = 0; index < 1000; ++index)
         {
             snprintf(generatedName, sizeof(generatedName), "SCREEN%03u.BMP", index);
-            if (!storage.userFileExists(SCREENSHOT_GAME_ID, generatedName))
+            if (!storage.userFileExists(SCREENSHOT_APP_ID, generatedName))
             {
                 found = true;
                 break;
@@ -104,7 +104,7 @@ bool saveScreenShot(GraphicsBase& graphics, uint16_t width, uint16_t height,
 
     ScreenShotContext context{graphics, width, height};
     return storage.writeBinaryFile(
-        SCREENSHOT_GAME_ID, fileName, &writeBitmap, &context);
+        SCREENSHOT_APP_ID, fileName, &writeBitmap, &context);
 }
 
 bool ScreenShot::save(GraphicsILI9341& graphics, StorageSD& storage, const char* fileName)

@@ -74,7 +74,7 @@ static const Audio::Music MEMORY_BGM = {
     0.25f,
 };
 
-class MemoryTilesGame : public GameMini
+class MemoryTilesGame : public App
 {
 public:
     const char* getId() const override { return "memory_tiles"; }
@@ -574,11 +574,11 @@ protected:
     }
 };
 
-MemoryTilesGame game;
+MemoryTilesGame app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, game);
+    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

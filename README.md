@@ -1,8 +1,8 @@
 # PLAMIO mini
 
-> **AI-Friendly Game / UI Framework for Arduino IDE**
+> **AI-Friendly Game / UI Application Framework for Arduino IDE**
 
-A lightweight game framework designed for AI-assisted game development.
+A lightweight framework for creating games and UI applications with AI assistance.
 
 ------------------------------------------------------------------------
 
@@ -11,12 +11,12 @@ A lightweight game framework designed for AI-assisted game development.
 `PLAMIO mini` is a streamlined version of [PLAMIO](https://github.com/mshujp/PLAMIO/) adapted for the Arduino IDE.
 For the full feature set, use PLAMIO instead.
 
--   Supports the creation of a single game.
+-   Supports the creation of a single application.
 -   AI-friendly public API
--   Portable game code across supported Arduino.
+-   Portable application code across supported Arduino.
 -   Unified Graphics / Input / Audio / Storage APIs
--   Supports both game UIs and Arduino-based sensor monitoring or data logging applications.
--   Fixed 30 FPS game loop
+-   Supports games, UI applications, sensor monitoring, and data logging.
+-   Fixed 30 FPS application loop
 -   Built-in SaveData helper
 -   2D viewport and scrolling support
 -   PWM / I2S audio support
@@ -45,11 +45,11 @@ For the full feature set, use PLAMIO instead.
 
 # Philosophy
 
-PLAMIO is designed so that both humans and AI can write games using the same simple API.
+PLAMIOmini is designed so that both humans and AI can create games and UI applications using the same simple API.
 
-Games implement only a small set of interfaces while the runtime manages graphics, input, audio, storage, and the game loop.
+Applications implement only a small set of interfaces, while the runtime manages graphics, input, audio, storage, and the application loop.
 
-This allows game logic to remain clean, portable, and easy to generate.
+This keeps game and UI logic clean, portable, and easy to generate.
 
 ------------------------------------------------------------------------
 
@@ -68,19 +68,19 @@ Download this project as a ZIP file, then install it from the Arduino IDE menu:
 
 ------------------------------------------------------------------------
 
-# Creating a Game
+# Creating an App
 
-To create a game, simply create **one class** that inherits from the `PLAMIOmini::GameMini` class.
+To create a game or UI application, define **one class** that inherits from `PLAMIOmini::App`.
 
-The PLAMIO system automatically manages the game loop, rendering, input, audio, and storage.
+The PLAMIOmini runtime automatically manages the application loop, rendering, input, audio, and storage.
 
-Your game only needs to implement its own game logic.
+Your app only needs to implement its own game or UI logic.
 
 ## Core API
 
-PLAMIO provides the following hardware abstraction interfaces to every game.
+PLAMIO provides the following hardware abstraction interfaces to every appliation.
 
-Game code does not need to access platform-specific hardware or drivers directly.
+Application code does not need to access platform-specific hardware or drivers directly.
 
 | Class | Purpose |
 |------|---------|
@@ -97,11 +97,11 @@ For the complete API reference, see:
 
 see the example [00B_Hardware_Setup](examples/00B_Hardware_Setup/00B_Hardware_Setup.ino)
 
-## `PLAMIOmini::GameMini` class
+## `PLAMIOmini::App` class
 
-Your game class should inherit from the `PLAMIOmini::GameMini` class.
+Your game/app class should inherit from the `PLAMIOmini::App` class.
 
-Most games implement their game logic in:
+Most application implement their game/app logic in:
 
 - `getId()`
 - `onInit()`
@@ -109,13 +109,13 @@ Most games implement their game logic in:
 - `onDraw()`
 - `onTerminate()`
 
-For the complete `PLAMIOmini::GameMini` class reference, see:
+For the complete `PLAMIOmini::App` class reference, see:
 
 - [`src/PLAMIOmini.h`](src/PLAMIOmini.h)
 
 ## AI Workflow
 
-PLAMIO is designed for AI-assisted game development.
+PLAMIO is designed for AI-assisted game/app development.
 
 see the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_Game_Generation.ino)
 
@@ -160,7 +160,7 @@ Based on current development experience:
 | AI | Recommendation | Notes |
 |----|---------------|-------|
 | **ChatGPT** | **Highly Recommended** | Best overall experience with PLAMIO |
-| **Claude** | **Recommended** | Strong at understanding the SDK and generating well-structured game code |
+| **Claude** | **Recommended** | Strong at understanding the SDK and generating well-structured game/app code |
 | **Gemini** | **Not Recommended** | Gemini struggles with interpreting the contents of the ZIP file. |
 | **Copilot** | **Not Recommended** | Does not currently support zip file uploads, making it difficult to provide the PLAMIO SDK. |
 | **Google Search AI Mode** | **Not Recommended** | Does not currently support file uploads, making it difficult to provide the PLAMIO SDK. |
@@ -173,8 +173,8 @@ Based on current development experience:
 
 - **Main board:** RP2040  
   Examples: Waveshare RP2040 Zero
-- **Input:** About 6 tactile switches  
-  D-pad, A, and B 
+- **Input:** One or more tactile switches
+  Simple applications may need only one or two buttons. Games may use a D-pad, A, and B.
 - **Display:** SSD1306
 - **Audio:** PWM  
   Add a potentiometer for volume adjustment if needed.

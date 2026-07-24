@@ -204,11 +204,11 @@ bool StorageSD::isValidFileName(const char* fileName)
 }
 
 bool StorageSD::makeDataPath(char* output, size_t outputSize,
-                             const char* gameId, const char* fileName) const
+                             const char* appId, const char* fileName) const
 {
-    if (output == nullptr || !isValidGameId(gameId) || !isValidFileName(fileName)) return false;
+    if (output == nullptr || !isValidAppId(appId) || !isValidFileName(fileName)) return false;
 
-    const int count = snprintf(output, outputSize, "%s/%s/%s", ROOT_DIR, gameId, fileName);
+    const int count = snprintf(output, outputSize, "%s/%s/%s", ROOT_DIR, appId, fileName);
     return count >= 0 && static_cast<size_t>(count) < outputSize;
 }
 
@@ -242,25 +242,25 @@ Storage::File* StorageSD::openRead(const char* path)
     return nullptr;
 }
 
-Storage::File* StorageSD::openRead(const char* gameId, const char* fileName)
+Storage::File* StorageSD::openRead(const char* appId, const char* fileName)
 {
     char path[PATH_MAX_LENGTH];
-    if (!makeDataPath(path, sizeof(path), gameId, fileName)) return nullptr;
+    if (!makeDataPath(path, sizeof(path), appId, fileName)) return nullptr;
     return openRead(path);
 }
 
 StorageBaseFile* StorageSD::openWrite(
-    const char* gameId,
+    const char* appId,
     const char* fileName,
     bool append)
 {
-    if (!isValidGameId(gameId) || !isValidFileName(fileName)) return nullptr;
+    if (!isValidAppId(appId) || !isValidFileName(fileName)) return nullptr;
 
     fileSlot.close();
     if (!mountCard()) return nullptr;
 
     char directory[PATH_MAX_LENGTH];
-    const int count = snprintf(directory, sizeof(directory), "%s/%s", ROOT_DIR, gameId);
+    const int count = snprintf(directory, sizeof(directory), "%s/%s", ROOT_DIR, appId);
     if (count < 0 || static_cast<size_t>(count) >= sizeof(directory) ||
         !ensureDirectory(directory))
     {
@@ -269,7 +269,7 @@ StorageBaseFile* StorageSD::openWrite(
     }
 
     char path[PATH_MAX_LENGTH];
-    if (!makeDataPath(path, sizeof(path), gameId, fileName))
+    if (!makeDataPath(path, sizeof(path), appId, fileName))
     {
         unmountCard();
         return nullptr;

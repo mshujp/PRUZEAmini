@@ -40,12 +40,12 @@ public:
     bool isAvailable() const override { return ready; }
 
     File* openRead(const char* path) override;
-    File* openRead(const char* gameId, const char* fileName) override;
+    File* openRead(const char* appId, const char* fileName) override;
     bool directoryExists(const char* path) override;
     bool fileExists(const char* path) override;
 
 protected:
-    StorageBaseFile* openWrite(const char* gameId, const char* fileName, bool append) override;
+    StorageBaseFile* openWrite(const char* appId, const char* fileName, bool append) override;
     bool supportsUserFileWrite() const override { return false; }
 
 private:
@@ -56,7 +56,7 @@ private:
 
     struct Slot
     {
-        char gameId[33];
+        char appId[33];
         char fileName[33];
         uint16_t length;
         char data[DATA_SIZE];
@@ -76,8 +76,8 @@ private:
     bool ready = false;
     StorageEEPROMFile fileSlot;
 
-    int find(const char* gameId, const char* fileName) const;
-    int allocate(const char* gameId, const char* fileName);
+    int find(const char* appId, const char* fileName) const;
+    int allocate(const char* appId, const char* fileName);
     static uint32_t hashString(const char* value);
     bool commit();
 };

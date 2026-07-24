@@ -74,7 +74,7 @@ static const Audio::Music REVERSI_BGM = {
     0.28f,
 };
 
-class ReversiGame : public GameMini
+class ReversiGame : public App
 {
 public:
     const char* getId() const override { return "reversi"; }
@@ -630,11 +630,11 @@ protected:
     }
 };
 
-ReversiGame game;
+ReversiGame app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, game);
+    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

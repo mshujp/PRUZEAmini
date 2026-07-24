@@ -10,8 +10,8 @@
 // Execution model
 //   System (30 FPS)
 //       ├─ Input update
-//       ├─ GameMini::onUpdate()
-//       ├─ GameMini::onDraw()
+//       ├─ App::onUpdate()
+//       ├─ App::onDraw()
 //       └─ Graphics::push()
 // ============================================================================
 
@@ -142,12 +142,12 @@ public:
     virtual uint64_t holdMillis(Button b) const = 0;
 
     // ## Button repeat settings
-    // Default values are applied before Game::onInit() is called.
+    // Default values are applied before App::onInit() is called.
     static constexpr uint16_t DAS_DELAY_MSEC_DEFAULT = 150;
     static constexpr uint16_t ARR_DELAY_MSEC_DEFAULT = 50;
 
     // ## Button repeat settings
-    // Default values are applied before Game::onInit().
+    // Default values are applied before App::onInit().
     // Call this only when changing the default repeat timing.
     virtual void setRepeatSettings(uint16_t dasDelayMsec, uint16_t arrDelayMsec) = 0;
     virtual bool repeat(Button b) const = 0;
@@ -212,7 +212,7 @@ using InputConfig = std::variant<
 //     - SSD1306
 //       - Graphics buffer size: up to 128x64
 //   - Drawing outside the visible screen is always safe. Graphics automatically clips all primitives internally.
-//     The game does NOT need to perform screen boundary checks before drawing.
+//     The app does NOT need to perform screen boundary checks before drawing.
 //     Prefer simple drawing code over manual visibility checks.
 // ====================================================================
 class Graphics {
@@ -497,16 +497,16 @@ using AudioConfig = std::variant<
 // # Storage
 // PLAMIO mini provides three storage APIs:
 // 1. SaveData
-//    Key-value persistent storage for ordinary game save data.
+//    Key-value persistent storage for ordinary app save data.
 //    No file paths or file-system operations are required.
-//    Use it for: high scores, unlocked content, game progress, game settings
+//    Use it for: high scores, unlocked content, app progress, app settings
 // 2. UserFile
-//    Writable per-game file storage for custom data formats.
-//    The game supplies only its gameId and a relative file name.
+//    Writable per-load file storage for custom data formats.
+//    The app supplies only its appId and a relative file name.
 //    The system determines the actual storage path.
-//    Games must not construct save-data paths manually.
+//    Apps must not construct save-data paths manually.
 // 3. File
-//    Read-only access to packaged game resources.
+//    Read-only access to packaged app resources.
 //
 //    File cannot be used to create, write, or modify save data.
 // =====================================================================
@@ -517,10 +517,10 @@ public:
     virtual bool isAvailable() const = 0;
 
     // ## Read-only resource file
-    // File provides read-only access to packaged game assets.
+    // File provides read-only access to packaged app assets.
     // It is not a writable save-data API.
     // Files opened with openRead() must be explicitly closed by the caller.
-    // Resource files should normally be opened and read only inside Game::init().
+    // Resource files should normally be opened and read only inside App::init().
     class File {
     public:
         virtual bool isOpen() const = 0;
@@ -541,7 +541,7 @@ public:
     //   - readUserFile() returns false when the file could not be opened or read.
     //   - The `arg` parameter can be used to pass `this` to a non-capturing lambda or static callback.
     using UserFileLineReaderHandler = bool(*)(const char* line, void* arg);
-    virtual bool readUserFile(const char* gameId, const char* fileName, UserFileLineReaderHandler reader, void* arg) = 0;
+    virtual bool readUserFile(const char* appId, const char* fileName, UserFileLineReaderHandler reader, void* arg) = 0;
     // ### Write UserFile
     //   - The callback uses std::string to prevent buffer overflows.
     //   - Inside this callback, ALWAYS use direct assignment (e.g., line = "value";) 
@@ -556,7 +556,7 @@ public:
     //     - Use snprintf() with a local buffer instead of std::to_string().
      static constexpr uint16_t USER_FILE_MAX_LINES = 256;
     using UserFileLineWriterHandler = bool(*)(std::string& line, void* arg);
-    virtual bool writeUserFile(const char* gameId, const char* fileName, UserFileLineWriterHandler writer, void* arg) = 0;
+    virtual bool writeUserFile(const char* appId, const char* fileName, UserFileLineWriterHandler writer, void* arg) = 0;
     // ### Lightweight UserFile writing
     //   - For writes of 200 bytes or less, use this function instead of UserFileLineWriterHandler.
     //   - Maximum size: 200 bytes.
@@ -565,7 +565,7 @@ public:
     //   - One newline character is automatically appended after the provided data.
     //   - If append is false, the existing file is replaced.
     //   - If append is true, the data is appended to the existing file.
-    virtual bool writeUserFile(const char* gameId, const char* fileName, const char* data, bool append = false) = 0;
+    virtual bool writeUserFile(const char* appId, const char* fileName, const char* data, bool append = false) = 0;
 
     // ## Read-only resource files
     // Opens a packaged read-only resource.
@@ -581,7 +581,7 @@ protected:
     virtual ~Storage() {};
 private:
     friend class SaveData;
-    virtual bool writeSaveDataInternal(const char* gameId, const char* fileName, UserFileLineWriterHandler writer, void* arg ) = 0;
+    virtual bool writeSaveDataInternal(const char* appId, const char* fileName, UserFileLineWriterHandler writer, void* arg ) = 0;
 };
 
 struct StorageEEPROMConfig
@@ -614,7 +614,7 @@ using StorageConfig = std::variant<
 // [PROVIDED BY SYSTEM]
 //   These APIs are already implemented by the PLAMIO mini runtime.
 //   These declarations define existing APIs. Do NOT implement or redefine them.
-//   Use them directly from your game code.
+//   Use them directly from your app code.
 //
 //   SaveData provides small key-value persistent storage.
 //   It handles file formatting and UserFile access internally.
@@ -628,8 +628,8 @@ public:
     SaveData();
 
     void clear();
-    bool load(Storage& storage, const char* gameId, const char* fileName);
-    bool save(Storage& storage, const char* gameId, const char* fileName);
+    bool load(Storage& storage, const char* appId, const char* fileName);
+    bool save(Storage& storage, const char* appId, const char* fileName);
     bool contains(const char* key) const;
     bool remove(const char* key);
     bool getString(const char* key, char* outValue, size_t outSize, const char* defaultValue = "") const;
@@ -664,15 +664,15 @@ private:
 
 
 // --- =================================================================
-// # GameMini
-//   Derive your game class from this class to run it on PLAMIO mini.
+// # App
+//   Derive your app class from this class to run it on PLAMIO mini.
 //   - Target update rate: 30 FPS
 //   - deltaSec is provided every frame.
 //   [!IMPORTANT] Never call init(), update(), draw(), or terminate() directly.
 //   The PLAMIO mini runtime calls them automatically.
 //   [!IMPORTANT] Override all pure virtual functions.
 // =====================================================================
-class GameMini {
+class App {
 private:
     // ## Typical game mode example:
     // enum InternalMode {
@@ -699,7 +699,7 @@ protected:
     // - Continuously animated action games may set dirty every update while running.
     bool dirty = true;
 
-    // ## Called once before the game starts.
+    // ## Called once before the app starts.
     //   - Load save data, initialize variables, and prepare resources.
     //   - Normally, rendering should be performed in draw().
     //   - After onInit() returns, the system calls draw() with requestFullRedraw = true.
@@ -707,19 +707,19 @@ protected:
     // Therefore, it keeps its direct name.
     virtual void onInit(Storage& storage) = 0;
 
-    // ## Frame-by-frame game state updating
-    // Called once per frame to update game logic, physics, and animations.
+    // ## Frame-by-frame app state updating
+    // Called once per frame to update app logic, physics, and animations.
     //   - Input has already been updated before onUpdate() is called.
     //   - [!IMPORTANT] Request sound playback only from onUpdate().
     // deltaSec:
-    //   Elapsed time since the previous Game::update(), in seconds.
+    //   Elapsed time since the previous App::update(), in seconds.
     //   The system guarantees a value in the range 0.0f to 0.1f.
     //   The first update after init(), resume, or a system-side pause receives 0.0f.
     virtual void onUpdate(Input& input, Audio& audio, Storage& storage, float deltaSec) = 0;
 
-    // ## Frame-by-frame game screen drawing
-    // Called once per frame to draw the game screen.
-     // - If requestFullRedraw is true, the game must draw regardless of dirty.
+    // ## Frame-by-frame app screen drawing
+    // Called once per frame to draw the app screen.
+     // - If requestFullRedraw is true, the app must draw regardless of dirty.
     // - If requestFullRedraw is false and dirty is false, return false without drawing.
     // - Return true only when drawing was performed.
     // - After drawing, set dirty = false before returning true.
@@ -731,12 +731,12 @@ protected:
     virtual bool onDraw(Graphics& graphics, bool requestFullRedraw) = 0;
 
     // ## Termination
-    //   - Called by the runtime when the game is about to terminate.
+    //   - Called by the runtime when the app is about to terminate.
     //   - Save persistent data or perform cleanup here if needed.
     //   - [!IMPORTANT] After onTerminate() is called, onUpdate() and onDraw() will never be called again.
     virtual void onTerminate(Storage& storage) = 0;
 
-    virtual ~GameMini() {};
+    virtual ~App() {};
 
 public:
     // ## System entry points
@@ -762,14 +762,14 @@ public:
         onTerminate(storage);
     }
 
-    // Returns the game ID.
+    // Returns the app ID.
     // The ID may contain only lowercase letters (a-z), digits (0-9), underscores (_), and hyphens (-), up to 32 characters.
     // Used to identify the application's storage data.
     virtual const char* getId() const = 0;
 };
 
 
-void start(const GraphicsConfig& graphicsConfig, const InputConfig& inputConfig, const AudioConfig& audioConfig, const StorageConfig& storageConfig, GameMini& game);
+void start(const GraphicsConfig& graphicsConfig, const InputConfig& inputConfig, const AudioConfig& audioConfig, const StorageConfig& storageConfig, App& app);
 
 
 } // namespace PLAMIO mini

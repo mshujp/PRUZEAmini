@@ -33,7 +33,7 @@ namespace PLAMIOmini {
 class SystemMini
 {
 public:
-    SystemMini(GraphicsBase& graphics, InputBase& input, StorageBase& storage, AudioBase& audio, GameMini& game);
+    SystemMini(GraphicsBase& graphics, InputBase& input, StorageBase& storage, AudioBase& audio, App& app);
     SystemMini(const SystemMini&) = delete;
     SystemMini& operator=(const SystemMini&) = delete;
     void setScreenShotContext(GraphicsILI9341* gi, StorageSD* sd);
@@ -45,7 +45,7 @@ private:
     InputBase& input;
     StorageBase& storage;
     AudioBase& audio;
-    GameMini& game;
+    App& app;
 
     GraphicsILI9341* graphicsILI9341 = nullptr;
     StorageSD* storageSD = nullptr;
@@ -84,8 +84,8 @@ SystemMini* picoSystem = nullptr;
 
 } // namespace
 
-SystemMini::SystemMini(GraphicsBase& _graphics, InputBase& _input, StorageBase& _storage, AudioBase& _audio, GameMini& _game)
-    : graphics(_graphics), input(_input), storage(_storage), audio(_audio), game(_game)
+SystemMini::SystemMini(GraphicsBase& _graphics, InputBase& _input, StorageBase& _storage, AudioBase& _audio, App& _app)
+    : graphics(_graphics), input(_input), storage(_storage), audio(_audio), app(_app)
 {
 }
 
@@ -102,7 +102,7 @@ bool SystemMini::initialize()
     storage.begin();
     volumeSteps = audio.getVolumeSteps();
     audio.setVolumeLevel(loadVolume());
-    game.init(storage);
+    app.init(storage);
     requestFullRedraw = true;
     return true;
 }
@@ -185,15 +185,15 @@ void SystemMini::runFrame()
     lastFrameMsec = now;
     input.update();
     updateSystem();
-    game.update(input, audio, storage, delta);
+    app.update(input, audio, storage, delta);
 
-    const bool drew = game.draw(graphics, requestFullRedraw);
+    const bool drew = app.draw(graphics, requestFullRedraw);
     if (drew)
     {
         drawOSD();
         while(graphics.push())
         {
-            game.draw(graphics, true);
+            app.draw(graphics, true);
             drawOSD();
         }
         requestFullRedraw = false;
@@ -296,7 +296,7 @@ uint8_t SystemMini::loadVolume()
     return static_cast<uint8_t>(data.getUInt32("volume", 1));
 }
 
-void start(const GraphicsConfig& graphicsConfig, const InputConfig& inputConfig, const AudioConfig& audioConfig, const StorageConfig& storageConfig, GameMini& game)
+void start(const GraphicsConfig& graphicsConfig, const InputConfig& inputConfig, const AudioConfig& audioConfig, const StorageConfig& storageConfig, App& app)
 {
     GraphicsBase* graphics = nullptr;
     InputBase* inputDriver = nullptr;
@@ -335,7 +335,7 @@ void start(const GraphicsConfig& graphicsConfig, const InputConfig& inputConfig,
 
     if (std::holds_alternative<StorageEEPROMConfig>(storageConfig))
     {
-        static StorageEEPROM instance(std::get<StorageEEPROMConfig>(storageConfig), game.getId());
+        static StorageEEPROM instance(std::get<StorageEEPROMConfig>(storageConfig), app.getId());
         storageDriver = &instance;
     }
     else if (std::holds_alternative<StorageSDConfig>(storageConfig))
@@ -368,7 +368,7 @@ void start(const GraphicsConfig& graphicsConfig, const InputConfig& inputConfig,
 
     if (!graphics || !inputDriver || !storageDriver || !audioDriver) return;
 
-    static SystemMini systemMini(*graphics, *inputDriver, *storageDriver, *audioDriver, game);
+    static SystemMini systemMini(*graphics, *inputDriver, *storageDriver, *audioDriver, app);
     if (gi != nullptr && sd != nullptr)
     {
         systemMini.setScreenShotContext(gi, sd);

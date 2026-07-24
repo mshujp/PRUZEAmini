@@ -78,7 +78,7 @@ static constexpr bool IMU_DEMO_MODE = true;
 // Application
 // =============================================================================
 
-class ImuMonitor : public GameMini
+class ImuMonitor : public App
 {
 public:
     const char* getId() const override { return "imu_monitor"; }
@@ -448,11 +448,11 @@ protected:
     }
 };
 
-ImuMonitor game;
+ImuMonitor app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, game);
+    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

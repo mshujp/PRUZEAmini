@@ -24,12 +24,12 @@ public:
 class StorageBase : public Storage
 {
 private:
-    static constexpr uint8_t GAME_ID_MAX_LENGTH = 32;
+    static constexpr uint8_t APP_ID_MAX_LENGTH = 32;
     static constexpr uint32_t TEXT_READ_BUFFER_SIZE = 256;
 
 protected:
-    static bool isValidGameId(const char* gameId);
-    virtual StorageBaseFile* openWrite(const char* gameId, const char* fileName, bool append) = 0;
+    static bool isValidAppId(const char* appId);
+    virtual StorageBaseFile* openWrite(const char* appId, const char* fileName, bool append) = 0;
     virtual bool supportsUserFileWrite() const { return true; }
 
 public:
@@ -39,17 +39,17 @@ public:
     virtual bool begin() = 0; 
     virtual void end() = 0; 
 
-    virtual File* openRead(const char* gameId, const char* fileName) = 0;
-    bool readUserFile(const char* gameId, const char* fileName, Storage::UserFileLineReaderHandler handler, void* arg) override;
-    bool writeUserFile(const char* gameId, const char* fileName, Storage::UserFileLineWriterHandler writer, void* arg) override;
-    bool writeUserFile(const char* gameId, const char* fileName, const char* data, bool append) override;
+    virtual File* openRead(const char* appId, const char* fileName) = 0;
+    bool readUserFile(const char* appId, const char* fileName, Storage::UserFileLineReaderHandler handler, void* arg) override;
+    bool writeUserFile(const char* appId, const char* fileName, Storage::UserFileLineWriterHandler writer, void* arg) override;
+    bool writeUserFile(const char* appId, const char* fileName, const char* data, bool append) override;
 
-    bool userFileExists(const char* gameId, const char* fileName);
-    bool writeBinaryFile(const char* gameId, const char* fileName, BinaryFileWriterHandler writer, void* arg);
+    bool userFileExists(const char* appId, const char* fileName);
+    bool writeBinaryFile(const char* appId, const char* fileName, BinaryFileWriterHandler writer, void* arg);
 
 private:
-    bool writeSaveDataInternal(const char* gameId, const char* fileName, Storage::UserFileLineWriterHandler writer, void* arg) override;
-    bool writeLines(const char* gameId, const char* fileName, Storage::UserFileLineWriterHandler writer, void* arg, bool append);
+    bool writeSaveDataInternal(const char* appId, const char* fileName, Storage::UserFileLineWriterHandler writer, void* arg) override;
+    bool writeLines(const char* appId, const char* fileName, Storage::UserFileLineWriterHandler writer, void* arg, bool append);
 };
 
 } // namespace

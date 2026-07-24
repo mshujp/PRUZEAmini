@@ -63,7 +63,7 @@ StorageConfig storageConfig = StorageStubConfig{};
 // Game
 // =============================================================================
 
-class AnimationGame : public GameMini
+class AnimationGame : public App
 {
 public:
     const char* getId() const override { return "animation"; }
@@ -497,7 +497,7 @@ protected:
 // PLAMIOmini objects
 // =============================================================================
 
-AnimationGame game;
+AnimationGame app;
 
 
 // =============================================================================
@@ -506,7 +506,7 @@ AnimationGame game;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, game);
+    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()
