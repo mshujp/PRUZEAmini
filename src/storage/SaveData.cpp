@@ -1,11 +1,11 @@
-#include "../PLAMIOmini.h"
+#include "../PRUZEAmini.h"
 
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
-namespace PLAMIOmini
+namespace PRUZEAmini
 {
 
 namespace
@@ -416,4 +416,4 @@ bool SaveData::save(Storage& storage, const char* appId, const char* fileName)
     return ok;
 }
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

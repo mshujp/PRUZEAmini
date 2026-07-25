@@ -2,7 +2,7 @@
 
 #include "../storage/StorageBase.h"
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class GraphicsILI9341;
 class GraphicsSSD1306;
@@ -15,4 +15,4 @@ public:
     static bool save(GraphicsSSD1306& graphics, StorageSD& storage, const char* fileName = nullptr);
 };
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

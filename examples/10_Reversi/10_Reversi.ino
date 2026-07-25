@@ -1,6 +1,6 @@
 /*
 ===============================================================================
- PLAMIOmini Example
+ PRUZEAmini Example
  10_Reversi
 ===============================================================================
 
@@ -17,9 +17,9 @@ Before compiling:
 - Change lcdRotate if necessary to match the display orientation.
 */
 
-#include <PLAMIOmini.h>
+#include <PRUZEAmini.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 GraphicsConfig graphicsConfig = GraphicsILI9341Config{
     .spiHost         = 0,
@@ -634,7 +634,7 @@ ReversiGame app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

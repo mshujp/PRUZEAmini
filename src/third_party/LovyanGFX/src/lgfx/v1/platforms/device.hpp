@@ -4,7 +4,7 @@
   Original Source: https://github.com/lovyan03/LovyanGFX/
   Licence: FreeBSD
 
-  This copy is limited to the SPI/I2C platforms used by PLAMIOmini.
+  This copy is limited to the SPI/I2C platforms used by PRUZEAmini.
 /----------------------------------------------------------------------------*/
 #pragma once
 

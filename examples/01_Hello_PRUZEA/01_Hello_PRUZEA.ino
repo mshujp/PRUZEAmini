@@ -1,19 +1,19 @@
 /*
 ===============================================================================
- PLAMIOmini Example
- 01_Hello_PLAMIO
+ PRUZEAmini Example
+ 01_Hello_PRUZEA
 ===============================================================================
 
-This example shows the minimum structure of a PLAMIOmini game.
+This example shows the minimum structure of a PRUZEAmini game.
 
 Before compiling:
 - Replace the required -1 values with pin numbers for your hardware.
 - Change lcdRotate if necessary to match the display orientation.
 */
 
-#include <PLAMIOmini.h>
+#include <PRUZEAmini.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 
 // =============================================================================
@@ -54,10 +54,10 @@ StorageConfig storageConfig = StorageStubConfig{};
 // Game
 // =============================================================================
 
-class HelloPLAMIOGame : public App
+class HelloPRUZEAGame : public App
 {
 public:
-    const char* getId() const override { return "hello_plamio"; }
+    const char* getId() const override { return "hello_pruzea"; }
 
 private:
     bool greeted = false;
@@ -106,7 +106,7 @@ protected:
             Graphics::WHITE);
 
         graphics.drawString(
-            "PLAMIOmini",
+            "PRUZEAmini",
             160, 70,
             Graphics::YELLOW,
             Graphics::SIZE_32B,
@@ -114,7 +114,7 @@ protected:
             Graphics::VerticalAlign::MIDDLE);
 
         graphics.drawString(
-            greeted ? "HELLO!" : "HELLO PLAMIO",
+            greeted ? "HELLO!" : "HELLO PRUZEA",
             160, 125,
             Graphics::WHITE,
             greeted ? Graphics::SIZE_42B : Graphics::SIZE_32B,
@@ -141,10 +141,10 @@ protected:
 
 
 // =============================================================================
-// PLAMIOmini objects
+// PRUZEAmini objects
 // =============================================================================
 
-HelloPLAMIOGame app;
+HelloPRUZEAGame app;
 
 
 // =============================================================================
@@ -153,7 +153,7 @@ HelloPLAMIOGame app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

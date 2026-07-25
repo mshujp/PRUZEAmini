@@ -1,6 +1,6 @@
 /*
 ===============================================================================
- PLAMIOmini Example
+ PRUZEAmini Example
  05_Save_Data
 
  SaveData works with both Emulated EEPROM and SD storage.
@@ -20,9 +20,9 @@ Before compiling:
 - Change lcdRotate if necessary to match the display orientation.
 */
 
-#include <PLAMIOmini.h>
+#include <PRUZEAmini.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 
 // =============================================================================
@@ -304,7 +304,7 @@ protected:
 
 
 // =============================================================================
-// PLAMIOmini objects
+// PRUZEAmini objects
 // =============================================================================
 
 SaveDataGame app;
@@ -316,7 +316,7 @@ SaveDataGame app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

@@ -1,8 +1,8 @@
-﻿#pragma once
+#pragma once
 
-#include "PLAMIOmini.h"
+#include "PRUZEAmini.h"
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class GraphicsBase : public Graphics
 {

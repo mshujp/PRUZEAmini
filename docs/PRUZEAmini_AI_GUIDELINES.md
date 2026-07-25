@@ -1,10 +1,10 @@
-# PLAMIOmini Game Generation Guidelines for AI
+# PRUZEAmini Game Generation Guidelines for AI
 
 ## Purpose
 
-This document defines the rules for generating `.ino` file for **PLAMIOmini**, the Arduino version of PLAMIO.
+This document defines the rules for generating `.ino` file for **PRUZEAmini**, the Arduino version of PRUZEA.
 
-PLAMIOmini is a small, statically configured game runtime for Arduino-compatible RP2040, RP2350, and ESP32 boards. A game derives from `PLAMIOmini::App` and supplies hardware configuration objects to the runtime.
+PRUZEAmini is a small, statically configured game runtime for Arduino-compatible RP2040, RP2350, and ESP32 boards. A game derives from `PRUZEAmini::App` and supplies hardware configuration objects to the runtime.
 
 These rules are intended for AI-generated game code. Follow them strictly.
 
@@ -16,9 +16,9 @@ For every generation task, use the supplied files as the only authoritative spec
 
 Priority order:
 
-1. `PLAMIOmini.h`
+1. `PRUZEAmini.h`
 2. The supplied board example
-3. This `PLAMIOmini_AI_GUIDELINES.md`
+3. This `PRUZEAmini_AI_GUIDELINES.md`
 4. The user's game design document
 
 Do not rely on:
@@ -26,11 +26,11 @@ Do not rely on:
 - Online documentation
 - GitHub repositories
 - Cached knowledge
-- Previous PLAMIO or PLAMIOmini versions
+- Previous PRUZEA or PRUZEAmini versions
 - APIs remembered from another framework
 - Arduino libraries not included or approved by the user
 
-Never invent an API. If a requested feature is not provided by PLAMIOmini, implement it inside the game class using fixed-size data structures.
+Never invent an API. If a requested feature is not provided by PRUZEAmini, implement it inside the game class using fixed-size data structures.
 
 Before generating code, verify all overridden function signatures directly against the supplied `App` declaration.
 
@@ -38,7 +38,7 @@ Before generating code, verify all overridden function signatures directly again
 
 ## Hardware Configuration
 
-Read `PLAMIOmini_HARDWARE_CONFIG.md` before generating code.
+Read `PRUZEAmini_HARDWARE_CONFIG.md` before generating code.
 
 Rules
 
@@ -48,7 +48,7 @@ Rules
 - Never mix multiple hardware implementations in the same category.
 - Never invent hardware or pin assignments.
 - Use the selected hardware exactly as described.
-- `PLAMIOmini_HARDWARE_CONFIG.md` is the only source of truth for hardware selection and pin assignments.
+- `PRUZEAmini_HARDWARE_CONFIG.md` is the only source of truth for hardware selection and pin assignments.
 
 The Board section identifies the target Arduino platform.
 
@@ -95,7 +95,7 @@ The generated sketch shall:
 - Create one configuration object for each selected hardware category.
 - Do not include or instantiate concrete hardware driver classes. The runtime owns them.
 - Create one App-derived game instance.
-- Pass the four configuration objects and game to `PLAMIOmini::start()` from `setup()`.
+- Pass the four configuration objects and game to `PRUZEAmini::start()` from `setup()`.
 - Leave Arduino `loop()` empty.
 
 Object declaration order:
@@ -113,28 +113,28 @@ Object declaration order:
 
 ---
 
-## PLAMIOmini Is Not Full PLAMIO
+## PRUZEAmini Is Not Full PRUZEA
 
-Do not copy assumptions from the full PLAMIO framework.
+Do not copy assumptions from the full PRUZEA framework.
 
-PLAMIOmini uses:
+PRUZEAmini uses:
 
-- Namespace: `PLAMIOmini`
+- Namespace: `PRUZEAmini`
 - Base class: `App`
 - Arduino sketch entry point
-- A fixed game instance passed to `PLAMIOmini::start()`
+- A fixed game instance passed to `PRUZEAmini::start()`
 - `void onUpdate(...)`
 - Internal game modes defined by the game itself
 
-PLAMIOmini does **not** provide these full-PLAMIO concepts unless they appear in the supplied header:
+PRUZEAmini does **not** provide these full-PRUZEA concepts unless they appear in the supplied header:
 
-- `PLAMIO::Game`
+- `PRUZEA::Game`
 - `GameState`
 - `getName()` / `getMenuName()` virtual functions
 - Logical-screen virtual functions on the game class
 - A launcher-controlled game transition returned from `onUpdate()`
 
-Never generate those APIs for PLAMIOmini.
+Never generate those APIs for PRUZEAmini.
 
 ---
 
@@ -145,7 +145,7 @@ Unless the user explicitly requests multiple files, generate **one complete `.in
 The normal structure is:
 
 - Required includes
-- `using namespace PLAMIOmini;`
+- `using namespace PRUZEAmini;`
 - Hardware configuration
 - Game class derived from `App`
 - Global hardware configuration objects
@@ -156,9 +156,9 @@ The normal structure is:
 Typical structure:
 
 ```cpp
-#include <PLAMIOmini.h>
+#include <PRUZEAmini.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 // Hardware configuration functions
 // Game class
@@ -167,7 +167,7 @@ using namespace PLAMIOmini;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, storageConfig, audioConfig, game);
+    PRUZEAmini::start(graphicsConfig, inputConfig, storageConfig, audioConfig, game);
 }
 
 void loop()
@@ -175,7 +175,7 @@ void loop()
 }
 ```
 
-`PLAMIOmini::start()` owns the main execution loop and normally does not return. Do not place game processing in Arduino `loop()`.
+`PRUZEAmini::start()` owns the main execution loop and normally does not return. Do not place game processing in Arduino `loop()`.
 
 ---
 
@@ -254,7 +254,7 @@ Recommended flow for action games:
 - Game over
 - Return to title or restart
 
-Do not invent a PLAMIOmini `GameState` return value.
+Do not invent a PRUZEAmini `GameState` return value.
 
 ---
 
@@ -308,7 +308,7 @@ Use `justPressed()` for one-shot actions and menu decisions. Use `repeat()` for 
 
 ## Time and Movement
 
-PLAMIOmini targets approximately 30 FPS, but the actual frame rate is not guaranteed.
+PRUZEAmini targets approximately 30 FPS, but the actual frame rate is not guaranteed.
 
 Never assume one frame equals exactly 1/30 second.
 
@@ -354,7 +354,7 @@ For fast objects, split `deltaSec` into bounded physics substeps when necessary.
 
 ## Dirty Rendering
 
-PLAMIOmini transfers the graphics buffer only when `onDraw()` returns `true`.
+PRUZEAmini transfers the graphics buffer only when `onDraw()` returns `true`.
 
 Follow this exact pattern:
 
@@ -474,7 +474,7 @@ Music should remain clear on simple tone audio. Prefer short repeating phrases, 
 
 ## Storage Rules
 
-PLAMIOmini provides three storage roles.
+PRUZEAmini provides three storage roles.
 
 ### SaveData
 
@@ -531,7 +531,7 @@ Mark progress as changed and save at safe points such as:
 
 ## Memory and C++ Rules
 
-PLAMIOmini targets memory-constrained microcontrollers.
+PRUZEAmini targets memory-constrained microcontrollers.
 
 Prefer:
 
@@ -568,7 +568,7 @@ Include required standard headers explicitly, such as:
 
 Use the C functions directly (`snprintf`, `memset`, `memcpy`), matching the style of the supplied framework.
 
-The PLAMIOmini runtime initializes random state. Do not call `srand()` unless the supplied version explicitly requires it.
+The PRUZEAmini runtime initializes random state. Do not call `srand()` unless the supplied version explicitly requires it.
 
 
 Avoid using common Arduino macro names as identifiers,
@@ -647,14 +647,14 @@ When the user asks for game logic only inside an existing template, output only 
 The generated game must be a complete Arduino `.ino` sketch.
 
 The hardware configuration objects and pin assignments must be generated from
-`PLAMIOmini_HARDWARE_CONFIG.md`.
+`PRUZEAmini_HARDWARE_CONFIG.md`.
 
 Do not copy hardware values from this sample.
 
 ```ino
-#include <PLAMIOmini.h>
+#include <PRUZEAmini.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 // ============================================================================
 // Hardware Configuration
@@ -662,7 +662,7 @@ using namespace PLAMIOmini;
 
 // Generate the selected hardware configuration here.
 //
-// Use only the values from PLAMIOmini_HARDWARE_CONFIG.md.
+// Use only the values from PRUZEAmini_HARDWARE_CONFIG.md.
 // Do not invent or reuse pin assignments from another board or sample.
 
 // ============================================================================
@@ -704,7 +704,7 @@ protected:
 // Create exactly one storage configuration object.
 // Create exactly one audio configuration object.
 //
-// Their types and values must come from PLAMIOmini_HARDWARE_CONFIG.md.
+// Their types and values must come from PRUZEAmini_HARDWARE_CONFIG.md.
 // Declare all hardware configuration objects at global scope.
 
 // ============================================================================
@@ -719,7 +719,7 @@ SampleGame game;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()
@@ -728,7 +728,7 @@ void loop()
 ```
 
 The final generated sketch must replace every hardware-related comment with
-real code based on `PLAMIOmini_HARDWARE_CONFIG.md`.
+real code based on `PRUZEAmini_HARDWARE_CONFIG.md`.
 
 Never leave hardware placeholders in the final output.
 
@@ -745,7 +745,7 @@ When generating a complete Arduino sketch:
 - Do not construct hardware configuration objects inside `setup()`.
 - Do not dynamically allocate framework objects.
 - Declare all hardware configuration objects and the game object at global scope.
-- Pass the global hardware configuration objects and game object to `PLAMIOmini::start()` from `setup()`.
+- Pass the global hardware configuration objects and game object to `PRUZEAmini::start()` from `setup()`.
 
 ---
 
@@ -762,11 +762,11 @@ When generating a complete Arduino sketch:
 
 Before presenting generated code, verify:
 
-1. The namespace is `PLAMIOmini`.
+1. The namespace is `PRUZEAmini`.
 2. The game derives from `App`.
 3. All four override signatures match exactly.
 4. `onUpdate()` returns `void`.
-5. No `GameState` or full-PLAMIO virtual metadata functions were invented.
+5. No `GameState` or full-PRUZEA virtual metadata functions were invented.
 6. Every input call receives exactly one button.
 7. Reserved volume/home buttons are not used for gameplay.
 8. Movement uses `deltaSec` where required.
@@ -781,13 +781,13 @@ Before presenting generated code, verify:
 17. All fonts, colors, and graphics calls exist in the supplied header.
 18. The selected hardware configuration matches the supplied working example.
 19. The sketch includes global hardware configuration objects and one game instance.
-20. `setup()` calls `PLAMIOmini::start(graphicsConfig, inputConfig, storageConfig, audioConfig, game)` and `loop()` is empty.
+20. `setup()` calls `PRUZEAmini::start(graphicsConfig, inputConfig, storageConfig, audioConfig, game)` and `loop()` is empty.
 
 ---
 
 ## Mandatory Compile-Safety Verification
 
-Before presenting the final code, inspect every PLAMIOmini symbol used in the
+Before presenting the final code, inspect every PRUZEAmini symbol used in the
 generated sketch and verify that it exists exactly in the supplied headers.
 
 Verify at minimum:
@@ -813,7 +813,7 @@ For example, the existence of `SIZE_22B` and `SIZE_25B` does not imply that
 
 ## Recommended Workflow
 
-1. Read `PLAMIOmini.h` and the selected board example.
+1. Read `PRUZEAmini.h` and the selected board example.
 2. Read the user's game design.
 3. Resolve the screen, controls, game loop, scoring, and save behavior.
 4. Present or confirm the final compact specification when needed.
@@ -823,4 +823,4 @@ For example, the existence of `SIZE_22B` and `SIZE_25B` does not imply that
 
 
 
-Do not redesign PLAMIOmini itself while generating a game. Implement the game using the framework as supplied.
+Do not redesign PRUZEAmini itself while generating a game. Implement the game using the framework as supplied.

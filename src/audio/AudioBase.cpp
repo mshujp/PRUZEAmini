@@ -1,9 +1,9 @@
-﻿#include "AudioBase.h"
+#include "AudioBase.h"
 
 #include <algorithm>
 #include <cstddef>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 namespace {
 

@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 namespace {
 

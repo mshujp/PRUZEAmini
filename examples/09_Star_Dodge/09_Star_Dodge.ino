@@ -1,6 +1,6 @@
 /*
 ===============================================================================
- PLAMIOmini Example
+ PRUZEAmini Example
  09_Star_Dodge
 ===============================================================================
 
@@ -24,9 +24,9 @@ Before compiling:
 - Change lcdRotate if necessary to match the display orientation.
 */
 
-#include <PLAMIOmini.h>
+#include <PRUZEAmini.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 
 // =============================================================================
@@ -626,7 +626,7 @@ protected:
 
 
 // =============================================================================
-// PLAMIOmini objects
+// PRUZEAmini objects
 // =============================================================================
 
 StarDodgeGame app;
@@ -638,7 +638,7 @@ StarDodgeGame app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

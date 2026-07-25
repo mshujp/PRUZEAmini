@@ -1,12 +1,12 @@
 // ============================================================================
-// PLAMIO mini
+// PRUZEA mini
 // AI-Friendly Game / UI Application Framework
 //
-// PLAMIO mini is a lightweight framework for creating games and UI applications with AI assistance.
+// PRUZEA mini is a lightweight framework for creating games and UI applications with AI assistance.
 //
 // This header defines the public API available to application.
-// The runtime implementation is provided by the PLAMIO mini system.
-// 
+// The runtime implementation is provided by the PRUZEA mini system.
+//
 // Execution model
 //   System (30 FPS)
 //       ├─ Input update
@@ -17,18 +17,18 @@
 
 #pragma once
 #include <stdint.h>
-#include <variant> 
+#include <variant>
 #include <string>
 
-namespace PLAMIOmini
+namespace PRUZEAmini
 {
 
-constexpr char PLAMIO_MINI_VERSION[] = "1.0"; 
+constexpr char PRUZEA_MINI_VERSION[] = "1.0";
 
 namespace Platform {
     // =========================================================================
     // [PROVIDED BY SYSTEM]
-    // These APIs are already implemented by the PLAMIO mini runtime.
+    // These APIs are already implemented by the PRUZEA mini runtime.
     // These declarations define existing APIs.
     // Do NOT implement or redefine them. Use them directly from your game code.
     // =========================================================================
@@ -39,7 +39,7 @@ namespace Platform {
 namespace Math {
     // =========================================================================
     // [PROVIDED BY SYSTEM]
-    // These APIs are already implemented by the PLAMIO mini runtime.
+    // These APIs are already implemented by the PRUZEA mini runtime.
     // These declarations define existing APIs.
     // Do NOT implement or redefine them. Use them directly from your game code.
     // =========================================================================
@@ -57,13 +57,13 @@ namespace Math {
     float sin(float radians);
     float cos(float radians);
     void rotate(float x, float y, float radians, float& outX, float& outY);
-    void normalize(float& x, float& y); // Normalize the vector. If the vector is zero, it is left unchanged. 
+    void normalize(float& x, float& y); // Normalize the vector. If the vector is zero, it is left unchanged.
     float angle(float x, float y); /// Returns the absolute angle of vector (x, y), in radians. Equivalent to atan2f(y, x). Return range: -PI to PI.
 }
 namespace Collision {
     // =========================================================================
     // [PROVIDED BY SYSTEM]
-    // These APIs are already implemented by the PLAMIO mini runtime.
+    // These APIs are already implemented by the PRUZEA mini runtime.
     // These declarations define existing APIs.
     // Do NOT implement or redefine them.
     // Use them directly from your game code.
@@ -156,7 +156,7 @@ protected:
     virtual ~Input() {};
 };
 
-// GPIO pin numbers associated with PLAMIOmini logical buttons.
+// GPIO pin numbers associated with PRUZEAmini logical buttons.
 // Used by GPIO button input and optional extra GPIO buttons.
 // Use -1 for buttons that are not connected.
 struct ButtonPins
@@ -196,7 +196,7 @@ struct InputPSConfig
 };
 using InputConfig = std::variant<
     InputGpioButtonsConfig,
-    InputSnesConfig, 
+    InputSnesConfig,
     InputPSConfig
 >;
 
@@ -246,7 +246,7 @@ public:
 
     virtual void clearScreen() = 0;
     virtual void fillScreen(Color color) = 0;
-    virtual void drawPixel(int16_t x, int16_t y, Color color) = 0; 
+    virtual void drawPixel(int16_t x, int16_t y, Color color) = 0;
     virtual void drawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2, Color color)= 0;
     virtual void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, Color color) = 0;
     virtual void fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, Color color) = 0;
@@ -330,7 +330,7 @@ protected:
 };
 
 struct GraphicsILI9341Config
-{ 
+{
     uint8_t spiHost = 0;
     uint32_t spiWriteFreq = 60000000;
     int8_t clkPin   = -1;
@@ -450,7 +450,7 @@ public:
         };
         Duration duration;
         bool tie;  // If true, continue into the next note without retriggering the tone.
-        
+
         constexpr ToneNote() : frequency(REST), duration(Q), tie(false) {}
         constexpr ToneNote(uint16_t _frequency, Duration _duration, bool _tie = false) : frequency(_frequency), duration(_duration), tie(_tie) {}
     };
@@ -493,7 +493,7 @@ using AudioConfig = std::variant<
 
 // --- =================================================================
 // # Storage
-// PLAMIO mini provides three storage APIs:
+// PRUZEA mini provides three storage APIs:
 // 1. SaveData
 //    Key-value persistent storage for ordinary app save data.
 //    No file paths or file-system operations are required.
@@ -542,7 +542,7 @@ public:
     virtual bool readUserFile(const char* appId, const char* fileName, UserFileLineReaderHandler reader, void* arg) = 0;
     // ### Write UserFile
     //   - The callback uses std::string to prevent buffer overflows.
-    //   - Inside this callback, ALWAYS use direct assignment (e.g., line = "value";) 
+    //   - Inside this callback, ALWAYS use direct assignment (e.g., line = "value";)
     //      or std::string::assign(). Never use string concatenation ('+') to prevent dynamic memory allocation.
     //   - A single write operation may produce at most 256 lines.
     //   - The callback is called once for each output line.
@@ -603,14 +603,14 @@ struct StorageStubConfig
 using StorageConfig = std::variant<
     StorageEEPROMConfig,
     StorageSDConfig,
-    StorageStubConfig 
+    StorageStubConfig
 >;
 
 
 // --- =================================================================
 // # SaveData: Storage helper
 // [PROVIDED BY SYSTEM]
-//   These APIs are already implemented by the PLAMIO mini runtime.
+//   These APIs are already implemented by the PRUZEA mini runtime.
 //   These declarations define existing APIs. Do NOT implement or redefine them.
 //   Use them directly from your app code.
 //
@@ -647,14 +647,14 @@ private:
     struct Entry {
         uint16_t keyOffset;
         uint16_t valueOffset;
-    }; 
+    };
     Entry entries[MAX_ENTRIES];
     char buffer[BUFFER_SIZE];
     uint8_t entryCount = 0;
     uint16_t usedBytes = 0;
     bool dirty = false;
     uint8_t saveCursor = 0;
-    
+
     int16_t findEntry(const char* key) const;
     bool appendString(const char* text, uint16_t& offset);
     static bool writeLineHandler(std::string& line, void* arg);
@@ -663,11 +663,11 @@ private:
 
 // --- =================================================================
 // # App
-//   Derive your app class from this class to run it on PLAMIO mini.
+//   Derive your app class from this class to run it on PRUZEA mini.
 //   - Target update rate: 30 FPS
 //   - deltaSec is provided every frame.
 //   [!IMPORTANT] Never call init(), update(), draw(), or terminate() directly.
-//   The PLAMIO mini runtime calls them automatically.
+//   The PRUZEA mini runtime calls them automatically.
 //   [!IMPORTANT] Override all pure virtual functions.
 // =====================================================================
 class App {
@@ -679,7 +679,7 @@ private:
     //     MODE_PAUSED,
     //     MODE_GAME_OVER
     // };
-    // Real-time games are encouraged to implement MODE_PAUSED and toggle it with the START button. 
+    // Real-time games are encouraged to implement MODE_PAUSED and toggle it with the START button.
     // When entering the pause state, you MUST explicitly call `audio.stopMusic()`.
     // When resuming the game to `MODE_RUNNING` or `MODE_PLAYING`, you MUST call `audio.playMusic()` exactly once to restart the BGM.
 
@@ -739,7 +739,7 @@ protected:
 public:
     // ## System entry points
     // [!IMPORTANT]
-    // The following functions are called by the PLAMIO mini runtime.
+    // The following functions are called by the PRUZEA mini runtime.
     // Do not modify, hide, or redefine them.
     // Implement the corresponding on*() functions instead.
     void init(Storage& storage)
@@ -770,5 +770,5 @@ public:
 void start(const GraphicsConfig& graphicsConfig, const InputConfig& inputConfig, const AudioConfig& audioConfig, const StorageConfig& storageConfig, App& app);
 
 
-} // namespace PLAMIO mini
+} // namespace PRUZEA mini
 

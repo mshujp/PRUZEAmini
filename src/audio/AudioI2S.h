@@ -2,7 +2,7 @@
 
 #include "AudioBase.h"
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class AudioI2S : public AudioBase
 {
@@ -28,4 +28,4 @@ public:
     void end() override;
 };
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

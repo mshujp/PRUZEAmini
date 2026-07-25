@@ -1,7 +1,7 @@
 #include <cmath>
-#include "../PLAMIOmini.h"
+#include "../PRUZEAmini.h"
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 bool Collision::pointRect(float px, float py, float rx, float ry, float rw, float rh)
 {

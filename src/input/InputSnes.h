@@ -2,7 +2,7 @@
 
 #include "InputBase.h"
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class InputSnes : public InputBase
 {
@@ -21,4 +21,4 @@ public:
     void end() override;
 };
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

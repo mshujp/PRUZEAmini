@@ -1,7 +1,7 @@
-#include "../PLAMIOmini.h"
+#include "../PRUZEAmini.h"
 #include <cmath>
 
-namespace PLAMIOmini
+namespace PRUZEAmini
 {
 namespace Math
 {
@@ -130,4 +130,4 @@ float angle(float x, float y)
 }
 
 } // namespace Math
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

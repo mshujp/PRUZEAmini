@@ -5,7 +5,7 @@
 #include <SD.h>
 #include <SPI.h>
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class StorageSD;
 
@@ -52,7 +52,7 @@ private:
     friend class StorageSDFile;
 
     static constexpr size_t PATH_MAX_LENGTH = 128;
-    static constexpr const char* ROOT_DIR = "/PLAMIO_Apps";
+    static constexpr const char* ROOT_DIR = "/PRUZEA_Apps";
     static constexpr uint32_t AVAILABILITY_CACHE_MSEC = 1000;
 
     StorageSDConfig config;
@@ -73,4 +73,4 @@ private:
     static bool isValidFileName(const char* fileName);
 };
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

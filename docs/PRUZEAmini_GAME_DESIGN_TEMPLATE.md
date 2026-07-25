@@ -1,4 +1,4 @@
-﻿PLAMIO Game design template
+PRUZEA Game design template
 
 == Editing Instructions ==
 Check the options you want to select.

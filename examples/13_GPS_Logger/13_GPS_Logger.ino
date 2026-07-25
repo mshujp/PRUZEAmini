@@ -1,6 +1,6 @@
 /*
 ===============================================================================
- PLAMIOmini Example
+ PRUZEAmini Example
  13_GPS_Logger
 ===============================================================================
 
@@ -27,11 +27,11 @@ Before compiling:
 Existing log files are replaced when the example starts.
 */
 
-#include <PLAMIOmini.h>
+#include <PRUZEAmini.h>
 #include <TinyGPSPlus.h>
 #include <math.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 // =============================================================================
 // Hardware configuration
@@ -633,7 +633,7 @@ GpsLogger app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

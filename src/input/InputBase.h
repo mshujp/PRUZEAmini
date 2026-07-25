@@ -1,9 +1,9 @@
 #pragma once
 
-#include "PLAMIOmini.h"
+#include "PRUZEAmini.h"
 #include <stddef.h>
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class InputBase : public Input
 {
@@ -68,4 +68,4 @@ public:
     bool repeat(Button b) const override;
 };
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

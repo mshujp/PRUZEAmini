@@ -2,7 +2,7 @@
 
 #include "GraphicsBase.h"
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class GraphicsILI9341 : public GraphicsBase
 {

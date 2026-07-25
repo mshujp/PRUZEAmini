@@ -3,7 +3,7 @@
 #include "InputBase.h"
 #include <Arduino.h>
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 namespace GpioButtons {
 
 inline void init(const ButtonPins& buttonPins)
@@ -51,4 +51,4 @@ inline uint32_t read(const ButtonPins& buttonPins)
 }
 
 } // namespace GpioButtons
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

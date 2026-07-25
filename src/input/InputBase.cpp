@@ -2,7 +2,7 @@
 #include "../util/Platform.h"
 #include <climits>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 constexpr InputBase::Button InputBase::BUTTONS[];
 

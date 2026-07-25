@@ -1,6 +1,6 @@
 /*
 ===============================================================================
- PLAMIOmini Example
+ PRUZEAmini Example
  12_IMU_Monitor
 ===============================================================================
 
@@ -25,13 +25,13 @@ Before compiling:
 - Set IMU_SDA_PIN and IMU_SCL_PIN for the MPU6050.
 */
 
-#include <PLAMIOmini.h>
+#include <PRUZEAmini.h>
 #include <Wire.h>
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <math.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 // =============================================================================
 // Hardware configuration
@@ -452,7 +452,7 @@ ImuMonitor app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

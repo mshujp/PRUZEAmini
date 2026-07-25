@@ -1,4 +1,4 @@
-﻿# PLAMIOmini Hardware Configuration
+# PRUZEAmini Hardware Configuration
 
 ## Board ===============================================
 

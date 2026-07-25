@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <cstring>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 bool StorageBase::isValidAppId(const char* appId)
 {

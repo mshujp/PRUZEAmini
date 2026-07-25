@@ -6,7 +6,7 @@
 #include <atomic>
 #endif
 
-namespace PLAMIOmini
+namespace PRUZEAmini
 {
 
 // Cross-platform lock for very short critical sections shared between
@@ -74,4 +74,4 @@ private:
     SpinLock& lock;
 };
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

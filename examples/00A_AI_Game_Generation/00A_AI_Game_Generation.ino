@@ -1,6 +1,6 @@
 /*
 ===============================================================================
- PLAMIOmini Example
+ PRUZEAmini Example
  00A_AI_Game_Generation
 ===============================================================================
 
@@ -13,45 +13,45 @@
 
 GOAL
 ----
-Design a game together with AI, generate a complete PLAMIOmini game,
+Design a game together with AI, generate a complete PRUZEAmini game,
 and run it on your hardware.
 
 
 STEP 1
 ------
-Check the version of the PLAMIOmini library installed in Arduino IDE.
+Check the version of the PRUZEAmini library installed in Arduino IDE.
 
 
 STEP 2
 ------
-Obtain the following files (must be the SAME version as your installed PLAMIOmini library):
+Obtain the following files (must be the SAME version as your installed PRUZEAmini library):
 
-- PLAMIOmini_SDK.zip
-- PLAMIOmini_PROJECT.zip
+- PRUZEAmini_SDK.zip
+- PRUZEAmini_PROJECT.zip
 
 You can download them from the release page below, or find them in the `docs` folder of your unzipped library package.
 
 Download page:
 
-https://github.com/mshujp/PLAMIOmini/releases/
+https://github.com/mshujp/PRUZEAmini/releases/
 
 Do not mix files from different releases.
 
 
 STEP 3
 ------
-Extract PLAMIOmini_PROJECT.zip.
+Extract PRUZEAmini_PROJECT.zip.
 
 It contains:
 
-- PLAMIOmini_GAME_DESIGN_TEMPLATE.md
-- PLAMIOmini_GAME_DESIGN_TEMPLATE_JP.md
-- PLAMIOmini_HARDWARE_CONFIG_TEMPLATE.md
+- PRUZEAmini_GAME_DESIGN_TEMPLATE.md
+- PRUZEAmini_GAME_DESIGN_TEMPLATE_JP.md
+- PRUZEAmini_HARDWARE_CONFIG_TEMPLATE.md
 
 
 STEP 4
 ------
-Edit PLAMIOmini_HARDWARE_CONFIG_TEMPLATE.md for your hardware.
+Edit PRUZEAmini_HARDWARE_CONFIG_TEMPLATE.md for your hardware.
 
 Specify the hardware you are using, including:
 
@@ -70,11 +70,11 @@ you want to create.
 
 English:
 
-- PLAMIOmini_GAME_DESIGN_TEMPLATE.md
+- PRUZEAmini_GAME_DESIGN_TEMPLATE.md
 
 Japanese:
 
-- PLAMIOmini_GAME_DESIGN_TEMPLATE_JP.md
+- PRUZEAmini_GAME_DESIGN_TEMPLATE_JP.md
 
 You only need to use one of them.
 
@@ -83,9 +83,9 @@ STEP 6
 ------
 Upload the following files to an AI:
 
-- PLAMIOmini_SDK.zip
-- The hardware config template you edited (PLAMIOmini_HARDWARE_CONFIG_TEMPLATE.md)
-- The game design template you edited (PLAMIOmini_GAME_DESIGN_TEMPLATE.md)
+- PRUZEAmini_SDK.zip
+- The hardware config template you edited (PRUZEAmini_HARDWARE_CONFIG_TEMPLATE.md)
+- The game design template you edited (PRUZEAmini_GAME_DESIGN_TEMPLATE.md)
 
 Discuss your game idea with the AI before generating the program.
 
@@ -114,7 +114,7 @@ Ask the AI to generate the complete game.
 
 Example request:
 
-"Generate one complete Arduino .ino file for PLAMIOmini."
+"Generate one complete Arduino .ino file for PRUZEAmini."
 
 
 STEP 8
@@ -141,46 +141,46 @@ Enjoy creating your own game!
 
 目的
 ----
-AIと相談しながらゲームを設計し、PLAMIOmini用の完全なゲームを
+AIと相談しながらゲームを設計し、PRUZEAmini用の完全なゲームを
 生成して、実際のハードウェアで動かします。
 
 
 手順1
 -----
-Arduino IDEにインストールされているPLAMIOminiライブラリの
+Arduino IDEにインストールされているPRUZEAminiライブラリの
 バージョンを確認します。
 
 
 手順2
 -----
-インストールされているPLAMIOminiライブラリと同じバージョンの次のファイルを準備します。
+インストールされているPRUZEAminiライブラリと同じバージョンの次のファイルを準備します。
 
-- PLAMIOmini_SDK.zip
-- PLAMIOmini_PROJECT.zip
+- PRUZEAmini_SDK.zip
+- PRUZEAmini_PROJECT.zip
 
 このファイルはライブラリーのインストールに使ったZIPファイルのdocsフォルダーに含まれています。もしくはGithubからダウンロードしてください。
 
 ダウンロードページ:
 
-https://github.com/mshujp/PLAMIO/releases/
+https://github.com/mshujp/PRUZEA/releases/
 
 異なるリリースのファイルを組み合わせて使用しないでください。
 
 
 手順3
 -----
-PLAMIOmini_PROJECT.zipを展開します。
+PRUZEAmini_PROJECT.zipを展開します。
 
 次のファイルが含まれています。
 
-- PLAMIOmini_GAME_DESIGN_TEMPLATE.md
-- PLAMIOmini_GAME_DESIGN_TEMPLATE_JP.md
-- PLAMIOmini_HARDWARE_CONFIG.md
+- PRUZEAmini_GAME_DESIGN_TEMPLATE.md
+- PRUZEAmini_GAME_DESIGN_TEMPLATE_JP.md
+- PRUZEAmini_HARDWARE_CONFIG.md
 
 
 手順4
 -----
-PLAMIOmini_HARDWARE_CONFIG_TEMPLATE.mdを、使用するハードウェアに合わせて
+PRUZEAmini_HARDWARE_CONFIG_TEMPLATE.mdを、使用するハードウェアに合わせて
 編集します。
 
 次のような項目を設定します。
@@ -200,11 +200,11 @@ PLAMIOmini_HARDWARE_CONFIG_TEMPLATE.mdを、使用するハードウェアに合
 
 英語版:
 
-- PLAMIOmini_GAME_DESIGN_TEMPLATE.md
+- PRUZEAmini_GAME_DESIGN_TEMPLATE.md
 
 日本語版:
 
-- PLAMIOmini_GAME_DESIGN_TEMPLATE_JP.md
+- PRUZEAmini_GAME_DESIGN_TEMPLATE_JP.md
 
 使用するのは、どちらか一方だけで構いません。
 
@@ -213,7 +213,7 @@ PLAMIOmini_HARDWARE_CONFIG_TEMPLATE.mdを、使用するハードウェアに合
 -----
 次のファイルをAIにアップロードします。
 
-- PLAMIOmini_SDK.zip
+- PRUZEAmini_SDK.zip
 - 編集したハードウェア設定
 - 編集したゲームデザインテンプレート
 
@@ -245,7 +245,7 @@ AIから、自分では思いつかなかった案が提案されることもあ
 
 依頼文の例:
 
-「PLAMIOmini用のArduino .inoファイルを生成してください。」
+「PRUZEAmini用のArduino .inoファイルを生成してください。」
 
 
 手順8

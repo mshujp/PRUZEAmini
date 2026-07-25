@@ -2,7 +2,7 @@
 
 #include "StorageBase.h"
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class StorageEEPROM;
 
@@ -82,4 +82,4 @@ private:
     bool commit();
 };
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

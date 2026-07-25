@@ -7,7 +7,7 @@
 #include <cstdio>
 #include <memory>
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 namespace {
 
 constexpr const char* SCREENSHOT_APP_ID = "screenshots";
@@ -117,4 +117,4 @@ bool ScreenShot::save(GraphicsSSD1306& graphics, StorageSD& storage, const char*
     return saveScreenShot(graphics, Display::SSD1306_SCREEN_W, Display::SSD1306_SCREEN_H, storage, fileName);
 }
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

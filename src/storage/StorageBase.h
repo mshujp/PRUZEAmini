@@ -1,8 +1,8 @@
 #pragma once
 
-#include "PLAMIOmini.h"
+#include "PRUZEAmini.h"
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class StorageBaseFile : public Storage::File
 {

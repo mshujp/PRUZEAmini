@@ -1,11 +1,11 @@
 #pragma once
 
-#include "PLAMIOmini.h"
+#include "PRUZEAmini.h"
 #include "../util/SpinLock.h"
 
 #include <atomic>
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class AudioBase : public Audio
 {
@@ -61,4 +61,4 @@ public:
     void update();
 };
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

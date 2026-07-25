@@ -1,4 +1,4 @@
-# PLAMIO mini
+# PRUZEA mini
 
 > **AI-Friendly Game / UI Application Framework for Arduino IDE**
 
@@ -8,8 +8,8 @@ A lightweight framework for creating games and UI applications with AI assistanc
 
 # Features
 
-`PLAMIO mini` is a streamlined version of [PLAMIO](https://github.com/mshujp/PLAMIO/) adapted for the Arduino IDE.
-For the full feature set, use PLAMIO instead.
+`PRUZEA mini` is a streamlined version of [PRUZEA](https://github.com/mshujp/PRUZEA/) adapted for the Arduino IDE.
+For the full feature set, use PRUZEA instead.
 
 -   Supports the creation of a single application.
 -   AI-friendly public API
@@ -45,7 +45,7 @@ For the full feature set, use PLAMIO instead.
 
 # Philosophy
 
-PLAMIOmini is designed so that both humans and AI can create games and UI applications using the same simple API.
+PRUZEAmini is designed so that both humans and AI can create games and UI applications using the same simple API.
 
 Applications implement only a small set of interfaces, while the runtime manages graphics, input, audio, storage, and the application loop.
 
@@ -70,36 +70,36 @@ Download this project as a ZIP file, then install it from the Arduino IDE menu:
 
 # Creating an App
 
-To create a game or UI application, define **one class** that inherits from `PLAMIOmini::App`.
+To create a game or UI application, define **one class** that inherits from `PRUZEAmini::App`.
 
-The PLAMIOmini runtime automatically manages the application loop, rendering, input, audio, and storage.
+The PRUZEAmini runtime automatically manages the application loop, rendering, input, audio, and storage.
 
 Your app only needs to implement its own game or UI logic.
 
 ## Core API
 
-PLAMIO provides the following hardware abstraction interfaces to every appliation.
+PRUZEA provides the following hardware abstraction interfaces to every appliation.
 
 Application code does not need to access platform-specific hardware or drivers directly.
 
 | Class | Purpose |
 |------|---------|
-| `PLAMIOmini::Graphics` | Drawing API for text, shapes, images, and sprites. |
-| `PLAMIOmini::Input` | Controller input, button state, repeat, and hold detection. |
-| `PLAMIOmini::Audio` | Play sound effects and music. |
-| `PLAMIOmini::Storage` | Read and write save data and configuration files. |
+| `PRUZEAmini::Graphics` | Drawing API for text, shapes, images, and sprites. |
+| `PRUZEAmini::Input` | Controller input, button state, repeat, and hold detection. |
+| `PRUZEAmini::Audio` | Play sound effects and music. |
+| `PRUZEAmini::Storage` | Read and write save data and configuration files. |
 
 For the complete API reference, see:
 
-- [`src/PLAMIOmini.h`](src/PLAMIOmini.h)
+- [`src/PRUZEAmini.h`](src/PRUZEAmini.h)
 
 ## Hardware Configuration
 
 see the example [00B_Hardware_Setup](examples/00B_Hardware_Setup/00B_Hardware_Setup.ino)
 
-## `PLAMIOmini::App` class
+## `PRUZEAmini::App` class
 
-Your game/app class should inherit from the `PLAMIOmini::App` class.
+Your game/app class should inherit from the `PRUZEAmini::App` class.
 
 Most application implement their game/app logic in:
 
@@ -109,13 +109,13 @@ Most application implement their game/app logic in:
 - `onDraw()`
 - `onTerminate()`
 
-For the complete `PLAMIOmini::App` class reference, see:
+For the complete `PRUZEAmini::App` class reference, see:
 
-- [`src/PLAMIOmini.h`](src/PLAMIOmini.h)
+- [`src/PRUZEAmini.h`](src/PRUZEAmini.h)
 
 ## AI Workflow
 
-PLAMIOmini is designed for AI-assisted game/app development.
+PRUZEAmini is designed for AI-assisted game/app development.
 
 see the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_Game_Generation.ino)
 
@@ -127,8 +127,8 @@ see the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_
 |--------|-------------|
 | [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_Game_Generation.ino) | AI-assisted game generation workflow |
 | [00B_Hardware_Setup](examples/00B_Hardware_Setup/00B_Hardware_Setup.ino) | Hardware configuration reference |
-| [01_Hello_PLAMIO](examples/01_Hello_PLAMIO/01_Hello_PLAMIO.ino) | Minimal PLAMIOmini game |
-| [01_Hello_PLAMIO_SSD1306](examples/01_Hello_PLAMIO_SSD1306/01_Hello_PLAMIO_SSD1306.ino) | Minimal PLAMIOmini game |
+| [01_Hello_PRUZEA](examples/01_Hello_PRUZEA/01_Hello_PRUZEA.ino) | Minimal PRUZEAmini game |
+| [01_Hello_PRUZEA_SSD1306](examples/01_Hello_PRUZEA_SSD1306/01_Hello_PRUZEA_SSD1306.ino) | Minimal PRUZEAmini game |
 | [02_Input_Basics](examples/02_Input_Basics/02_Input_Basics.ino) | Button input and movement |
 | [03_Graphics_Basics](examples/03_Graphics_Basics/03_Graphics_Basics.ino) | Shapes, colors, fonts, and alignment |
 | [04_Audio_Basics](examples/04_Audio_Basics/04_Audio_Basics.ino) | Sound effects and music |
@@ -153,17 +153,17 @@ Each example introduces one or more new concepts while building on previous exam
 
 ## Recommended AI
 
-PLAMIOmini is designed to work with modern AI coding assistants.
+PRUZEAmini is designed to work with modern AI coding assistants.
 
 Based on current development experience:
 
 | AI | Recommendation | Notes |
 |----|---------------|-------|
-| **ChatGPT** | **Highly Recommended** | Best overall experience with PLAMIOmini |
+| **ChatGPT** | **Highly Recommended** | Best overall experience with PRUZEAmini |
 | **Claude** | **Recommended** | Strong at understanding the SDK and generating well-structured game/app code |
 | **Gemini** | **Not Recommended** | Gemini struggles with interpreting the contents of the ZIP file. |
-| **Copilot** | **Not Recommended** | Does not currently support zip file uploads, making it difficult to provide the PLAMIOmini SDK. |
-| **Google Search AI Mode** | **Not Recommended** | Does not currently support file uploads, making it difficult to provide the PLAMIOmini SDK. |
+| **Copilot** | **Not Recommended** | Does not currently support zip file uploads, making it difficult to provide the PRUZEAmini SDK. |
+| **Google Search AI Mode** | **Not Recommended** | Does not currently support file uploads, making it difficult to provide the PRUZEAmini SDK. |
 
 ------------------------------------------------------------------------
 
@@ -214,11 +214,11 @@ This configuration has been verified on both RP2040 and RP2350 and is recommende
 
 Use an SDHC or SDXC card with a capacity of 4 GB or more.
 
-Although the Arduino-based PLAMIOmini implementation may work with some 2 GB standard SD cards,
-they are not officially supported. This keeps SD card requirements consistent with the full PLAMIO framework.
+Although the Arduino-based PRUZEAmini implementation may work with some 2 GB standard SD cards,
+they are not officially supported. This keeps SD card requirements consistent with the full PRUZEA framework.
 
 > [!WARNING]
-> Although PLAMIOmini provides a software shutdown option, embedded systems can still lose power unexpectedly (for example, due to battery removal or depletion).
+> Although PRUZEAmini provides a software shutdown option, embedded systems can still lose power unexpectedly (for example, due to battery removal or depletion).
 > Do **not** store important or irreplaceable data on the SD card.
 
 ## PWM Audio
@@ -231,11 +231,11 @@ If adjustable volume is required, use an external amplifier or a potentiometer.
 
 ## I2S
 
-For RP2040 and RP2350, PLAMIOmini uses the I2S library included with the Earle Philhower Arduino-Pico core. LRCLK/WS must use the GPIO immediately following BCLK.
+For RP2040 and RP2350, PRUZEAmini uses the I2S library included with the Earle Philhower Arduino-Pico core. LRCLK/WS must use the GPIO immediately following BCLK.
 
 ------------------------------------------------------------------------
 
-## PLAMIOmini Hardware Compatibility
+## PRUZEAmini Hardware Compatibility
 
 | Platform | ILI9341 | SSD1306 | PWM | I2S | GPIO | SNES Pad | Emulated EEPROM | SD |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -263,7 +263,7 @@ MIT License
 
 This project includes a minimized subset of LovyanGFX 1.2.26.
 
-Only the components required by PLAMIOmini are included.
+Only the components required by PRUZEAmini are included.
 Unused panels, buses, touch drivers, platform implementations, and font data have been removed.
 
 The original copyright notices and applicable license files for all retained components are preserved.

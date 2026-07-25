@@ -2,7 +2,7 @@
 
 #include "InputBase.h"
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 // Input implementation for buttons individually connected to GPIO pins.
 class InputGpioButtons : public InputBase
@@ -19,4 +19,4 @@ public:
     void end() override;
 };
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

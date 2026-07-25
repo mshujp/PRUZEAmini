@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <cstring>
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 StorageEEPROM::StorageEEPROM(const StorageEEPROMConfig& config, const char* appId)
     : config(config), currentAppIdHash(hashString(appId))
@@ -215,4 +215,4 @@ bool StorageEEPROM::fileExists(const char* path)
     return false;
 }
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

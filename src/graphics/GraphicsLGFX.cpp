@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include "../third_party/LovyanGFX/src/LovyanGFX.hpp"
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 namespace {
 
@@ -207,7 +207,7 @@ void GraphicsILI9341::setFont(const char* str, Font font)
         case Font::SIZE_32B: targetFont = &fonts::FreeSansBold12pt7b; scaleS = 1.10; break;
         case Font::SIZE_42:  targetFont = &fonts::DejaVu40; break;
         case Font::SIZE_42B: targetFont = &fonts::FreeSansBold18pt7b; break;
-#ifdef PLAMIO_JAPANESE_FONT
+#ifdef PRUZEA_JAPANESE_FONT
         case Font::SIZE_16J: targetFont = &fonts::DejaVu18; break;
         case Font::SIZE_20J: targetFont = &fonts::DejaVu18; break;
         case Font::SIZE_32J: targetFont = &fonts::DejaVu24; scaleS = 1.33; break;
@@ -492,7 +492,7 @@ void GraphicsSSD1306::setFont(const char* str, Font font)
         case Font::SIZE_32B: targetFont = &fonts::FreeSansBold12pt7b; scaleS = 1.10; break;
         case Font::SIZE_42:  targetFont = &fonts::DejaVu40; break;
         case Font::SIZE_42B: targetFont = &fonts::FreeSansBold18pt7b; break;
-#ifdef PLAMIO_JAPANESE_FONT
+#ifdef PRUZEA_JAPANESE_FONT
         case Font::SIZE_16J: targetFont = &fonts::DejaVu18; break;
         case Font::SIZE_20J: targetFont = &fonts::DejaVu18; break;
         case Font::SIZE_32J: targetFont = &fonts::DejaVu24; scaleS = 1.33; break;

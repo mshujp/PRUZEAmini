@@ -1,6 +1,6 @@
 /*
 ===============================================================================
- PLAMIOmini Example
+ PRUZEAmini Example
  00B_Hardware_Setup
 ===============================================================================
 
@@ -14,8 +14,8 @@ One configuration in each category is enabled. Alternative configurations
 are commented out.
 */
 
-#include <PLAMIOmini.h>
-using namespace PLAMIOmini;
+#include <PRUZEAmini.h>
+using namespace PRUZEAmini;
 
 /*
 ===============================================================================
@@ -225,7 +225,7 @@ MyApp app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

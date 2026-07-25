@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <algorithm>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 bool AudioPWM::begin()
 {

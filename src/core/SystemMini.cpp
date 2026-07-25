@@ -1,4 +1,4 @@
-﻿#include "../audio/AudioBase.h"
+#include "../audio/AudioBase.h"
 #include "../graphics/GraphicsBase.h"
 #include "../input/InputBase.h"
 #include "../storage/StorageBase.h"
@@ -28,7 +28,7 @@
 #endif
 
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class SystemMini
 {
@@ -132,9 +132,9 @@ bool SystemMini::launchAudioWorker()
 #elif defined(ARDUINO_ARCH_ESP32)
     BaseType_t result;
 #if CONFIG_FREERTOS_UNICORE
-    result = xTaskCreate(&SystemMini::espAudioEntry, "plamio_audio", 4096, this, 2, nullptr);
+    result = xTaskCreate(&SystemMini::espAudioEntry, "pruzea_audio", 4096, this, 2, nullptr);
 #else
-    result = xTaskCreatePinnedToCore(&SystemMini::espAudioEntry, "plamio_audio", 4096, this, 2, nullptr, 0);
+    result = xTaskCreatePinnedToCore(&SystemMini::espAudioEntry, "pruzea_audio", 4096, this, 2, nullptr, 0);
 #endif
     if (result != pdPASS) return false;
 #else
@@ -376,4 +376,4 @@ void start(const GraphicsConfig& graphicsConfig, const InputConfig& inputConfig,
     systemMini.start();
 }
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

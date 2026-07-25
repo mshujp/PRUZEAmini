@@ -2,7 +2,7 @@
 
 #include "StorageBase.h"
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class StorageStub : public StorageBase
 {

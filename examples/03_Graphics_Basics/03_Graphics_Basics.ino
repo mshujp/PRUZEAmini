@@ -1,6 +1,6 @@
 /*
 ===============================================================================
- PLAMIOmini Example
+ PRUZEAmini Example
  03_Graphics_Basics
 ===============================================================================
 
@@ -15,9 +15,9 @@ Before compiling:
 - Change lcdRotate if necessary to match the display orientation.
 */
 
-#include <PLAMIOmini.h>
+#include <PRUZEAmini.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 
 // =============================================================================
@@ -219,7 +219,7 @@ private:
             Graphics::VerticalAlign::MIDDLE);
 
         graphics.drawString(
-            "PLAMIOmini",
+            "PRUZEAmini",
             160, 165,
             Graphics::WHITE,
             Graphics::SIZE_32B,
@@ -302,7 +302,7 @@ protected:
 
 
 // =============================================================================
-// PLAMIOmini objects
+// PRUZEAmini objects
 // =============================================================================
 
 GraphicsBasicsGame app;
@@ -314,7 +314,7 @@ GraphicsBasicsGame app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

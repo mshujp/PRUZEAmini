@@ -1,6 +1,6 @@
 /*
 ===============================================================================
- PLAMIOmini Example
+ PRUZEAmini Example
  02_Input_Basics
 ===============================================================================
 
@@ -17,9 +17,9 @@ Before compiling:
 - Change lcdRotate if necessary to match the display orientation.
 */
 
-#include <PLAMIOmini.h>
+#include <PRUZEAmini.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 
 // =============================================================================
@@ -281,7 +281,7 @@ protected:
 
 
 // =============================================================================
-// PLAMIOmini objects
+// PRUZEAmini objects
 // =============================================================================
 
 InputBasicsGame app;
@@ -293,7 +293,7 @@ InputBasicsGame app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

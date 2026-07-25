@@ -8,14 +8,14 @@
 #elif defined(ARDUINO_ARCH_ESP32)
 #if __has_include(<ESP_I2S.h>)
 #include <ESP_I2S.h>
-#define PLAMIO_MINI_ESP_I2S_CLASS 1
+#define PRUZEA_MINI_ESP_I2S_CLASS 1
 #else
 #include <driver/i2s.h>
-#define PLAMIO_MINI_ESP_I2S_LEGACY 1
+#define PRUZEA_MINI_ESP_I2S_LEGACY 1
 #endif
 #endif
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 AudioI2S::~AudioI2S()
 {
@@ -41,7 +41,7 @@ bool AudioI2S::begin()
         return false;
     }
     device = i2s;
-#elif defined(ARDUINO_ARCH_ESP32) && defined(PLAMIO_MINI_ESP_I2S_CLASS)
+#elif defined(ARDUINO_ARCH_ESP32) && defined(PRUZEA_MINI_ESP_I2S_CLASS)
     I2SClass* i2s = new I2SClass();
     if (i2s == nullptr) return false;
 
@@ -91,7 +91,7 @@ void AudioI2S::end()
 #if defined(ARDUINO_ARCH_RP2040)
     static_cast<I2S*>(device)->end();
     delete static_cast<I2S*>(device);
-#elif defined(ARDUINO_ARCH_ESP32) && defined(PLAMIO_MINI_ESP_I2S_CLASS)
+#elif defined(ARDUINO_ARCH_ESP32) && defined(PRUZEA_MINI_ESP_I2S_CLASS)
     static_cast<I2SClass*>(device)->end();
     delete static_cast<I2SClass*>(device);
 #elif defined(ARDUINO_ARCH_ESP32)
@@ -148,7 +148,7 @@ bool AudioI2S::toneSamples(int from, int to, uint32_t total, uint32_t& written, 
         {
             i2s->write16(buffer[i * 2], buffer[i * 2 + 1]);
         }
-#elif defined(ARDUINO_ARCH_ESP32) && defined(PLAMIO_MINI_ESP_I2S_CLASS)
+#elif defined(ARDUINO_ARCH_ESP32) && defined(PRUZEA_MINI_ESP_I2S_CLASS)
         static_cast<I2SClass*>(device)->write(reinterpret_cast<uint8_t*>(buffer), frames * 4);
 #elif defined(ARDUINO_ARCH_ESP32)
         size_t bytesWritten = 0;

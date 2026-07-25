@@ -2,7 +2,7 @@
 
 #include <cstring>
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 StorageSDFile::~StorageSDFile()
 {
@@ -306,4 +306,4 @@ bool StorageSD::fileExists(const char* path)
     return result;
 }
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

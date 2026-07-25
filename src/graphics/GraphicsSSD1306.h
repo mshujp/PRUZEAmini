@@ -2,7 +2,7 @@
 
 #include "GraphicsBase.h"
 
-namespace PLAMIOmini {
+namespace PRUZEAmini {
 
 class GraphicsSSD1306 : public GraphicsBase
 {
@@ -41,4 +41,4 @@ public:
     bool push() override;
 };
 
-} // namespace PLAMIOmini
+} // namespace PRUZEAmini

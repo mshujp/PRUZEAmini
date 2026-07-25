@@ -1,8 +1,8 @@
-﻿#include "Platform.h"
-#include "PLAMIOmini.h"
+#include "Platform.h"
+#include "PRUZEAmini.h"
 #include <Arduino.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 uint32_t Platform::getMsec()
 {

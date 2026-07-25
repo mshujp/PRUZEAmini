@@ -1,10 +1,10 @@
 /*
 ===============================================================================
- PLAMIOmini Example
- 01_Hello_PLAMIO_SSD1306
+ PRUZEAmini Example
+ 01_Hello_PRUZEA_SSD1306
 ===============================================================================
 
-This example shows the minimum structure of a PLAMIOmini game
+This example shows the minimum structure of a PRUZEAmini game
 using a 128 x 64 SSD1306 OLED display.
 
 Before compiling:
@@ -12,9 +12,9 @@ Before compiling:
 - Change oledRotate if necessary to match the display orientation.
 */
 
-#include <PLAMIOmini.h>
+#include <PRUZEAmini.h>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 
 // =============================================================================
@@ -52,10 +52,10 @@ StorageConfig storageConfig = StorageStubConfig{};
 // Game
 // =============================================================================
 
-class HelloPLAMIOGame : public App
+class HelloPRUZEAGame : public App
 {
 public:
-    const char* getId() const override { return "hello_plamio_ssd1306"; }
+    const char* getId() const override { return "hello_pruzea_ssd1306"; }
 
 private:
     bool greeted = false;
@@ -100,7 +100,7 @@ protected:
             Graphics::SSD1306_ON);
 
         graphics.drawString(
-            "PLAMIOmini",
+            "PRUZEAmini",
             64, 13,
             Graphics::SSD1306_ON,
             Graphics::SIZE_13,
@@ -139,10 +139,10 @@ protected:
 
 
 // =============================================================================
-// PLAMIOmini objects
+// PRUZEAmini objects
 // =============================================================================
 
-HelloPLAMIOGame app;
+HelloPRUZEAGame app;
 
 
 // =============================================================================
@@ -151,7 +151,7 @@ HelloPLAMIOGame app;
 
 void setup()
 {
-    PLAMIOmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()

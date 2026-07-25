@@ -1,7 +1,7 @@
-﻿#include "GraphicsBase.h"
+#include "GraphicsBase.h"
 #include <algorithm>
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 uint16_t GraphicsBase::getTextHeight(const char* text, Font font)
 {

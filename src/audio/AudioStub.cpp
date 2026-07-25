@@ -1,6 +1,6 @@
 #include "AudioStub.h"
 
-using namespace PLAMIOmini;
+using namespace PRUZEAmini;
 
 bool AudioStub::begin()
 {

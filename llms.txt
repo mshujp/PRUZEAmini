@@ -1,19 +1,19 @@
-# PLAMIOmini
+# PRUZEAmini
 
-> PLAMIOmini is a lightweight, single-game Arduino runtime for AI-assisted game development. It provides unified Graphics, Input, Audio, Storage, timing, collision, tween, and save-data APIs for RP2040, RP2350, and ESP32 targets.
+> PRUZEAmini is a lightweight, single-game Arduino runtime for AI-assisted game development. It provides unified Graphics, Input, Audio, Storage, timing, collision, tween, and save-data APIs for RP2040, RP2350, and ESP32 targets.
 
-PLAMIOmini is a streamlined Arduino IDE version of PLAMIO. Games derive from `PLAMIOmini::GameMini` and are combined with one concrete display, input, audio, and storage implementation in a complete Arduino `.ino` sketch. The runtime owns the approximately 30 FPS main loop; `setup()` calls `PLAMIOmini::start(...)`, and Arduino `loop()` remains empty.
+PRUZEAmini is a streamlined Arduino IDE version of PRUZEA. Games derive from `PRUZEAmini::GameMini` and are combined with one concrete display, input, audio, and storage implementation in a complete Arduino `.ino` sketch. The runtime owns the approximately 30 FPS main loop; `setup()` calls `PRUZEAmini::start(...)`, and Arduino `loop()` remains empty.
 
-For code generation, treat the supplied headers as authoritative. Never invent classes, enum values, configuration fields, constructor arguments, fonts, colors, buttons, sound presets, or function signatures. The public API in `src/PLAMIOmini.h` has the highest priority, followed by the selected driver headers and hardware configuration, the AI guidelines, and the game design document.
+For code generation, treat the supplied headers as authoritative. Never invent classes, enum values, configuration fields, constructor arguments, fonts, colors, buttons, sound presets, or function signatures. The public API in `src/PRUZEAmini.h` has the highest priority, followed by the selected driver headers and hardware configuration, the AI guidelines, and the game design document.
 
 ## Essential Documentation
 
 - [README](README.md): Project overview, installation, supported platforms and hardware, learning path, and sample index.
-- [Public API](src/PLAMIOmini.h): Authoritative game-facing API for `GameMini`, Graphics, Input, Audio, Storage, SaveData, Platform, Math, Collision, Tween, and Display constants.
-- [AI Game Generation Guidelines](docs/PLAMIOmini_AI_GUIDELINES.md): Mandatory rules for generating compile-ready PLAMIOmini Arduino sketches.
-- [Hardware Configuration Template](docs/PLAMIOmini_HARDWARE_CONFIG_TEMPLATE.md): Selects the board, display, input, audio, storage, pins, buses, and hardware settings used by generated sketches.
-- [Game Design Template](docs/PLAMIOmini_GAME_DESIGN_TEMPLATE.md): English game-design worksheet for AI-assisted generation.
-- [Game Design Template (Japanese)](docs/PLAMIOmini_GAME_DESIGN_TEMPLATE_JP.md): Japanese game-design worksheet.
+- [Public API](src/PRUZEAmini.h): Authoritative game-facing API for `GameMini`, Graphics, Input, Audio, Storage, SaveData, Platform, Math, Collision, Tween, and Display constants.
+- [AI Game Generation Guidelines](docs/PRUZEAmini_AI_GUIDELINES.md): Mandatory rules for generating compile-ready PRUZEAmini Arduino sketches.
+- [Hardware Configuration Template](docs/PRUZEAmini_HARDWARE_CONFIG_TEMPLATE.md): Selects the board, display, input, audio, storage, pins, buses, and hardware settings used by generated sketches.
+- [Game Design Template](docs/PRUZEAmini_GAME_DESIGN_TEMPLATE.md): English game-design worksheet for AI-assisted generation.
+- [Game Design Template (Japanese)](docs/PRUZEAmini_GAME_DESIGN_TEMPLATE_JP.md): Japanese game-design worksheet.
 - [License](LICENSE.txt): MIT License.
 
 ## Driver Headers
@@ -50,17 +50,17 @@ Read the concrete driver header selected by the hardware configuration before cr
 
 ## Required Game Structure
 
-A game derives from `PLAMIOmini::GameMini` and overrides these exact functions:
+A game derives from `PRUZEAmini::GameMini` and overrides these exact functions:
 
 ```cpp
-void onInit(PLAMIOmini::Storage& storage) override;
-void onUpdate(PLAMIOmini::Input& input,
-              PLAMIOmini::Audio& audio,
-              PLAMIOmini::Storage& storage,
+void onInit(PRUZEAmini::Storage& storage) override;
+void onUpdate(PRUZEAmini::Input& input,
+              PRUZEAmini::Audio& audio,
+              PRUZEAmini::Storage& storage,
               float deltaSec) override;
-bool onDraw(PLAMIOmini::Graphics& graphics,
+bool onDraw(PRUZEAmini::Graphics& graphics,
             bool requestFullRedraw) override;
-void onTerminate(PLAMIOmini::Storage& storage) override;
+void onTerminate(PRUZEAmini::Storage& storage) override;
 ```
 
 A complete sketch normally declares, at global scope and in this order:
@@ -76,7 +76,7 @@ Then call:
 ```cpp
 void setup()
 {
-    PLAMIOmini::start(graphics, input, storage, audio, game);
+    PRUZEAmini::start(graphics, input, storage, audio, game);
 }
 
 void loop()
@@ -125,8 +125,8 @@ return true;
 
 - [00A AI Game Generation](examples/00A_AI_Game_Generation/00A_AI_Game_Generation.ino): Recommended AI-assisted workflow and required project files.
 - [00B Hardware Setup](examples/00B_Hardware_Setup/00B_Hardware_Setup.ino): Driver includes, configuration structures, constructors, and hardware selection reference.
-- [01 Hello PLAMIO](examples/01_Hello_PLAMIO/01_Hello_PLAMIO.ino): Minimal ILI9341 game structure.
-- [01 Hello PLAMIO SSD1306](examples/01_Hello_PLAMIO_SSD1306/01_Hello_PLAMIO_SSD1306.ino): Minimal SSD1306 game structure.
+- [01 Hello PRUZEA](examples/01_Hello_PRUZEA/01_Hello_PRUZEA.ino): Minimal ILI9341 game structure.
+- [01 Hello PRUZEA SSD1306](examples/01_Hello_PRUZEA_SSD1306/01_Hello_PRUZEA_SSD1306.ino): Minimal SSD1306 game structure.
 - [02 Input Basics](examples/02_Input_Basics/02_Input_Basics.ino): Button input and movement.
 - [03 Graphics Basics](examples/03_Graphics_Basics/03_Graphics_Basics.ino): Shapes, colors, fonts, and alignment.
 - [04 Audio Basics](examples/04_Audio_Basics/04_Audio_Basics.ino): Sound effects and music.
@@ -140,7 +140,7 @@ return true;
 
 ## Optional Implementation Sources
 
-These files implement the runtime and are useful when diagnosing behavior or extending PLAMIOmini, but game generation should normally rely on the public API and selected driver headers.
+These files implement the runtime and are useful when diagnosing behavior or extending PRUZEAmini, but game generation should normally rely on the public API and selected driver headers.
 
 - [System Runtime](src/core/SystemMini.cpp): Main loop, audio worker, volume controls, OSD, and startup behavior.
 - [Graphics Implementations](src/graphics/): ILI9341, SSD1306, and shared graphics implementation.
