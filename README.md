@@ -251,8 +251,8 @@ For RP2040 and RP2350, PRUZEAmini uses the I2S library included with the Earle P
 
 *1: When emulated EEPROM is written while I2S audio is playing on RP2350, audible noise may occur. Using I2S and emulated EEPROM together is therefore not recommended.
 
-
 Hardware test reports are welcome, especially for currently unverified boards such as ESP32-S3, ESP32-C3, and ESP32-C6.
+
 ------------------------------------------------------------------------
 
 # License
