@@ -2,14 +2,14 @@
 
 > PRUZEAmini is a lightweight, single-game Arduino runtime for AI-assisted game development. It provides unified Graphics, Input, Audio, Storage, timing, collision, tween, and save-data APIs for RP2040, RP2350, and ESP32 targets.
 
-PRUZEAmini is a streamlined Arduino IDE version of PRUZEA. Games derive from `PRUZEAmini::GameMini` and are combined with one concrete display, input, audio, and storage implementation in a complete Arduino `.ino` sketch. The runtime owns the approximately 30 FPS main loop; `setup()` calls `PRUZEAmini::start(...)`, and Arduino `loop()` remains empty.
+PRUZEAmini is a streamlined Arduino IDE version of PRUZEA. Games derive from `PRUZEAmini::App` and are combined with one concrete display, input, audio, and storage implementation in a complete Arduino `.ino` sketch. The runtime owns the approximately 30 FPS main loop; `setup()` calls `PRUZEAmini::start(...)`, and Arduino `loop()` remains empty.
 
 For code generation, treat the supplied headers as authoritative. Never invent classes, enum values, configuration fields, constructor arguments, fonts, colors, buttons, sound presets, or function signatures. The public API in `src/PRUZEAmini.h` has the highest priority, followed by the selected driver headers and hardware configuration, the AI guidelines, and the game design document.
 
 ## Essential Documentation
 
 - [README](README.md): Project overview, installation, supported platforms and hardware, learning path, and sample index.
-- [Public API](src/PRUZEAmini.h): Authoritative game-facing API for `GameMini`, Graphics, Input, Audio, Storage, SaveData, Platform, Math, Collision, Tween, and Display constants.
+- [Public API](src/PRUZEAmini.h): Authoritative game-facing API for `App`, Graphics, Input, Audio, Storage, SaveData, Platform, Math, Collision, Tween, and Display constants.
 - [AI Game Generation Guidelines](docs/PRUZEAmini_AI_GUIDELINES.md): Mandatory rules for generating compile-ready PRUZEAmini Arduino sketches.
 - [Hardware Configuration Template](docs/PRUZEAmini_HARDWARE_CONFIG_TEMPLATE.md): Selects the board, display, input, audio, storage, pins, buses, and hardware settings used by generated sketches.
 - [Game Design Template](docs/PRUZEAmini_GAME_DESIGN_TEMPLATE.md): English game-design worksheet for AI-assisted generation.
@@ -50,7 +50,7 @@ Read the concrete driver header selected by the hardware configuration before cr
 
 ## Required Game Structure
 
-A game derives from `PRUZEAmini::GameMini` and overrides these exact functions:
+A game derives from `PRUZEAmini::App` and overrides these exact functions:
 
 ```cpp
 void onInit(PRUZEAmini::Storage& storage) override;
@@ -69,14 +69,14 @@ A complete sketch normally declares, at global scope and in this order:
 2. One selected input configuration or button mapping and instance.
 3. One selected storage configuration and instance.
 4. One selected audio configuration and instance.
-5. One `GameMini`-derived game instance.
+5. One `App`-derived game instance.
 
 Then call:
 
 ```cpp
 void setup()
 {
-    PRUZEAmini::start(graphics, input, storage, audio, game);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()
@@ -94,7 +94,7 @@ void loop()
 - Request sound from `onUpdate()`, not `onDraw()`, and trigger it only once per event.
 - Perform packaged resource-file I/O during `onInit()`, never during `onUpdate()` or `onDraw()`.
 - Prefer fixed-size arrays and static constant assets. Avoid dynamic allocation and dynamic STL containers.
-- Do not call `GameMini::init()`, `update()`, `draw()`, or `terminate()` directly.
+- Do not call `App::init()`, `update()`, `draw()`, or `terminate()` directly.
 
 ## Rendering and Timing
 

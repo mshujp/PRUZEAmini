@@ -162,7 +162,7 @@ Arduino IDEにインストールされているPRUZEAminiライブラリの
 
 ダウンロードページ:
 
-https://github.com/mshujp/PRUZEA/releases/
+https://github.com/mshujp/PRUZEAmini/releases/
 
 異なるリリースのファイルを組み合わせて使用しないでください。
 

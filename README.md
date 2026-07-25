@@ -33,7 +33,7 @@ For the full feature set, use PRUZEA instead.
 | ![](docs/images/01.jpg) | ![](docs/images/02.jpg) |
 | ![](docs/images/03.jpg) | ![](docs/images/04.jpg) |
 
-| ScreenShots | |
+| Screenshots | |
 | :---: | :---: |
 | ![](docs/images/ss01.png) | ![](docs/images/ss02.png) |
 | ![](docs/images/ss03.png) | ![](docs/images/ss04.png) |
@@ -78,7 +78,7 @@ Your app only needs to implement its own game or UI logic.
 
 ## Core API
 
-PRUZEA provides the following hardware abstraction interfaces to every appliation.
+PRUZEA provides the following hardware abstraction interfaces to every application.
 
 Application code does not need to access platform-specific hardware or drivers directly.
 
@@ -99,9 +99,9 @@ see the example [00B_Hardware_Setup](examples/00B_Hardware_Setup/00B_Hardware_Se
 
 ## `PRUZEAmini::App` class
 
-Your game/app class should inherit from the `PRUZEAmini::App` class.
+Your application class should inherit from the `PRUZEAmini::App` class.
 
-Most application implement their game/app logic in:
+Most applications implement their application logic in:
 
 - `getId()`
 - `onInit()`
@@ -115,7 +115,7 @@ For the complete `PRUZEAmini::App` class reference, see:
 
 ## AI Workflow
 
-PRUZEAmini is designed for AI-assisted game/app development.
+PRUZEAmini is designed for AI-assisted game and UI application development.
 
 see the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_Game_Generation.ino)
 
@@ -160,7 +160,7 @@ Based on current development experience:
 | AI | Recommendation | Notes |
 |----|---------------|-------|
 | **ChatGPT** | **Highly Recommended** | Best overall experience with PRUZEAmini |
-| **Claude** | **Recommended** | Strong at understanding the SDK and generating well-structured game/app code |
+| **Claude** | **Recommended** | Strong at understanding the SDK and generating well-structured application code |
 | **Gemini** | **Not Recommended** | Gemini struggles with interpreting the contents of the ZIP file. |
 | **Copilot** | **Not Recommended** | Does not currently support zip file uploads, making it difficult to provide the PRUZEAmini SDK. |
 | **Google Search AI Mode** | **Not Recommended** | Does not currently support file uploads, making it difficult to provide the PRUZEAmini SDK. |
