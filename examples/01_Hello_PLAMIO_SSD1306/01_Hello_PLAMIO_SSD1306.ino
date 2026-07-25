@@ -31,7 +31,7 @@ GraphicsConfig graphicsConfig = GraphicsSSD1306Config{
 };
 
 InputConfig inputConfig = InputGpioButtonsConfig{
-    .buttonMapping = {
+    .gpioButtonPins = {
         .UP       = -1,
         .DOWN     = -1,
         .LEFT     = -1,

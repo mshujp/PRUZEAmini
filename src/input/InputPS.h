@@ -15,7 +15,7 @@ private:
     int8_t commandPin;
     int8_t attentionPin;
     int8_t dataPin;
-    ButtonMapping buttonMapping;
+    ButtonPins extraGpioButtonPins;
 
     uint8_t transferByte(uint8_t command);
     bool pollController(uint32_t& buttons);

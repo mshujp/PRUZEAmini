@@ -41,7 +41,7 @@ InputPS::InputPS(const InputPSConfig& config)
       commandPin(config.commandPin),
       attentionPin(config.attentionPin),
       dataPin(config.dataPin),
-      buttonMapping(config.buttonMapping)
+      extraGpioButtonPins(config.extraGpioButtonPins)
 {
 }
 
@@ -59,7 +59,7 @@ bool InputPS::begin()
     pinMode(attentionPin,OUTPUT);digitalWrite(attentionPin,HIGH);
     pinMode(dataPin,INPUT_PULLUP);
 
-    GpioButtons::init(buttonMapping);
+    GpioButtons::init(extraGpioButtonPins);
     reset();
 
     uint32_t buttons = 0;
@@ -137,17 +137,17 @@ bool InputPS::pollController(uint32_t& buttons)
     if (pressed & PSButton::START)    buttons |= buttonMask(Button::START);
     if (pressed & PSButton::SELECT)   buttons |= buttonMask(Button::SELECT);
 
-    if (buttonMapping.VOL_DOWN < 0 && (buttons & buttonMask(Button::L)))
+    if (extraGpioButtonPins.VOL_DOWN < 0 && (buttons & buttonMask(Button::L)))
     {
         buttons |= buttonMask(Button::VOL_DOWN);
         buttons &= ~buttonMask(Button::L);
     }
-    if (buttonMapping.VOL_UP < 0 && (buttons & buttonMask(Button::R)))
+    if (extraGpioButtonPins.VOL_UP < 0 && (buttons & buttonMask(Button::R)))
     {
         buttons |= buttonMask(Button::VOL_UP);
         buttons &= ~buttonMask(Button::R);
     }
-    buttons |= GpioButtons::read(buttonMapping);
+    buttons |= GpioButtons::read(extraGpioButtonPins);
     return true;
 }
 

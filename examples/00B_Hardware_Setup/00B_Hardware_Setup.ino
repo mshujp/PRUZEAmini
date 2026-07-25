@@ -66,7 +66,7 @@ GraphicsConfig graphicsConfig = GraphicsSSD1306Config{
 // -----------------------------------------------------------------------------
 
 InputConfig inputConfig = InputGpioButtonsConfig{
-    .buttonMapping = {
+    .gpioButtonPins = {
         .UP       = -1,
         .DOWN     = -1,
         .LEFT     = -1,
@@ -96,7 +96,7 @@ InputConfig inputConfig = InputSnesConfig{
     .latPin  = -1,
     .dataPin = -1,
 
-    .buttonMapping = {
+    .extraGpioButtonPins = {
         .UP       = -1,
         .DOWN     = -1,
         .LEFT     = -1,

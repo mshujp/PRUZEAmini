@@ -8,7 +8,7 @@ namespace PLAMIOmini {
 class InputGpioButtons : public InputBase
 {
 private:
-    ButtonMapping buttonMapping;
+    ButtonPins gpioButtonPins;
 
     uint32_t readButtons() override;
 

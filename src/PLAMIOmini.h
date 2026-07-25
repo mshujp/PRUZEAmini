@@ -156,12 +156,10 @@ protected:
     virtual ~Input() {};
 };
 
-// Physical-input identifiers associated with PLAMIO logical buttons.
-// The meaning of each value is defined by the derived input class.
-// Examples:
-//   InputGpioButtons / InputSnes auxiliary buttons: GPIO number
-//   Future InputKeyboard: key code
-struct ButtonMapping
+// GPIO pin numbers associated with PLAMIOmini logical buttons.
+// Used by GPIO button input and optional extra GPIO buttons.
+// Use -1 for buttons that are not connected.
+struct ButtonPins
 {
     int16_t UP       = -1;
     int16_t DOWN     = -1;
@@ -180,13 +178,13 @@ struct ButtonMapping
     int16_t MUTE     = -1;
 };
 struct InputGpioButtonsConfig {
-    ButtonMapping buttonMapping{};
+    ButtonPins gpioButtonPins{};
 };
 struct InputSnesConfig {
     int8_t clkPin  = -1;
     int8_t latPin  = -1;
     int8_t dataPin = -1;
-    ButtonMapping buttonMapping{};
+    ButtonPins extraGpioButtonPins{};
 };
 struct InputPSConfig
 {
@@ -194,7 +192,7 @@ struct InputPSConfig
     int8_t commandPin = -1;
     int8_t attentionPin = -1;
     int8_t dataPin = -1;
-    ButtonMapping buttonMapping{};
+    ButtonPins extraGpioButtonPins{};
 };
 using InputConfig = std::variant<
     InputGpioButtonsConfig,

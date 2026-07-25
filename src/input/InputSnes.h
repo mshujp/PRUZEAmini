@@ -10,7 +10,7 @@ private:
     int8_t clkPin;
     int8_t latPin;
     int8_t dataPin;
-    ButtonMapping buttonMapping;
+    ButtonPins extraGpioButtonPins;
 
     uint32_t readButtons() override;
 

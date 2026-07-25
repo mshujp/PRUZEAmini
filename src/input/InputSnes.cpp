@@ -29,7 +29,7 @@ InputSnes::InputSnes(const InputSnesConfig& config)
     : clkPin(config.clkPin),
       latPin(config.latPin),
       dataPin(config.dataPin),
-      buttonMapping(config.buttonMapping)
+      extraGpioButtonPins(config.extraGpioButtonPins)
 {
 }
 
@@ -40,7 +40,7 @@ bool InputSnes::begin()
     pinMode(latPin, OUTPUT);
     pinMode(dataPin, INPUT_PULLUP);
 
-    GpioButtons::init(buttonMapping);
+    GpioButtons::init(extraGpioButtonPins);
 
     reset();
     available = true;
@@ -79,7 +79,7 @@ uint32_t InputSnes::readButtons()
         Platform::sleepUsec(6);
     }
 
-    if (buttonMapping.VOL_DOWN < 0)
+    if (extraGpioButtonPins.VOL_DOWN < 0)
     {
         // L acts as VOL_DOWN.
         if (buttons & static_cast<uint32_t>(Button::L))
@@ -88,7 +88,7 @@ uint32_t InputSnes::readButtons()
             buttons &= ~static_cast<uint32_t>(Button::L);
         }
     }
-    if (buttonMapping.VOL_UP < 0)
+    if (extraGpioButtonPins.VOL_UP < 0)
     {
         // R acts as VOL_UP.
         if (buttons & static_cast<uint32_t>(Button::R))
@@ -99,7 +99,7 @@ uint32_t InputSnes::readButtons()
     }
 
     // Auxiliary GPIO buttons are already mapped to their final logical roles.
-    buttons |= GpioButtons::read(buttonMapping);
+    buttons |= GpioButtons::read(extraGpioButtonPins);
 
     return buttons;
 }

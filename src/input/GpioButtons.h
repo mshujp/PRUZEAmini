@@ -6,14 +6,14 @@
 namespace PLAMIOmini {
 namespace GpioButtons {
 
-inline void init(const ButtonMapping& mapping)
+inline void init(const ButtonPins& buttonPins)
 {
     const int16_t pins[] =
     {
-        mapping.UP, mapping.DOWN, mapping.LEFT, mapping.RIGHT,
-        mapping.A, mapping.B, mapping.X, mapping.Y,
-        mapping.L, mapping.R, mapping.START, mapping.SELECT,
-        mapping.VOL_UP, mapping.VOL_DOWN, mapping.MUTE
+        buttonPins.UP, buttonPins.DOWN, buttonPins.LEFT, buttonPins.RIGHT,
+        buttonPins.A, buttonPins.B, buttonPins.X, buttonPins.Y,
+        buttonPins.L, buttonPins.R, buttonPins.START, buttonPins.SELECT,
+        buttonPins.VOL_UP, buttonPins.VOL_DOWN, buttonPins.MUTE
     };
 
     for (int16_t pin : pins)
@@ -22,7 +22,7 @@ inline void init(const ButtonMapping& mapping)
     }
 }
 
-inline uint32_t read(const ButtonMapping& mapping)
+inline uint32_t read(const ButtonPins& buttonPins)
 {
     struct Entry
     {
@@ -32,14 +32,14 @@ inline uint32_t read(const ButtonMapping& mapping)
 
     const Entry entries[] =
     {
-        {Input::UP, mapping.UP}, {Input::DOWN, mapping.DOWN},
-        {Input::LEFT, mapping.LEFT}, {Input::RIGHT, mapping.RIGHT},
-        {Input::A, mapping.A}, {Input::B, mapping.B},
-        {Input::X, mapping.X}, {Input::Y, mapping.Y},
-        {Input::L, mapping.L}, {Input::R, mapping.R},
-        {Input::START, mapping.START}, {Input::SELECT, mapping.SELECT},
-        {Input::VOL_UP, mapping.VOL_UP}, {Input::VOL_DOWN, mapping.VOL_DOWN},
-        {Input::MUTE, mapping.MUTE}
+        {Input::UP, buttonPins.UP}, {Input::DOWN, buttonPins.DOWN},
+        {Input::LEFT, buttonPins.LEFT}, {Input::RIGHT, buttonPins.RIGHT},
+        {Input::A, buttonPins.A}, {Input::B, buttonPins.B},
+        {Input::X, buttonPins.X}, {Input::Y, buttonPins.Y},
+        {Input::L, buttonPins.L}, {Input::R, buttonPins.R},
+        {Input::START, buttonPins.START}, {Input::SELECT, buttonPins.SELECT},
+        {Input::VOL_UP, buttonPins.VOL_UP}, {Input::VOL_DOWN, buttonPins.VOL_DOWN},
+        {Input::MUTE, buttonPins.MUTE}
     };
 
     uint32_t value = 0;

@@ -37,7 +37,7 @@ GraphicsConfig graphicsConfig = GraphicsILI9341Config{
 };
 
 InputConfig inputConfig = InputGpioButtonsConfig{
-    .buttonMapping = {
+    .gpioButtonPins = {
         .UP       = -1,
         .DOWN     = -1,
         .LEFT     = -1,

@@ -9,32 +9,32 @@ namespace {
 struct MappingEntry
 {
     Input::Button button;
-    int16_t ButtonMapping::* pin;
+    int16_t ButtonPins::* pin;
 };
 
 constexpr MappingEntry MAPPINGS[] =
 {
-    {Input::UP, &ButtonMapping::UP},
-    {Input::DOWN, &ButtonMapping::DOWN},
-    {Input::LEFT, &ButtonMapping::LEFT},
-    {Input::RIGHT, &ButtonMapping::RIGHT},
-    {Input::A, &ButtonMapping::A},
-    {Input::B, &ButtonMapping::B},
-    {Input::X, &ButtonMapping::X},
-    {Input::Y, &ButtonMapping::Y},
-    {Input::L, &ButtonMapping::L},
-    {Input::R, &ButtonMapping::R},
-    {Input::START, &ButtonMapping::START},
-    {Input::SELECT, &ButtonMapping::SELECT},
-    {Input::VOL_UP, &ButtonMapping::VOL_UP},
-    {Input::VOL_DOWN, &ButtonMapping::VOL_DOWN},
-    {Input::MUTE, &ButtonMapping::MUTE}
+    {Input::UP, &ButtonPins::UP},
+    {Input::DOWN, &ButtonPins::DOWN},
+    {Input::LEFT, &ButtonPins::LEFT},
+    {Input::RIGHT, &ButtonPins::RIGHT},
+    {Input::A, &ButtonPins::A},
+    {Input::B, &ButtonPins::B},
+    {Input::X, &ButtonPins::X},
+    {Input::Y, &ButtonPins::Y},
+    {Input::L, &ButtonPins::L},
+    {Input::R, &ButtonPins::R},
+    {Input::START, &ButtonPins::START},
+    {Input::SELECT, &ButtonPins::SELECT},
+    {Input::VOL_UP, &ButtonPins::VOL_UP},
+    {Input::VOL_DOWN, &ButtonPins::VOL_DOWN},
+    {Input::MUTE, &ButtonPins::MUTE}
 };
 
 } // namespace
 
 InputGpioButtons::InputGpioButtons(const InputGpioButtonsConfig& config)
-    : buttonMapping(config.buttonMapping)
+    : gpioButtonPins(config.gpioButtonPins)
 {
 }
 
@@ -42,7 +42,7 @@ bool InputGpioButtons::begin()
 {
     for (const auto& entry : MAPPINGS)
     {
-        const int16_t pin = buttonMapping.*(entry.pin);
+        const int16_t pin = gpioButtonPins.*(entry.pin);
         if (pin >= 0) pinMode(pin, INPUT_PULLUP);
     }
 
@@ -62,7 +62,7 @@ uint32_t InputGpioButtons::readButtons()
     uint32_t result = 0;
     for (const auto& entry : MAPPINGS)
     {
-        const int16_t pin = buttonMapping.*(entry.pin);
+        const int16_t pin = gpioButtonPins.*(entry.pin);
         if (pin >= 0 && digitalRead(pin) == LOW) result |= entry.button;
     }
     return result;
