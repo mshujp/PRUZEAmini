@@ -115,7 +115,7 @@ For the complete `PLAMIOmini::App` class reference, see:
 
 ## AI Workflow
 
-PLAMIO is designed for AI-assisted game/app development.
+PLAMIOmini is designed for AI-assisted game/app development.
 
 see the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_Game_Generation.ino)
 
@@ -153,17 +153,17 @@ Each example introduces one or more new concepts while building on previous exam
 
 ## Recommended AI
 
-PLAMIO is designed to work with modern AI coding assistants.
+PLAMIOmini is designed to work with modern AI coding assistants.
 
 Based on current development experience:
 
 | AI | Recommendation | Notes |
 |----|---------------|-------|
-| **ChatGPT** | **Highly Recommended** | Best overall experience with PLAMIO |
+| **ChatGPT** | **Highly Recommended** | Best overall experience with PLAMIOmini |
 | **Claude** | **Recommended** | Strong at understanding the SDK and generating well-structured game/app code |
 | **Gemini** | **Not Recommended** | Gemini struggles with interpreting the contents of the ZIP file. |
-| **Copilot** | **Not Recommended** | Does not currently support zip file uploads, making it difficult to provide the PLAMIO SDK. |
-| **Google Search AI Mode** | **Not Recommended** | Does not currently support file uploads, making it difficult to provide the PLAMIO SDK. |
+| **Copilot** | **Not Recommended** | Does not currently support zip file uploads, making it difficult to provide the PLAMIOmini SDK. |
+| **Google Search AI Mode** | **Not Recommended** | Does not currently support file uploads, making it difficult to provide the PLAMIOmini SDK. |
 
 ------------------------------------------------------------------------
 
@@ -218,7 +218,7 @@ Although the Arduino-based PLAMIOmini implementation may work with some 2 GB sta
 they are not officially supported. This keeps SD card requirements consistent with the full PLAMIO framework.
 
 > [!WARNING]
-> Although PLAMIO provides a software shutdown option, embedded systems can still lose power unexpectedly (for example, due to battery removal or depletion).
+> Although PLAMIOmini provides a software shutdown option, embedded systems can still lose power unexpectedly (for example, due to battery removal or depletion).
 > Do **not** store important or irreplaceable data on the SD card.
 
 ## PWM Audio
