@@ -256,6 +256,15 @@ Hardware test reports are welcome, especially for currently unverified boards su
 
 ------------------------------------------------------------------------
 
+## Flexible by Design
+
+PRUZEA mini does not require applications to use every built-in subsystem.
+Graphics, input, audio, and storage can be replaced with stub implementations when an application manages those features directly.
+
+This allows applications to use Arduino libraries and hardware APIs for features such as touchscreens, sensors, MP3 playback, network radio, and custom I2S audio.
+
+------------------------------------------------------------------------
+
 # License
 
 MIT License
