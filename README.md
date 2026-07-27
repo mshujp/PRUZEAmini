@@ -141,6 +141,7 @@ see the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_
 | [11_Memory_Tiles](examples/11_Memory_Tiles/11_Memory_Tiles.ino) | Memory game with state transitions |
 | [12_IMU_Monitor](examples/12_IMU_Monitor/12_IMU_Monitor.ino) | IMU sensor monitoring and simple tilt visualization |
 | [13_GPS_Logger](examples/13_GPS_Logger/13_GPS_Logger.ino) | GPS monitoring and CSV data logging to an SD card |
+| [14_Touchscreen](examples/14_Touchscreen/14_Touchscreen.ino) | Touch input and coordinate visualization |
 
 Each sample is placed under the [`examples`](examples) directory.
 
