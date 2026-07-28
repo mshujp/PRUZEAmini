@@ -12,6 +12,11 @@ This example shows:
 Required library:
 - XPT2046_Touchscreen by Paul Stoffregen
 
+Supported targets:
+- RP2040 / RP2350
+- ESP32 / ESP32-S3
+- ESP32-C3 / ESP32-C6 are not supported by this example.
+
 Before compiling:
 - Replace the required -1 values with pin numbers for your hardware.
 - Set the display and XPT2046 touch-panel pins.
@@ -30,6 +35,9 @@ using namespace PRUZEAmini;
 // Touch configuration
 // =============================================================================
 
+// 0: SPI0, 1: SPI1 on RP2040/RP2350.
+// 0: HSPI, 1: VSPI on ESP32; 0: FSPI, 1: HSPI on ESP32-S3.
+static constexpr uint8_t TOUCH_SPI_HOST = 0;
 static constexpr int8_t TOUCH_SCK_PIN  = -1;
 static constexpr int8_t TOUCH_MOSI_PIN = -1;
 static constexpr int8_t TOUCH_MISO_PIN = -1;
@@ -87,6 +95,18 @@ AudioConfig audioConfig = AudioStubConfig{};
 StorageConfig storageConfig = StorageStubConfig{};
 
 XPT2046_Touchscreen touch(TOUCH_CS_PIN, TOUCH_IRQ_PIN);
+
+#if defined(ARDUINO_ARCH_RP2040)
+static SPIClassRP2040& touchSpi = TOUCH_SPI_HOST == 0 ? SPI : SPI1;
+#elif defined(ARDUINO_ARCH_ESP32)
+#if defined(CONFIG_IDF_TARGET_ESP32C3) || defined(CONFIG_IDF_TARGET_ESP32C6)
+#error "14_Touchscreen does not support ESP32-C3 or ESP32-C6"
+#elif defined(CONFIG_IDF_TARGET_ESP32S3)
+static SPIClass touchSpi(TOUCH_SPI_HOST == 0 ? FSPI : HSPI);
+#else
+static SPIClass touchSpi(TOUCH_SPI_HOST == 0 ? HSPI : VSPI);
+#endif
+#endif
 
 // =============================================================================
 // App
@@ -234,12 +254,16 @@ public:
             digitalWrite(SHARED_SPI_DEVICE_CS_PIN, HIGH);
         }
 
-        SPI.setSCK(TOUCH_SCK_PIN);
-        SPI.setTX(TOUCH_MOSI_PIN);
-        SPI.setRX(TOUCH_MISO_PIN);
-        SPI.begin();
+#if defined(ARDUINO_ARCH_RP2040)
+        touchSpi.setSCK(TOUCH_SCK_PIN);
+        touchSpi.setTX(TOUCH_MOSI_PIN);
+        touchSpi.setRX(TOUCH_MISO_PIN);
+        touchSpi.begin();
+#elif defined(ARDUINO_ARCH_ESP32)
+        touchSpi.begin(TOUCH_SCK_PIN, TOUCH_MISO_PIN, TOUCH_MOSI_PIN, TOUCH_CS_PIN);
+#endif
 
-        touchReady = touch.begin(SPI);
+        touchReady = touch.begin(touchSpi);
         dirty = true;
     }
 
