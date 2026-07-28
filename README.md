@@ -142,6 +142,7 @@ see the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_
 | [12_IMU_Monitor](examples/12_IMU_Monitor/12_IMU_Monitor.ino) | IMU sensor monitoring and simple tilt visualization |
 | [13_GPS_Logger](examples/13_GPS_Logger/13_GPS_Logger.ino) | GPS monitoring and CSV data logging to an SD card |
 | [14_Touchscreen](examples/14_Touchscreen/14_Touchscreen.ino) | Touch input and coordinate visualization |
+| [15_Analog_Stick](examples/15_Analog_Stick/15_Analog_Stick.ino) | Analog stick input |
 
 Each sample is placed under the [`examples`](examples) directory.
 
@@ -234,17 +235,28 @@ If adjustable volume is required, use an external amplifier or a potentiometer.
 
 For RP2040 and RP2350, PRUZEAmini uses the I2S library included with the Earle Philhower Arduino-Pico core. LRCLK/WS must use the GPIO immediately following BCLK.
 
+## Analog Stick
+
+PRUZEA supports the analog sticks of PlayStation 1 and PlayStation 2 controllers.
+
+Analog stick values are normalized to the range `-1000` to `1000`.
+
+```cpp
+const int16_t moveX = input.axis(Input::Axis::LEFT_X);
+const int16_t moveY = input.axis(Input::Axis::LEFT_Y);
+```
+
 ------------------------------------------------------------------------
 
 ## PRUZEAmini Hardware Compatibility
 
-| Platform | ILI9341 | SSD1306 | PWM | I2S | GPIO | SNES Pad | Emulated EEPROM | SD |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| RP2040 | ✅ | ✅ | ✅ |  | ✅ |  | ✅ | ✅ |
-| RP2350 | ✅ |  |  | ✅ |  | ✅ | ✅ *1 | ✅ |
-| ESP32 | ✅ | ✅ | ✅ | ✅ | ✅ |  | ✅ | ✅ |
-| ESP32-S3 |  |  |  |  |  |  |  |  |
-| ESP32-C3/C6 |  |  |  |  |  |  |  |  |
+| Platform | ILI9341 | SSD1306 | PWM | I2S | GPIO | SNES Pad | PS Pad | Emulated EEPROM | SD |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| RP2040 | ✅ | ✅ | ✅ |  | ✅ |  |  | ✅ | ✅ |
+| RP2350 | ✅ |  |  | ✅ |  | ✅ | ✅ | ✅ *1 | ✅ |
+| ESP32 | ✅ | ✅ | ✅ | ✅ | ✅ |  |  | ✅ | ✅ |
+| ESP32-S3 |  |  |  |  |  |  |  |  |  |
+| ESP32-C3/C6 |  |  |  |  |  |  |  |  |  |
 
 - ✅: Verified on actual hardware
 - Blank: Not yet tested. A blank cell does **not** mean unsupported or incompatible.

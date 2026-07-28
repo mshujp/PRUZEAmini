@@ -12,7 +12,8 @@ inline void init(const ButtonPins& buttonPins)
     {
         buttonPins.UP, buttonPins.DOWN, buttonPins.LEFT, buttonPins.RIGHT,
         buttonPins.A, buttonPins.B, buttonPins.X, buttonPins.Y,
-        buttonPins.L, buttonPins.R, buttonPins.START, buttonPins.SELECT,
+        buttonPins.L, buttonPins.R, buttonPins.L2, buttonPins.R2,
+        buttonPins.L3, buttonPins.R3, buttonPins.START, buttonPins.SELECT,
         buttonPins.VOL_UP, buttonPins.VOL_DOWN, buttonPins.MUTE
     };
 
@@ -37,6 +38,8 @@ inline uint32_t read(const ButtonPins& buttonPins)
         {Input::A, buttonPins.A}, {Input::B, buttonPins.B},
         {Input::X, buttonPins.X}, {Input::Y, buttonPins.Y},
         {Input::L, buttonPins.L}, {Input::R, buttonPins.R},
+        {Input::L2, buttonPins.L2}, {Input::R2, buttonPins.R2},
+        {Input::L3, buttonPins.L3}, {Input::R3, buttonPins.R3},
         {Input::START, buttonPins.START}, {Input::SELECT, buttonPins.SELECT},
         {Input::VOL_UP, buttonPins.VOL_UP}, {Input::VOL_DOWN, buttonPins.VOL_DOWN},
         {Input::MUTE, buttonPins.MUTE}

@@ -5,9 +5,7 @@
 namespace PRUZEAmini {
 
 // Experimental PlayStation controller input implementation.
-// Compile-tested only; communication with real hardware has not been verified.
-// Supports digital buttons only. ACK, analog axes, vibration, and mode setup
-// are intentionally not implemented.
+// ACK, vibration, and mode setup are intentionally not implemented.
 class InputPS : public InputBase
 {
 private:
@@ -16,6 +14,10 @@ private:
     int8_t attentionPin;
     int8_t dataPin;
     ButtonPins extraGpioButtonPins;
+    uint8_t analogDeadZone;
+    uint8_t axisCenters[4];
+    uint8_t axisValues[4]{};
+    bool analogAvailable = false;
 
     uint8_t transferByte(uint8_t command);
     bool pollController(uint32_t& buttons);
@@ -26,6 +28,8 @@ public:
 
     bool begin() override;
     void end() override;
+    bool hasAnalogSticks() const override;
+    int16_t axis(Axis axis) const override;
 };
 
 } // namespace PRUZEAmini

@@ -127,6 +127,10 @@ public:
         R        = 1u << 9,
         START    = 1u << 10,
         SELECT   = 1u << 11,
+        L2       = 1u << 12,
+        R2       = 1u << 13,
+        L3       = 1u << 14,
+        R3       = 1u << 15,
 
         // System-reserved virtual buttons. Hardware implementations may map
         // physical buttons or shortcuts to these.
@@ -152,6 +156,19 @@ public:
     virtual void setRepeatSettings(uint16_t dasDelayMsec, uint16_t arrDelayMsec) = 0;
     virtual bool repeat(Button b) const = 0;
 
+    // ## Analog stick input
+    enum Axis : uint8_t
+    {
+        LEFT_X,
+        LEFT_Y,
+        RIGHT_X,
+        RIGHT_Y
+    };
+    virtual bool hasAnalogSticks() const { return false; }
+    // Returns a normalized value from -1000 to 1000.
+    // Returns 0 when the axis is unavailable or inside the dead zone.
+    virtual int16_t axis(Axis axis) const { return 0; }
+
 protected:
     virtual ~Input() {};
 };
@@ -171,6 +188,10 @@ struct ButtonPins
     int16_t Y        = -1;
     int16_t L        = -1;
     int16_t R        = -1;
+    int16_t L2       = -1;
+    int16_t R2       = -1;
+    int16_t L3       = -1;
+    int16_t R3       = -1;
     int16_t START    = -1;
     int16_t SELECT   = -1;
     int16_t VOL_UP   = -1;
@@ -192,6 +213,14 @@ struct InputPSConfig
     int8_t commandPin = -1;
     int8_t attentionPin = -1;
     int8_t dataPin = -1;
+
+    // Analog Stick
+    uint8_t analogDeadZone = 24;
+    uint8_t leftXCenter = 128;
+    uint8_t leftYCenter = 128;
+    uint8_t rightXCenter = 128;
+    uint8_t rightYCenter = 128;
+
     ButtonPins extraGpioButtonPins{};
 };
 using InputConfig = std::variant<
