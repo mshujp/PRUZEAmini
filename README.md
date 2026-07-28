@@ -223,6 +223,28 @@ they are not officially supported. This keeps SD card requirements consistent wi
 > Although PRUZEAmini provides a software shutdown option, embedded systems can still lose power unexpectedly (for example, due to battery removal or depletion).
 > Do **not** store important or irreplaceable data on the SD card.
 
+## Touchscreen
+
+Touchscreen input is an optional extension to the primary button input.
+It is intended for secondary-screen-style interaction and does not replace system menu controls.
+
+PRUZEA supports ILI9341 display modules with an integrated XPT2046 touchscreen controller.
+
+For builds that use both a touchscreen and an SD card, the following configuration is recommended:
+
+| Peripheral | SPI |
+|------------|-----|
+| ILI9341 LCD | SPI1 |
+| XPT2046 Touchscreen | SPI1 |
+| SD Card | SPI0 |
+
+The touchscreen and ILI9341 card may share the SPI1 clock, MOSI, and MISO pins.
+They must use separate CS pins.
+
+The IRQ pin is optional.
+Set `irqPin` to `-1` when it is not connected.
+In that case, PRUZEA detects touch input by polling the XPT2046 controller.
+
 ## PWM Audio
 
 Use a passive buzzer or an appropriate transistor/amplifier circuit.

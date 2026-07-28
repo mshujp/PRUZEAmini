@@ -59,7 +59,7 @@ public:
     virtual bool begin() = 0;
     virtual void end() = 0;
 
-    void update();
+    virtual void update();
     void reset();
 
     bool pressed(Button b) const override;

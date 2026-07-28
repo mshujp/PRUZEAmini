@@ -14,9 +14,11 @@ class LGFX_ILI9341 : public lgfx::LGFX_Device
 private:
     lgfx::Panel_ILI9341 panel;
     lgfx::Bus_SPI bus;
+    lgfx::Touch_XPT2046 touch;
+    int16_t minimumTouchPressure = 0;
 
 public:
-    void configure(const GraphicsILI9341Config& config)
+    void configure(const GraphicsILI9341Config& config, const TouchXPT2046Config* touchConfig)
     {
         auto busConfig = bus.config();
         busConfig.spi_host = static_cast<decltype(busConfig.spi_host)>(config.spiHost);
@@ -25,7 +27,10 @@ public:
         busConfig.freq_read = 16000000;
         busConfig.pin_sclk = config.clkPin;
         busConfig.pin_mosi = config.dataPin;
-        busConfig.pin_miso = -1;
+        busConfig.pin_miso =
+            touchConfig != nullptr && touchConfig->spiHost == config.spiHost
+                ? touchConfig->misoPin
+                : -1;
         busConfig.pin_dc = config.dcPin;
         bus.config(busConfig);
         panel.setBus(&bus);
@@ -44,7 +49,46 @@ public:
         panelConfig.dlen_16bit = false;
         panelConfig.bus_shared = true;
         panel.config(panelConfig);
+
+        if (touchConfig != nullptr)
+        {
+            auto touchDriverConfig = touch.config();
+            touchDriverConfig.spi_host = static_cast<decltype(touchDriverConfig.spi_host)>(touchConfig->spiHost);
+            touchDriverConfig.freq = touchConfig->spiFreq;
+            touchDriverConfig.pin_sclk = touchConfig->clkPin;
+            touchDriverConfig.pin_mosi = touchConfig->mosiPin;
+            touchDriverConfig.pin_miso = touchConfig->misoPin;
+            touchDriverConfig.pin_cs = touchConfig->csPin;
+            // XPT2046 IRQ behavior differs between supported Arduino cores.
+            // Polling keeps touch input consistent on both Pico and ESP32.
+            touchDriverConfig.pin_int = -1;
+            touchDriverConfig.x_min = touchConfig->minX;
+            touchDriverConfig.x_max = touchConfig->maxX;
+            touchDriverConfig.y_min = touchConfig->minY;
+            touchDriverConfig.y_max = touchConfig->maxY;
+            touchDriverConfig.offset_rotation = touchConfig->offsetRotation;
+            touchDriverConfig.bus_shared = touchConfig->spiHost == config.spiHost;
+            touch.config(touchDriverConfig);
+            panel.setTouch(&touch);
+            minimumTouchPressure = touchConfig->minZ;
+        }
+        else
+        {
+            panel.setTouch(nullptr);
+            minimumTouchPressure = 0;
+        }
         setPanel(&panel);
+    }
+
+    bool readTouch(int16_t& x, int16_t& y)
+    {
+        lgfx::touch_point_t point;
+        if (getTouch(&point) == 0) return false;
+        if (static_cast<uint32_t>(point.size) * 256 < static_cast<uint16_t>(minimumTouchPressure)) return false;
+
+        x = point.x;
+        y = point.y;
+        return true;
     }
 };
 
@@ -53,15 +97,56 @@ lgfx::LGFX_Sprite ili9341Canvas(&ili9341Lcd);
 
 } // namespace
 
-GraphicsILI9341::GraphicsILI9341(const GraphicsILI9341Config& config)
-    : config(config)
+void GraphicsLGFXContext::configureGraphics(const GraphicsILI9341Config& config)
+{
+    graphicsConfig = config;
+}
+
+void GraphicsLGFXContext::configureTouch(const TouchXPT2046Config& config)
+{
+    touchConfig = config;
+    touchConfigured =
+        config.clkPin >= 0 &&
+        config.mosiPin >= 0 &&
+        config.misoPin >= 0 &&
+        config.csPin >= 0;
+}
+
+void GraphicsLGFXContext::clearTouch()
+{
+    touchConfigured = false;
+    touchAvailable = false;
+}
+
+bool GraphicsLGFXContext::begin()
+{
+    ili9341Lcd.configure(graphicsConfig, touchConfigured ? &touchConfig : nullptr);
+    const bool displayAvailable = ili9341Lcd.init();
+    touchAvailable = displayAvailable && touchConfigured;
+    return displayAvailable;
+}
+
+void GraphicsLGFXContext::end()
+{
+    touchAvailable = false;
+    ili9341Lcd.clear();
+}
+
+bool GraphicsLGFXContext::readTouch(int16_t& x, int16_t& y)
+{
+    if (!touchAvailable) return false;
+    return ili9341Lcd.readTouch(x, y);
+}
+
+GraphicsILI9341::GraphicsILI9341(const GraphicsILI9341Config& config, GraphicsLGFXContext& context)
+    : config(config), context(context)
 {
 }
 
 bool GraphicsILI9341::begin()
 {
-    ili9341Lcd.configure(config);
-    ili9341Lcd.init();
+    context.configureGraphics(config);
+    if (!context.begin()) return false;
     ili9341Lcd.setRotation(config.lcdRotate);
 
     ili9341Canvas.setColorDepth(ili9341Lcd.getColorDepth());
@@ -96,7 +181,7 @@ bool GraphicsILI9341::begin()
 void GraphicsILI9341::end()
 {
     ili9341Canvas.deleteSprite();
-    ili9341Lcd.clear();
+    context.end();
     if (config.backlightPin >= 0) digitalWrite(config.backlightPin, LOW);
     screenDirty = false;
 }

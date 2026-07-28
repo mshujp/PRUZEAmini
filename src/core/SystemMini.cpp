@@ -7,9 +7,12 @@
 
 #include "../graphics/GraphicsILI9341.h"
 #include "../graphics/GraphicsSSD1306.h"
+#include "../graphics/GraphicsLGFXContext.h"
 #include "../input/InputGpioButtons.h"
 #include "../input/InputPS.h"
 #include "../input/InputSnes.h"
+#include "../input/InputStub.h"
+#include "../input/InputTouch.h"
 #include "../audio/AudioI2S.h"
 #include "../audio/AudioPWM.h"
 #include "../audio/AudioStub.h"
@@ -63,6 +66,7 @@ private:
     void waitFor30Fps();
     void updateSystem();
     void drawOSD();
+    void drawVolume();
     void saveVolume(uint8_t volume);
     uint8_t loadVolume();
 
@@ -111,7 +115,7 @@ bool SystemMini::start()
 {
     if (!initialize()) return false;
 
-    launchAudioWorker();
+    if (audio.runsAsAudioWorker()) launchAudioWorker();
     lastFrameMsec = 0;
     for (;;)
     {
@@ -241,8 +245,10 @@ void SystemMini::updateSystem()
     }
 }
 
-void SystemMini::drawOSD()
+void SystemMini::drawVolume()
 {
+    if (audio.getVolumeSteps() == 0) return;
+
     const char* text = nullptr;
     const uint8_t volume = audio.getVolumeLevel();
 
@@ -277,6 +283,11 @@ void SystemMini::drawOSD()
     }
 }
 
+void SystemMini::drawOSD()
+{
+    drawVolume();
+}
+
 void SystemMini::saveVolume(uint8_t volume)
 {
     if (!storage.isAvailable()) return;
@@ -304,10 +315,29 @@ void start(const GraphicsConfig& graphicsConfig, const InputConfig& inputConfig,
     AudioBase* audioDriver = nullptr;
     GraphicsILI9341* gi = nullptr;
     StorageSD* sd = nullptr;
+    static GraphicsLGFXContext lgfxContext;
+
+    lgfxContext.clearTouch();
+    if (std::holds_alternative<InputTouchConfig<InputStubConfig>>(inputConfig))
+    {
+        lgfxContext.configureTouch(std::get<InputTouchConfig<InputStubConfig>>(inputConfig).touch);
+    }
+    else if (std::holds_alternative<InputTouchConfig<InputGpioButtonsConfig>>(inputConfig))
+    {
+        lgfxContext.configureTouch(std::get<InputTouchConfig<InputGpioButtonsConfig>>(inputConfig).touch);
+    }
+    else if (std::holds_alternative<InputTouchConfig<InputSnesConfig>>(inputConfig))
+    {
+        lgfxContext.configureTouch(std::get<InputTouchConfig<InputSnesConfig>>(inputConfig).touch);
+    }
+    else if (std::holds_alternative<InputTouchConfig<InputPSConfig>>(inputConfig))
+    {
+        lgfxContext.configureTouch(std::get<InputTouchConfig<InputPSConfig>>(inputConfig).touch);
+    }
 
     if (std::holds_alternative<GraphicsILI9341Config>(graphicsConfig))
     {
-        static GraphicsILI9341 instance(std::get<GraphicsILI9341Config>(graphicsConfig));
+        static GraphicsILI9341 instance(std::get<GraphicsILI9341Config>(graphicsConfig), lgfxContext);
         graphics = &instance;
         gi = &instance;
     }
@@ -330,6 +360,26 @@ void start(const GraphicsConfig& graphicsConfig, const InputConfig& inputConfig,
     else if (std::holds_alternative<InputPSConfig>(inputConfig))
     {
         static InputPS instance(std::get<InputPSConfig>(inputConfig));
+        inputDriver = &instance;
+    }
+    else if (std::holds_alternative<InputTouchConfig<InputStubConfig>>(inputConfig))
+    {
+        static InputTouch<InputStub> instance(std::get<InputTouchConfig<InputStubConfig>>(inputConfig), lgfxContext);
+        inputDriver = &instance;
+    }
+    else if (std::holds_alternative<InputTouchConfig<InputGpioButtonsConfig>>(inputConfig))
+    {
+        static InputTouch<InputGpioButtons> instance(std::get<InputTouchConfig<InputGpioButtonsConfig>>(inputConfig), lgfxContext);
+        inputDriver = &instance;
+    }
+    else if (std::holds_alternative<InputTouchConfig<InputSnesConfig>>(inputConfig))
+    {
+        static InputTouch<InputSnes> instance(std::get<InputTouchConfig<InputSnesConfig>>(inputConfig), lgfxContext);
+        inputDriver = &instance;
+    }
+    else if (std::holds_alternative<InputTouchConfig<InputPSConfig>>(inputConfig))
+    {
+        static InputTouch<InputPS> instance(std::get<InputTouchConfig<InputPSConfig>>(inputConfig), lgfxContext);
         inputDriver = &instance;
     }
 

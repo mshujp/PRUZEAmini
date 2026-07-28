@@ -14,19 +14,34 @@ Contributors:
  [ciniml](https://github.com/ciniml)
  [mongonta0716](https://github.com/mongonta0716)
  [tobozo](https://github.com/tobozo)
- [erazor83](https://github.com/erazor83)
- 
 /----------------------------------------------------------------------------*/
 #pragma once
 
-#include "v1/gitTagVersion.h"
+#include "../Touch.hpp"
 
-#include "v1/platforms/device.hpp"
-#include "v1/platforms/common.hpp"
-#include "v1/lgfx_filesystem_support.hpp"
-#include "v1/LGFXBase.hpp"
-#include "v1/LGFX_Sprite.hpp"
+namespace lgfx
+{
+ inline namespace v1
+ {
 
-#include "v1/panel/Panel_ILI9341.hpp"
-#include "v1/panel/Panel_SSD1306.hpp"
-#include "v1/touch/Touch_XPT2046.hpp"
+  struct Touch_XPT2046 : public ITouch
+  {
+    Touch_XPT2046(void)
+    {
+      _cfg.freq = 1000000;
+      _cfg.x_min = 300;
+      _cfg.x_max = 3900;
+      _cfg.y_min = 400;
+      _cfg.y_max = 3900;
+    }
+
+    bool init(void) override;
+
+    void wakeup(void) override {}
+    void sleep(void) override {}
+
+    uint_fast8_t getTouchRaw(touch_point_t* tp, uint_fast8_t count) override;
+  };
+
+ }
+}

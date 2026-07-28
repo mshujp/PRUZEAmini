@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GraphicsBase.h"
+#include "GraphicsLGFXContext.h"
 
 namespace PRUZEAmini {
 
@@ -8,6 +9,7 @@ class GraphicsILI9341 : public GraphicsBase
 {
 private:
     GraphicsILI9341Config config;
+    GraphicsLGFXContext& context;
 
     uint16_t canvasHeight = 0;
     uint8_t canvasIndex = 0;
@@ -16,7 +18,7 @@ private:
     void setFont(const char* str, Font font);
 
 public:
-    explicit GraphicsILI9341(const GraphicsILI9341Config& config);
+    GraphicsILI9341(const GraphicsILI9341Config& config, GraphicsLGFXContext& context);
  
     bool begin() override;
     void end() override;

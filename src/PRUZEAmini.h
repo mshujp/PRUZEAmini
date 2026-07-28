@@ -169,6 +169,15 @@ public:
     // Returns 0 when the axis is unavailable or inside the dead zone.
     virtual int16_t axis(Axis axis) const { return 0; }
 
+    // ## Touchscreen input
+    // Coordinates are converted to the visible screen coordinate system.
+    // Coordinates return -1 while the screen is not being touched.
+    virtual bool touched() const { return false; }
+    virtual bool justTouched() const { return false; }
+    virtual bool justTouchReleased() const { return false; }
+    virtual int16_t touchX() const { return -1; }
+    virtual int16_t touchY() const { return -1; }
+
 protected:
     virtual ~Input() {};
 };
@@ -223,10 +232,40 @@ struct InputPSConfig
 
     ButtonPins extraGpioButtonPins{};
 };
+struct InputStubConfig
+{
+};
+struct TouchXPT2046Config
+{
+    uint8_t spiHost = 0;
+    uint32_t spiFreq = 2000000;
+    int8_t clkPin = -1;
+    int8_t mosiPin = -1;
+    int8_t misoPin = -1;
+    int8_t csPin = -1;
+    int8_t irqPin = -1;
+
+    int16_t minX = 250;
+    int16_t maxX = 3850;
+    int16_t minY = 250;
+    int16_t maxY = 3850;
+    int16_t minZ = 2048;
+    uint8_t offsetRotation = 5;
+};
+template<typename BaseInputConfig>
+struct InputTouchConfig
+{
+    BaseInputConfig input{};
+    TouchXPT2046Config touch{};
+};
 using InputConfig = std::variant<
     InputGpioButtonsConfig,
     InputSnesConfig,
-    InputPSConfig
+    InputPSConfig,
+    InputTouchConfig<InputStubConfig>,
+    InputTouchConfig<InputGpioButtonsConfig>,
+    InputTouchConfig<InputSnesConfig>,
+    InputTouchConfig<InputPSConfig>
 >;
 
 
