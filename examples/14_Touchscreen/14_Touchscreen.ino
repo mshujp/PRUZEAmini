@@ -42,6 +42,11 @@ static constexpr int16_t TOUCH_MIN_Y = 250;
 static constexpr int16_t TOUCH_MAX_Y = 3850;
 static constexpr int16_t TOUCH_MIN_Z = 200;
 
+// [!Important] When another device, such as an SD card reader, shares this SPI host,
+// keep its CS pin HIGH while accessing the touchscreen.
+// Set to -1 when no other SPI device is connected.
+static constexpr int8_t SHARED_SPI_DEVICE_CS_PIN = -1;
+
 // =============================================================================
 // PRUZEAmini hardware configuration
 // =============================================================================
@@ -109,21 +114,14 @@ private:
 
     uint32_t lastTouchReadMsec = 0;
 
-    static int16_t clampMap(
-        int32_t value,
-        int32_t inMin,
-        int32_t inMax,
-        int16_t outMin,
-        int16_t outMax)
+    static int16_t clampMap(int32_t value, int32_t inMin, int32_t inMax, int16_t outMin, int16_t outMax)
     {
         if (inMin == inMax)
         {
             return outMin;
         }
 
-        const int32_t mapped =
-            (value - inMin) * (outMax - outMin) /
-            (inMax - inMin) + outMin;
+        const int32_t mapped = (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 
         const int16_t low = min(outMin, outMax);
         const int16_t high = max(outMin, outMax);
@@ -133,6 +131,9 @@ private:
     void readTouch()
     {
         touching = false;
+
+        if (!touchReady) return;
+        if (TOUCH_IRQ_PIN >= 0 && digitalRead(TOUCH_IRQ_PIN) != LOW) return;
 
         if (!touchReady || !touch.touched())
         {
@@ -150,10 +151,8 @@ private:
         }
 
         // First map the touch panel in its unrotated 240 x 320 orientation.
-        const int16_t touchX = clampMap(
-            rawX, TOUCH_MIN_X, TOUCH_MAX_X, 0, 239);
-        const int16_t touchY = clampMap(
-            rawY, TOUCH_MIN_Y, TOUCH_MAX_Y, 0, 319);
+        const int16_t touchX = clampMap(rawX, TOUCH_MIN_X, TOUCH_MAX_X, 0, 239);
+        const int16_t touchY = clampMap(rawY, TOUCH_MIN_Y, TOUCH_MAX_Y, 0, 319);
 
         // lcdRotate = 1: rotate the touch coordinates 90 degrees left.
         screenX = constrain(319 - touchY, 0, 319);
@@ -163,19 +162,8 @@ private:
 
     void drawPreview(Graphics& graphics)
     {
-        graphics.drawRect(
-            PREVIEW_X - 1,
-            PREVIEW_Y - 1,
-            PREVIEW_W + 2,
-            PREVIEW_H + 2,
-            Graphics::DARKGRAY);
-
-        graphics.fillRect(
-            PREVIEW_X,
-            PREVIEW_Y,
-            PREVIEW_W,
-            PREVIEW_H,
-            Graphics::BLACK);
+        graphics.drawRect(PREVIEW_X - 1, PREVIEW_Y - 1, PREVIEW_W + 2, PREVIEW_H + 2, Graphics::DARKGRAY);
+        graphics.fillRect(PREVIEW_X, PREVIEW_Y, PREVIEW_W, PREVIEW_H, Graphics::BLACK);
 
         if (!touching)
         {
@@ -240,6 +228,12 @@ public:
         pinMode(TOUCH_CS_PIN, OUTPUT);
         digitalWrite(TOUCH_CS_PIN, HIGH);
 
+        if (SHARED_SPI_DEVICE_CS_PIN >= 0)
+        {
+            pinMode(SHARED_SPI_DEVICE_CS_PIN, OUTPUT);
+            digitalWrite(SHARED_SPI_DEVICE_CS_PIN, HIGH);
+        }
+
         SPI.setSCK(TOUCH_SCK_PIN);
         SPI.setTX(TOUCH_MOSI_PIN);
         SPI.setRX(TOUCH_MISO_PIN);
@@ -265,10 +259,7 @@ public:
 
         readTouch();
 
-        if (touching != previousTouching ||
-            screenX != previousX ||
-            screenY != previousY ||
-            rawZ != previousZ)
+        if (touching != previousTouching || screenX != previousX || screenY != previousY || rawZ != previousZ)
         {
             dirty = true;
         }
@@ -305,12 +296,7 @@ TouchscreenApp app;
 
 void setup()
 {
-    PRUZEAmini::start(
-        graphicsConfig,
-        inputConfig,
-        audioConfig,
-        storageConfig,
-        app);
+    PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
 void loop()
