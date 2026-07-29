@@ -407,7 +407,19 @@ struct GraphicsILI9341Config
     int8_t csPin    = -1;
     int8_t resetPin   = -1;
     int8_t backlightPin = -1;
-    uint8_t lcdRotate = 0;
+    uint8_t lcdRotate = 1;
+};
+struct GraphicsILI9341ParallelConfig
+{
+    uint32_t writeFreq = 10000000;
+    int8_t dataPinBase = -1;
+    int8_t wrPin = -1;
+    int8_t rdPin = -1;
+    int8_t dcPin = -1;
+    int8_t csPin = -1;
+    int8_t resetPin = -1;
+    int8_t backlightPin = -1;
+    uint8_t lcdRotate = 1;
 };
 struct GraphicsSSD1306Config {
     uint8_t i2cPort = 0;
@@ -419,6 +431,7 @@ struct GraphicsSSD1306Config {
 };
 using GraphicsConfig = std::variant<
     GraphicsILI9341Config,
+    GraphicsILI9341ParallelConfig,
     GraphicsSSD1306Config
 >;
 

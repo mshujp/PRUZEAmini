@@ -11,6 +11,7 @@
 #if defined(ESP_PLATFORM)
 
 #include "esp32/Bus_I2C.hpp"
+#include "esp32/Bus_Parallel8.hpp"
 #include "esp32/Bus_SPI.hpp"
 
 #elif defined(ARDUINO_ARCH_MBED_RP2040) || defined(ARDUINO_ARCH_RP2040) || defined(USE_PICO_SDK)

@@ -3,6 +3,12 @@
 #include <Arduino.h>
 #include "../third_party/LovyanGFX/src/LovyanGFX.hpp"
 
+#if defined(ARDUINO_ARCH_RP2040)
+#include "BusParallelPIO.h"
+#elif defined(ESP_PLATFORM)
+#include "../third_party/LovyanGFX/src/lgfx/v1/platforms/esp32/Bus_Parallel8.hpp"
+#endif
+
 using namespace PRUZEAmini;
 
 namespace {
@@ -14,12 +20,19 @@ class LGFX_ILI9341 : public lgfx::LGFX_Device
 private:
     lgfx::Panel_ILI9341 panel;
     lgfx::Bus_SPI bus;
+#if defined(ARDUINO_ARCH_RP2040)
+    BusParallelPIO parallelBus;
+#elif defined(ESP_PLATFORM) && (!defined(CONFIG_IDF_TARGET) || defined(CONFIG_IDF_TARGET_ESP32))
+    lgfx::Bus_Parallel8 parallelBus;
+#endif
     lgfx::Touch_XPT2046 touch;
     int16_t minimumTouchPressure = 0;
+    bool configured = false;
 
 public:
     void configure(const GraphicsILI9341Config& config, const TouchXPT2046Config* touchConfig)
     {
+        configured = true;
         auto busConfig = bus.config();
         busConfig.spi_host = static_cast<decltype(busConfig.spi_host)>(config.spiHost);
         busConfig.spi_mode = 0;
@@ -80,6 +93,75 @@ public:
         setPanel(&panel);
     }
 
+    void configure(const GraphicsILI9341ParallelConfig& config, const TouchXPT2046Config* touchConfig)
+    {
+#if defined(ARDUINO_ARCH_RP2040)
+        parallelBus.configure(config);
+        configured = true;
+#elif defined(ESP_PLATFORM) && (!defined(CONFIG_IDF_TARGET) || defined(CONFIG_IDF_TARGET_ESP32))
+        auto busConfig = parallelBus.config();
+        busConfig.i2s_port = I2S_NUM_0;
+        busConfig.freq_write = config.writeFreq;
+        busConfig.pin_rd = config.rdPin;
+        busConfig.pin_wr = config.wrPin;
+        busConfig.pin_rs = config.dcPin;
+        for (uint8_t i = 0; i < 8; ++i) busConfig.pin_data[i] = config.dataPinBase + i;
+        parallelBus.config(busConfig);
+        configured = true;
+#else
+        configured = false;
+        return;
+#endif
+
+#if defined(ARDUINO_ARCH_RP2040) || (defined(ESP_PLATFORM) && (!defined(CONFIG_IDF_TARGET) || defined(CONFIG_IDF_TARGET_ESP32)))
+        panel.setBus(&parallelBus);
+
+        auto panelConfig = panel.config();
+        panelConfig.pin_cs = config.csPin;
+        panelConfig.pin_rst = config.resetPin;
+        panelConfig.pin_busy = -1;
+        panelConfig.panel_width = Display::ILI9341_SCREEN_H;
+        panelConfig.panel_height = Display::ILI9341_SCREEN_W;
+        panelConfig.memory_width = Display::ILI9341_SCREEN_H;
+        panelConfig.memory_height = Display::ILI9341_SCREEN_W;
+        panelConfig.readable = false;
+        panelConfig.invert = false;
+        panelConfig.rgb_order = false;
+        panelConfig.dlen_16bit = false;
+        panelConfig.bus_shared = false;
+        panel.config(panelConfig);
+
+        if (touchConfig != nullptr)
+        {
+            auto touchDriverConfig = touch.config();
+            touchDriverConfig.spi_host = static_cast<decltype(touchDriverConfig.spi_host)>(touchConfig->spiHost);
+            touchDriverConfig.freq = touchConfig->spiFreq;
+            touchDriverConfig.pin_sclk = touchConfig->clkPin;
+            touchDriverConfig.pin_mosi = touchConfig->mosiPin;
+            touchDriverConfig.pin_miso = touchConfig->misoPin;
+            touchDriverConfig.pin_cs = touchConfig->csPin;
+            touchDriverConfig.pin_int = -1;
+            touchDriverConfig.x_min = touchConfig->minX;
+            touchDriverConfig.x_max = touchConfig->maxX;
+            touchDriverConfig.y_min = touchConfig->minY;
+            touchDriverConfig.y_max = touchConfig->maxY;
+            touchDriverConfig.offset_rotation = touchConfig->offsetRotation;
+            touchDriverConfig.bus_shared = false;
+            touch.config(touchDriverConfig);
+            panel.setTouch(&touch);
+            minimumTouchPressure = touchConfig->minZ;
+        }
+        else
+        {
+            panel.setTouch(nullptr);
+            minimumTouchPressure = 0;
+        }
+        setPanel(&panel);
+#endif
+    }
+
+    bool isConfigured() const { return configured; }
+
     bool readTouch(int16_t& x, int16_t& y)
     {
         lgfx::touch_point_t point;
@@ -100,6 +182,13 @@ lgfx::LGFX_Sprite ili9341Canvas(&ili9341Lcd);
 void GraphicsLGFXContext::configureGraphics(const GraphicsILI9341Config& config)
 {
     graphicsConfig = config;
+    parallel = false;
+}
+
+void GraphicsLGFXContext::configureGraphics(const GraphicsILI9341ParallelConfig& config)
+{
+    parallelGraphicsConfig = config;
+    parallel = true;
 }
 
 void GraphicsLGFXContext::configureTouch(const TouchXPT2046Config& config)
@@ -120,7 +209,15 @@ void GraphicsLGFXContext::clearTouch()
 
 bool GraphicsLGFXContext::begin()
 {
-    ili9341Lcd.configure(graphicsConfig, touchConfigured ? &touchConfig : nullptr);
+    if (parallel)
+    {
+        ili9341Lcd.configure(parallelGraphicsConfig, touchConfigured ? &touchConfig : nullptr);
+    }
+    else
+    {
+        ili9341Lcd.configure(graphicsConfig, touchConfigured ? &touchConfig : nullptr);
+    }
+    if (!ili9341Lcd.isConfigured()) return false;
     const bool displayAvailable = ili9341Lcd.init();
     touchAvailable = displayAvailable && touchConfigured;
     return displayAvailable;
@@ -143,11 +240,24 @@ GraphicsILI9341::GraphicsILI9341(const GraphicsILI9341Config& config, GraphicsLG
 {
 }
 
+GraphicsILI9341::GraphicsILI9341(const GraphicsILI9341ParallelConfig& config, GraphicsLGFXContext& context)
+    : parallelConfig(config), context(context), parallel(true)
+{
+}
+
 bool GraphicsILI9341::begin()
 {
-    context.configureGraphics(config);
+    if (parallel)
+    {
+        context.configureGraphics(parallelConfig);
+    }
+    else
+    {
+        context.configureGraphics(config);
+    }
     if (!context.begin()) return false;
-    ili9341Lcd.setRotation(config.lcdRotate);
+    const uint8_t lcdRotate = parallel ? parallelConfig.lcdRotate : config.lcdRotate;
+    ili9341Lcd.setRotation(lcdRotate);
 
     ili9341Canvas.setColorDepth(ili9341Lcd.getColorDepth());
     ili9341Canvas.setSwapBytes(true);
@@ -166,10 +276,11 @@ bool GraphicsILI9341::begin()
 
     ili9341Canvas.clear();
 
-    if (config.backlightPin >= 0)
+    const int8_t backlightPin = parallel ? parallelConfig.backlightPin : config.backlightPin;
+    if (backlightPin >= 0)
     {
-        pinMode(config.backlightPin, OUTPUT);
-        digitalWrite(config.backlightPin, HIGH);
+        pinMode(backlightPin, OUTPUT);
+        digitalWrite(backlightPin, HIGH);
     }
 
     viewportX = 0;
@@ -182,7 +293,8 @@ void GraphicsILI9341::end()
 {
     ili9341Canvas.deleteSprite();
     context.end();
-    if (config.backlightPin >= 0) digitalWrite(config.backlightPin, LOW);
+    const int8_t backlightPin = parallel ? parallelConfig.backlightPin : config.backlightPin;
+    if (backlightPin >= 0) digitalWrite(backlightPin, LOW);
     screenDirty = false;
 }
 

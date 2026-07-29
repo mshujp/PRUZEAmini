@@ -273,13 +273,13 @@ const int16_t moveY = input.axis(Input::Axis::LEFT_Y);
 
 ## PRUZEAmini Hardware Compatibility
 
-| Platform | ILI9341 | SSD1306 | PWM | I2S | GPIO | SNES Pad | PS Pad | Emulated EEPROM | SD |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| RP2040 | ✅ | ✅ | ✅ |  | ✅ |  |  | ✅ | ✅ |
-| RP2350 | ✅ |  |  | ✅ |  | ✅ | ✅ | ✅ *1 | ✅ |
-| ESP32 | ✅ | ✅ | ✅ | ✅ | ✅ |  |  | ✅ | ✅ |
-| ESP32-S3 |  |  |  |  |  |  |  |  |  |
-| ESP32-C3/C6 |  |  |  |  |  |  |  |  |  |
+| Platform | ILI9341 SPI | ILI9341 Parallel | SSD1306 | PWM | I2S | GPIO | SNES Pad | PS Pad | Emulated EEPROM | SD |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| RP2040 | ✅ | ✅ | ✅ | ✅ |  | ✅ |  |  | ✅ | ✅ |
+| RP2350 | ✅ |  |  |  | ✅ |  | ✅ | ✅ | ✅ *1 | ✅ |
+| ESP32 | ✅ |  | ✅ | ✅ | ✅ | ✅ |  |  | ✅ | ✅ |
+| ESP32-S3 |  |  |  |  |  |  |  |  |  |  |
+| ESP32-C3/C6 |  |  |  |  |  |  |  |  |  |  |
 
 - ✅: Verified on actual hardware
 - Blank: Not yet tested. A blank cell does **not** mean unsupported or incompatible.

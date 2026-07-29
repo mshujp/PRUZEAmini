@@ -41,6 +41,26 @@ GraphicsConfig graphicsConfig = GraphicsILI9341Config{
 };
 
 // -----------------------------------------------------------------------------
+// GraphicsILI9341Parallel
+// RP2040/RP2350: dataPinBase through dataPinBase + 7 must be consecutive.
+// Classic ESP32: Uses LovyanGFX's native 8-bit parallel bus.
+// -----------------------------------------------------------------------------
+
+/*
+GraphicsConfig graphicsConfig = GraphicsILI9341ParallelConfig{
+    .writeFreq       = 10000000,
+    .dataPinBase     = -1,  // The eight data pins must be connected consecutively, starting from dataPinBase
+    .wrPin           = -1,
+    .rdPin           = -1,
+    .dcPin           = -1,
+    .csPin           = -1,
+    .resetPin        = -1,
+    .backlightPin    = -1,
+    .lcdRotate       = 1,
+};
+*/
+
+// -----------------------------------------------------------------------------
 // GraphicsSSD1306
 // -----------------------------------------------------------------------------
 

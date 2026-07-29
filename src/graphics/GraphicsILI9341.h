@@ -9,7 +9,9 @@ class GraphicsILI9341 : public GraphicsBase
 {
 private:
     GraphicsILI9341Config config;
+    GraphicsILI9341ParallelConfig parallelConfig;
     GraphicsLGFXContext& context;
+    bool parallel = false;
 
     uint16_t canvasHeight = 0;
     uint8_t canvasIndex = 0;
@@ -19,6 +21,7 @@ private:
 
 public:
     GraphicsILI9341(const GraphicsILI9341Config& config, GraphicsLGFXContext& context);
+    GraphicsILI9341(const GraphicsILI9341ParallelConfig& config, GraphicsLGFXContext& context);
  
     bool begin() override;
     void end() override;

@@ -341,6 +341,12 @@ void start(const GraphicsConfig& graphicsConfig, const InputConfig& inputConfig,
         graphics = &instance;
         gi = &instance;
     }
+    else if (std::holds_alternative<GraphicsILI9341ParallelConfig>(graphicsConfig))
+    {
+        static GraphicsILI9341 instance(std::get<GraphicsILI9341ParallelConfig>(graphicsConfig), lgfxContext);
+        graphics = &instance;
+        gi = &instance;
+    }
     else if (std::holds_alternative<GraphicsSSD1306Config>(graphicsConfig))
     {
         static GraphicsSSD1306 instance(std::get<GraphicsSSD1306Config>(graphicsConfig));
