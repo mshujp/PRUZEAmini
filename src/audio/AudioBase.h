@@ -42,6 +42,7 @@ public:
     AudioBase(const AudioBase&) = delete;
     AudioBase& operator=(const AudioBase&) = delete;
 
+    virtual bool runsAsAudioWorker() const { return true; }
     virtual bool begin() = 0;
     virtual void end() = 0;
 

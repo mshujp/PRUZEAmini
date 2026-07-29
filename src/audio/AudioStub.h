@@ -12,6 +12,7 @@ private:
     bool toneSamples(int startFrequency, int endFrequency, uint32_t totalSamples, uint32_t& writtenSamples, float startVolumeScale, float endVolumeScale) override;
 
 public:
+    bool runsAsAudioWorker() const override { return false; }
     uint8_t getVolumeSteps() const override { return 0; }
     bool begin() override;
     void end() override;
