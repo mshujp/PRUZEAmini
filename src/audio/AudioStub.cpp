@@ -25,3 +25,10 @@ bool AudioStub::toneSamples(int startFrequency, int endFrequency, uint32_t total
     writtenSamples = totalSamples;
     return true;
 }
+
+bool AudioStub::pcmSamples(const int16_t* samples, uint32_t sampleCount)
+{
+    (void)samples;
+    (void)sampleCount;
+    return true;
+}

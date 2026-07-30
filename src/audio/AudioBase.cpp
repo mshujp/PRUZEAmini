@@ -2,13 +2,15 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <cstring>
 
 using namespace PRUZEAmini;
+
+using CriticalSectionLock = SpinLockGuard;
 
 namespace {
 
 using CriticalSectionLock = SpinLockGuard;
-template<class T>T clampValue(T value,T low,T high){return value<low?low:(value>high?high:value);}
 
 template<std::size_t N>
 constexpr Audio::Sound makeSound(const Audio::SoundStep (&steps)[N])
@@ -50,7 +52,7 @@ void AudioBase::setVolumeLevel(int8_t level)
 {
     const uint8_t volumeSteps = getVolumeSteps();
     const int8_t maxLevel = volumeSteps > 0 ? static_cast<int8_t>(volumeSteps - 1) : 0;
-    const int8_t clampedLevel = clampValue(level, static_cast<int8_t>(0), maxLevel);
+    const int8_t clampedLevel = std::clamp(level, static_cast<int8_t>(0), maxLevel);
 
     volumeLevel.store(clampedLevel, std::memory_order_relaxed);
     if (clampedLevel > 0)
@@ -121,6 +123,31 @@ bool AudioBase::hasPendingSE() const
     return triggerSEPending.load(std::memory_order_acquire);
 }
 
+void AudioBase::startPendingSE()
+{
+    if (!hasPendingSE()) return;
+
+    float gain = 1.0f;
+    const Sound* sound = takeTriggerSE(gain);
+    if (sound == nullptr) return;
+
+    CriticalSectionLock lock(stateLock);
+    activeSE = sound;
+    activeSEGain = gain;
+    seStepIndex = 0;
+    seStepWrittenSamples = 0;
+    sePhase = 0;
+}
+
+void AudioBase::resetActiveSE()
+{
+    activeSE = nullptr;
+    activeSEGain = 1.0f;
+    seStepIndex = 0;
+    seStepWrittenSamples = 0;
+    sePhase = 0;
+}
+
 void AudioBase::playSE(const Sound* sound, float gain)
 {
     if (sound == nullptr || sound->steps == nullptr || sound->stepCount == 0) return;
@@ -128,22 +155,50 @@ void AudioBase::playSE(const Sound* sound, float gain)
     CriticalSectionLock lock(stateLock);
 
     triggerSE = sound;
-    triggerSEGain = clampValue(gain, 0.0f, 1.0f);
+    triggerSEGain = std::clamp(gain, 0.0f, 1.0f);
     triggerSEPending.store(true, std::memory_order_release);
+}
+
+void AudioBase::stopSE()
+{
+    CriticalSectionLock lock(stateLock);
+
+    triggerSE = nullptr;
+    triggerSEGain = 1.0f;
+    triggerSEPending.store(false, std::memory_order_release);
+    resetActiveSE();
 }
 
 void AudioBase::playMusic(const Music* newMusic)
 {
     CriticalSectionLock lock(stateLock);
 
+    midiPlayer.stop();
+    midiActive.store(false, std::memory_order_release);
+
     music = newMusic;
     musicNoteIndex = 0;
     musicRepeatIndex = 0;
     musicNoteWrittenSamples = 0;
+    musicPhase = 0;
 
     const bool playable = newMusic != nullptr && newMusic->notes != nullptr && newMusic->noteCount > 0;
-
     musicActive.store(playable, std::memory_order_release);
+}
+
+void AudioBase::playMidi(const Midi* midi)
+{
+    CriticalSectionLock lock(stateLock);
+
+    music = nullptr;
+    musicNoteIndex = 0;
+    musicRepeatIndex = 0;
+    musicNoteWrittenSamples = 0;
+    musicPhase = 0;
+    musicActive.store(false, std::memory_order_release);
+
+    const bool playable = midiPlayer.play(midi, sampleRate());
+    midiActive.store(playable, std::memory_order_release);
 }
 
 void AudioBase::stopMusic()
@@ -154,178 +209,291 @@ void AudioBase::stopMusic()
     musicNoteIndex = 0;
     musicRepeatIndex = 0;
     musicNoteWrittenSamples = 0;
+    musicPhase = 0;
     musicActive.store(false, std::memory_order_release);
+
+    midiPlayer.stop();
+    midiActive.store(false, std::memory_order_release);
 }
 
-bool AudioBase::playSound(const Sound* sound, float gain)
+uint32_t AudioBase::phaseStepForFrequency(uint32_t frequency, uint32_t rate)
 {
-    if (sound == nullptr || sound->steps == nullptr || sound->stepCount == 0) return true;
-
-    const float clampedGain = clampValue(gain, 0.0f, 1.0f);
-
-    for (uint16_t i = 0; i < sound->stepCount; ++i)
-    {
-        const SoundStep& step = sound->steps[i];
-        if (step.durationMsec == 0) continue;
-
-        uint32_t writtenSamples = 0;
-        const uint32_t totalSamples =
-            (sampleRate() * static_cast<uint32_t>(step.durationMsec)) / 1000u;
-
-        if (totalSamples == 0) continue;
-
-        const bool completed = toneSamples(
-            step.startFrequency,
-            step.endFrequency,
-            totalSamples,
-            writtenSamples,
-            clampValue(step.startVolume, 0.0f, 1.0f) * clampedGain,
-            clampValue(step.endVolume, 0.0f, 1.0f) * clampedGain
-        );
-
-        if (!completed) return false;
-    }
-
-    return true;
+    if (frequency == 0 || rate == 0) return 0;
+    return static_cast<uint32_t>((static_cast<uint64_t>(frequency) << 32) / rate);
 }
 
-bool AudioBase::playMusicStep()
+int16_t AudioBase::clampSample(int32_t sample)
 {
-    const Music* localMusic = nullptr;
-    uint8_t localRepeatIndex = 0;
-    uint16_t localNoteIndex = 0;
-    uint32_t localWrittenSamples = 0;
-    float localMusicVolume = 0.5f;
+    if (sample > 32767) return 32767;
+    if (sample < -32768) return -32768;
+    return static_cast<int16_t>(sample);
+}
 
+int16_t AudioBase::renderTriangle(uint32_t phase, float volume)
+{
+    const uint16_t position = static_cast<uint16_t>(phase >> 16);
+    int32_t wave;
+
+    if (position < 32768u)
     {
-        CriticalSectionLock lock(stateLock);
-
-        localMusic = music;
-        localNoteIndex = musicNoteIndex;
-        localRepeatIndex = musicRepeatIndex;
-        localWrittenSamples = musicNoteWrittenSamples;
-        localMusicVolume = localMusic == nullptr ? 0.0f : clampValue(localMusic->gain, 0.0f, 1.0f);
+        wave = -32767 + static_cast<int32_t>(position) * 2;
+    }
+    else
+    {
+        wave = 98303 - static_cast<int32_t>(position) * 2;
     }
 
-    if (localMusic == nullptr || localMusic->notes == nullptr || localMusic->noteCount == 0)
-    {
-        musicActive.store(false, std::memory_order_release);
-        return true;
-    }
+    const float clampedVolume = std::clamp(volume, 0.0f, 1.0f);
+    return static_cast<int16_t>(
+        static_cast<float>(wave) *
+        clampedVolume *
+        (static_cast<float>(TONE_AMPLITUDE) / 32767.0f));
+}
 
-    if (localMusic->bpm == 0)
-    {
-        CriticalSectionLock lock(stateLock);
+void AudioBase::renderMusicSamples(int16_t* output, uint32_t sampleCount)
+{
+    std::memset(output, 0, sizeof(int16_t) * sampleCount);
 
-        if (music == localMusic)
+    if (!musicActive.load(std::memory_order_relaxed)) return;
+
+    for (uint32_t sampleIndex = 0; sampleIndex < sampleCount; ++sampleIndex)
+    {
+        while (musicActive.load(std::memory_order_relaxed))
         {
-            music = nullptr;
-            musicNoteIndex = 0;
-            musicRepeatIndex = 0;
-            musicNoteWrittenSamples = 0;
-            musicActive.store(false, std::memory_order_release);
-        }
-        return true;
-    }
-
-    if (localNoteIndex >= localMusic->noteCount)
-    {
-        CriticalSectionLock lock(stateLock);
-
-        if (music == localMusic && musicNoteIndex == localNoteIndex)
-        {
-            if (localMusic->playCount == 0 || localRepeatIndex + 1 < localMusic->playCount)
+            if (music == nullptr || music->notes == nullptr || music->noteCount == 0 || music->bpm == 0)
             {
-                musicNoteIndex = 0;
-                musicRepeatIndex = localMusic->playCount == 0 ? 0 : static_cast<uint8_t>(localRepeatIndex + 1);
-                musicNoteWrittenSamples = 0;
+                music = nullptr;
+                musicActive.store(false, std::memory_order_release);
+                break;
             }
-            else
+
+            if (musicNoteIndex >= music->noteCount)
             {
+                if (music->playCount == 0 || musicRepeatIndex + 1 < music->playCount)
+                {
+                    musicNoteIndex = 0;
+                    musicRepeatIndex = music->playCount == 0
+                        ? 0
+                        : static_cast<uint8_t>(musicRepeatIndex + 1);
+                    musicNoteWrittenSamples = 0;
+                    continue;
+                }
+
                 music = nullptr;
                 musicNoteIndex = 0;
                 musicRepeatIndex = 0;
                 musicNoteWrittenSamples = 0;
                 musicActive.store(false, std::memory_order_release);
+                break;
             }
-        }
-        return true;
-    }
 
-    const ToneNote& note = localMusic->notes[localNoteIndex];
-    uint32_t durationUnits = static_cast<uint32_t>(note.duration);
-    uint16_t nextNoteIndex = static_cast<uint16_t>(localNoteIndex + 1);
+            const ToneNote& note = music->notes[musicNoteIndex];
+            uint32_t durationUnits = static_cast<uint32_t>(note.duration);
+            uint16_t nextNoteIndex = static_cast<uint16_t>(musicNoteIndex + 1);
 
-    while (note.frequency != ToneNote::REST
-        && nextNoteIndex < localMusic->noteCount
-        && localMusic->notes[nextNoteIndex - 1].tie
-        && localMusic->notes[nextNoteIndex].frequency == note.frequency)
-    {
-        durationUnits += static_cast<uint32_t>(localMusic->notes[nextNoteIndex].duration);
-        ++nextNoteIndex;
-    }
+            while (note.frequency != ToneNote::REST
+                && nextNoteIndex < music->noteCount
+                && music->notes[nextNoteIndex - 1].tie
+                && music->notes[nextNoteIndex].frequency == note.frequency)
+            {
+                durationUnits += static_cast<uint32_t>(music->notes[nextNoteIndex].duration);
+                ++nextNoteIndex;
+            }
 
-    const uint64_t numerator = static_cast<uint64_t>(sampleRate()) * 60u * durationUnits;
-    const uint32_t totalSamples = static_cast<uint32_t>(numerator / (static_cast<uint64_t>(localMusic->bpm) * static_cast<uint32_t>(ToneNote::Q)));
+            const uint64_t numerator =
+                static_cast<uint64_t>(sampleRate()) * 60u * durationUnits;
 
-    if (totalSamples == 0)
-    {
-        CriticalSectionLock lock(stateLock);
+            const uint32_t totalSamples = static_cast<uint32_t>(
+                numerator /
+                (static_cast<uint64_t>(music->bpm) *
+                 static_cast<uint32_t>(ToneNote::Q)));
 
-        if (music == localMusic && musicNoteIndex == localNoteIndex)
-        {
-            musicNoteIndex = nextNoteIndex;
-            musicNoteWrittenSamples = 0;
-        }
-        return true;
-    }
+            if (totalSamples == 0 || musicNoteWrittenSamples >= totalSamples)
+            {
+                musicNoteIndex = nextNoteIndex;
+                musicNoteWrittenSamples = 0;
+                continue;
+            }
 
-    const bool completed = toneSamples(
-        note.frequency,
-        note.frequency,
-        totalSamples,
-        localWrittenSamples,
-        localMusicVolume,
-        localMusicVolume
-    );
+            if (note.frequency != ToneNote::REST)
+            {
+                output[sampleIndex] = renderTriangle(
+                    musicPhase,
+                    std::clamp(music->gain, 0.0f, 1.0f));
 
-    {
-        CriticalSectionLock lock(stateLock);
+                musicPhase += phaseStepForFrequency(
+                    note.frequency,
+                    sampleRate());
+            }
 
-        if (music == localMusic && musicNoteIndex == localNoteIndex)
-        {
-            if (completed || localWrittenSamples >= totalSamples)
+            ++musicNoteWrittenSamples;
+            if (musicNoteWrittenSamples >= totalSamples)
             {
                 musicNoteIndex = nextNoteIndex;
                 musicNoteWrittenSamples = 0;
             }
-            else
-            {
-                musicNoteWrittenSamples = localWrittenSamples;
-            }
+            break;
         }
     }
+}
 
-    return completed;
+void AudioBase::renderMidiSamples(int16_t* output, uint32_t sampleCount)
+{
+    std::memset(output, 0, sizeof(int16_t) * sampleCount);
+
+    if (!midiActive.load(std::memory_order_relaxed)) return;
+
+    midiPlayer.render(output, sampleCount);
+    if (!midiPlayer.isPlaying())
+    {
+        midiActive.store(false, std::memory_order_release);
+    }
+}
+
+void AudioBase::renderSESamples(int16_t* output, uint32_t sampleCount)
+{
+    std::memset(output, 0, sizeof(int16_t) * sampleCount);
+
+    for (uint32_t sampleIndex = 0; sampleIndex < sampleCount; ++sampleIndex)
+    {
+        while (activeSE != nullptr)
+        {
+            if (activeSE->steps == nullptr || seStepIndex >= activeSE->stepCount)
+            {
+                resetActiveSE();
+                break;
+            }
+
+            const SoundStep& step = activeSE->steps[seStepIndex];
+            const uint32_t totalSamples =
+                (sampleRate() * static_cast<uint32_t>(step.durationMsec)) / 1000u;
+
+            if (totalSamples == 0 || seStepWrittenSamples >= totalSamples)
+            {
+                ++seStepIndex;
+                seStepWrittenSamples = 0;
+                continue;
+            }
+
+            const uint32_t position = seStepWrittenSamples;
+            const uint32_t denominator = totalSamples > 1 ? totalSamples - 1 : 1;
+
+            const int32_t frequencyDelta =
+                static_cast<int32_t>(step.endFrequency) -
+                static_cast<int32_t>(step.startFrequency);
+
+            int32_t frequency =
+                static_cast<int32_t>(step.startFrequency) +
+                static_cast<int32_t>(
+                    (static_cast<int64_t>(frequencyDelta) * position) /
+                    denominator);
+
+            if (frequency < 0) frequency = 0;
+
+            const float t =
+                static_cast<float>(position) /
+                static_cast<float>(denominator);
+
+            const float volume =
+                (step.startVolume +
+                 (step.endVolume - step.startVolume) * t) *
+                activeSEGain;
+
+            if (frequency > 0)
+            {
+                output[sampleIndex] = renderTriangle(sePhase, volume);
+                sePhase += phaseStepForFrequency(
+                    static_cast<uint32_t>(frequency),
+                    sampleRate());
+            }
+
+            ++seStepWrittenSamples;
+            if (seStepWrittenSamples >= totalSamples)
+            {
+                ++seStepIndex;
+                seStepWrittenSamples = 0;
+            }
+            break;
+        }
+    }
+}
+
+void AudioBase::mixSamples(
+    int16_t* output,
+    const int16_t* bgm,
+    const int16_t* se,
+    uint32_t sampleCount,
+    bool hasBgm,
+    bool hasSE)
+{
+    for (uint32_t i = 0; i < sampleCount; ++i)
+    {
+        int32_t mixed = 0;
+
+        if (hasBgm)
+        {
+            mixed += static_cast<int32_t>(bgm[i]);
+        }
+
+        if (hasSE)
+        {
+            const float seScale = hasBgm ? SE_MIX_GAIN : 1.0f;
+            mixed += static_cast<int32_t>(
+                static_cast<float>(se[i]) * seScale);
+        }
+
+        output[i] = clampSample(mixed);
+    }
 }
 
 void AudioBase::update()
 {
-    if (hasPendingSE())
-    {
-        float seGain = 1.0f;
-        const Sound* sound = takeTriggerSE(seGain);
+    startPendingSE();
 
-        if (sound != nullptr)
+    bool hasBgm = false;
+    bool hasSE = false;
+
+    {
+        CriticalSectionLock lock(stateLock);
+
+        hasBgm =
+            musicActive.load(std::memory_order_relaxed) ||
+            midiActive.load(std::memory_order_relaxed);
+
+        hasSE = activeSE != nullptr;
+
+        if (!hasBgm && !hasSE) return;
+
+        if (musicActive.load(std::memory_order_relaxed))
         {
-            playSound(sound, seGain);
+            renderMusicSamples(bgmBuffer, AUDIO_BUFFER_SAMPLES);
         }
+        else if (midiActive.load(std::memory_order_relaxed))
+        {
+            renderMidiSamples(bgmBuffer, AUDIO_BUFFER_SAMPLES);
+        }
+        else
+        {
+            std::memset(bgmBuffer, 0, sizeof(bgmBuffer));
+        }
+
+        renderSESamples(seBuffer, AUDIO_BUFFER_SAMPLES);
+
+        hasBgm =
+            musicActive.load(std::memory_order_relaxed) ||
+            midiActive.load(std::memory_order_relaxed) ||
+            hasBgm;
+
+        hasSE = activeSE != nullptr || hasSE;
+
+        mixSamples(
+            mixBuffer,
+            bgmBuffer,
+            seBuffer,
+            AUDIO_BUFFER_SAMPLES,
+            hasBgm,
+            hasSE);
     }
 
-    if (hasPendingSE()) return;
-
-    if (musicActive.load(std::memory_order_acquire))
-    {
-        playMusicStep();
-    }
+    pcmSamples(mixBuffer, AUDIO_BUFFER_SAMPLES);
 }

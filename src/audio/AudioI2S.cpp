@@ -160,3 +160,64 @@ bool AudioI2S::toneSamples(int from, int to, uint32_t total, uint32_t& written, 
     }
     return true;
 }
+
+bool AudioI2S::pcmSamples(const int16_t* samples, uint32_t sampleCount)
+{
+    if (!started || samples == nullptr || sampleCount == 0) return true;
+
+    int16_t stereoBuffer[256];
+    uint32_t offset = 0;
+
+    while (offset < sampleCount)
+    {
+        const uint32_t frames = std::min<uint32_t>(128, sampleCount - offset);
+        for (uint32_t i = 0; i < frames; ++i)
+        {
+            int32_t sample = samples[offset + i];
+            switch (getVolumeLevel())
+            {
+            case 1:
+                sample /= 5;
+                break;
+            case 2:
+                sample /= 2;
+                break;
+            case 3:
+                break;
+            default:
+                sample = 0;
+                break;
+            }
+
+            stereoBuffer[i * 2] = static_cast<int16_t>(sample);
+            stereoBuffer[i * 2 + 1] = static_cast<int16_t>(sample);
+        }
+
+#if defined(ARDUINO_ARCH_RP2040)
+        I2S* i2s = static_cast<I2S*>(device);
+        for (uint32_t i = 0; i < frames; ++i)
+        {
+            i2s->write16(stereoBuffer[i * 2], stereoBuffer[i * 2 + 1]);
+        }
+#elif defined(ARDUINO_ARCH_ESP32) && defined(PRUZEA_MINI_ESP_I2S_CLASS)
+        static_cast<I2SClass*>(device)->write(
+            reinterpret_cast<uint8_t*>(stereoBuffer),
+            frames * sizeof(int16_t) * 2);
+#elif defined(ARDUINO_ARCH_ESP32)
+        size_t bytesWritten = 0;
+        i2s_write(
+            I2S_NUM_0,
+            stereoBuffer,
+            frames * sizeof(int16_t) * 2,
+            &bytesWritten,
+            portMAX_DELAY);
+        if (bytesWritten != frames * sizeof(int16_t) * 2) return false;
+#else
+        return false;
+#endif
+
+        offset += frames;
+    }
+
+    return true;
+}

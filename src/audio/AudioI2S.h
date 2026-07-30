@@ -18,6 +18,7 @@ private:
 
     uint32_t sampleRate() const override { return SAMPLE_RATE; }
     bool toneSamples(int from, int to, uint32_t total, uint32_t& written, float startGain, float endGain) override;
+    bool pcmSamples(const int16_t* samples, uint32_t sampleCount) override;
 
 public:
     explicit AudioI2S(const AudioI2SConfig& config) : bclkPin(config.bclkPin), wsPin(config.wsPin), dataPin(config.dataPin) {}

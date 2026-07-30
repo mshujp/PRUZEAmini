@@ -13,19 +13,26 @@ For the full feature set, use PRUZEA instead.
 
 -   Supports the creation of a single application.
 -   AI-friendly public API
--   Portable application code across supported Arduino.
+-   Portable application code across supported Arduino-compatible platforms
 -   Unified Graphics / Input / Audio / Storage APIs
 -   Supports games, UI applications, sensor monitoring, and data logging.
 -   Fixed 30 FPS application loop
 -   Built-in SaveData helper
 -   2D viewport and scrolling support
 -   PWM / I2S audio support
--   SSD1306 / ILI9341 display support
+-   ILI9341 (SPI / Parallel) and SSD1306 display support
 -   AI-oriented documentation and API design
+-   Embedded JPEG / PNG image support
+-   RGB565 sprite scaling, rotation, flipping, and color-key transparency
+-   ToneNote and embedded SMF Format 0 / 1 MIDI playback
+-   Simultaneous background music and sound-effect mixing
+-   GPIO buttons, gamepads, analog sticks, and touchscreen input
 
 - **Supported platforms**
-  - Raspberry Pi Pico family (RP2040 / RP2350)
-  - ESP32
+  - Raspberry Pi Pico family
+    - RP2040
+    - RP2350
+  - ESP32 family
   
 
 | Hardware |  |
@@ -78,7 +85,7 @@ Your app only needs to implement its own game or UI logic.
 
 ## Core API
 
-PRUZEA provides the following hardware abstraction interfaces to every application.
+PRUZEAmini provides the following hardware abstraction interfaces to every application.
 
 Application code does not need to access platform-specific hardware or drivers directly.
 
@@ -95,7 +102,7 @@ For the complete API reference, see:
 
 ## Hardware Configuration
 
-see the example [00B_Hardware_Setup](examples/00B_Hardware_Setup/00B_Hardware_Setup.ino)
+See the example [00B_Hardware_Setup](examples/00B_Hardware_Setup/00B_Hardware_Setup.ino)
 
 ## `PRUZEAmini::App` class
 
@@ -113,11 +120,23 @@ For the complete `PRUZEAmini::App` class reference, see:
 
 - [`src/PRUZEAmini.h`](src/PRUZEAmini.h)
 
+## Resource Files
+
+### Image
+- Embedded JPEG, PNG, and RGB565 images are supported.
+- Sprites support scaling, rotation, flipping, and color-key transparency.
+
+### Audio
+- ToneNote sound effects, ToneNote music, and MIDI music are supported.
+- ToneNote music and MIDI music can play simultaneously with sound effects.
+- Embedded MIDI supports SMF Format 0 and Format 1.
+
+
 ## AI Workflow
 
 PRUZEAmini is designed for AI-assisted game and UI application development.
 
-see the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_Game_Generation.ino)
+See the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_Game_Generation.ino)
 
 ------------------------------------------------------------------------
 
@@ -145,6 +164,7 @@ see the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_
 | [15_Analog_Stick](examples/15_Analog_Stick/15_Analog_Stick.ino) | Analog stick input |
 | [16_MP3_Deck](examples/16_MP3_Deck/16_MP3_Deck.ino) | Touch-controlled MP3 player with SD card and I2S audio |
 | [17_Image_Showcase](examples/17_Image_Showcase/17_Image_Showcase.ino) | JPEG and PNG image rendering |
+| [18_MIDI_Music_Box](examples/18_MIDI_Music_Box/18_MIDI_Music_Box.ino) | Embedded SMF Format 0 / 1 MIDI playback |
 
 Each sample is placed under the [`examples`](examples) directory.
 
@@ -261,7 +281,7 @@ For RP2040 and RP2350, PRUZEAmini uses the I2S library included with the Earle P
 
 ## Analog Stick
 
-PRUZEA supports the analog sticks of PlayStation 1 and PlayStation 2 controllers.
+PRUZEAmini supports the analog sticks of PlayStation 1 and PlayStation 2 controllers.
 
 Analog stick values are normalized to the range `-1000` to `1000`.
 
