@@ -144,6 +144,7 @@ see the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_
 | [14_Touchscreen](examples/14_Touchscreen/14_Touchscreen.ino) | Touch input and coordinate visualization |
 | [15_Analog_Stick](examples/15_Analog_Stick/15_Analog_Stick.ino) | Analog stick input |
 | [16_MP3_Deck](examples/16_MP3_Deck/16_MP3_Deck.ino) | Touch-controlled MP3 player with SD card and I2S audio |
+| [17_Image_Showcase](examples/17_Image_Showcase/17_Image_Showcase.ino) | JPEG and PNG image rendering |
 
 Each sample is placed under the [`examples`](examples) directory.
 

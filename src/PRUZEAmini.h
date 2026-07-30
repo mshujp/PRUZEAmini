@@ -268,6 +268,41 @@ using InputConfig = std::variant<
     InputTouchConfig<InputPSConfig>
 >;
 
+// --- =================================================================
+// # Image: Graphics helper
+// [PROVIDED BY SYSTEM]
+//  These APIs are already implemented by the PRUZEA mini runtime.
+//  These declarations define existing APIs.
+//  Do NOT implement or redefine them. Use them directly from your game code.
+// =====================================================================
+namespace Image {
+    class ImageData
+    {
+    public:
+        virtual const uint16_t* getBuffer() const = 0;
+        virtual uint16_t getWidth() const = 0;
+        virtual uint16_t getHeight() const = 0;
+        virtual void close() = 0;
+    protected:
+        virtual ~ImageData() {}
+    };
+    enum class ImageFit : uint8_t
+    {
+        STRETCH,
+        CONTAIN,
+        COVER
+    };
+
+    // Returns a decoded reusable image.
+    // Returns nullptr when:
+    // - the active graphics backend does not support this image format,
+    // - the image data is invalid,
+    // - the output size is invalid, or
+    // - memory allocation or decoding fails.
+    // The returned image must be explicitly closed by calling Image::close().
+    ImageData* loadJpeg(const uint8_t* jpegData, uint32_t jpegSize, uint16_t outputWidth, uint16_t outputHeight, ImageFit fit);
+    ImageData* loadPng(const uint8_t* pngData, uint32_t pngSize, uint16_t outputWidth, uint16_t outputHeight, ImageFit fit);
+} 
 
 // --- =================================================================
 // # Graphics
@@ -376,7 +411,27 @@ public:
     //       static const uint16_t player_sprite[] = { ... };
     //   - Recommended sprite size: 32x32 pixels or smaller.
     //   - Enlarge sprites using `scale` instead of larger bitmap data.
-    virtual void drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h, uint8_t scale, Color transparentColor, bool flipX = false, bool flipY = false) = 0;
+    virtual void drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h) = 0;
+    struct SpriteOptions
+    {
+        uint8_t scale = 1;
+        float angle = 0.0f;
+        bool flipX = false;
+        bool flipY = false;
+
+        bool transparent = false;
+        Color transparentColor = MAGENTA;
+    };
+    virtual void drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h, const SpriteOptions& options) = 0;
+
+    // Draws an image created by this Graphics backend.
+    // Passing an image created by another backend is not supported.
+    // Image loading may be unsupported by some display backends.
+    // drawImage() uses the transparency information stored in the Image.
+    // Draws the image as opaque.
+    // PNG alpha transparency is not supported.
+    // For color-key transparency, scaling, rotation, or flipping, use drawSprite() with Image::getBuffer(), getWidth(), and getHeight().
+    virtual void drawImage(const Image::ImageData& image, int16_t x, int16_t y) {}
 
     // ## Viewport control
     //   - The default viewport position is (0, 0).

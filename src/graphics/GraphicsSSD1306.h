@@ -35,7 +35,8 @@ public:
     void fillCircle(int16_t x, int16_t y, uint16_t rx, uint16_t ry, Graphics::Color color) override;
     void drawString(const char* str, int16_t x, int16_t y, Graphics::Color color, Font font) override;
     uint16_t getTextWidth(const char* text, Font font) override;
-    void drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h, uint8_t spriteScale,  Color transparentColor, bool flipX = false, bool flipY = false) override;
+    void drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h) override;
+    void drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h, const SpriteOptions& options) override;
 
     bool readScreenLine(uint16_t y, uint16_t* outPixels, uint16_t pixelCount) override;
     bool push() override;

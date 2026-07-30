@@ -432,33 +432,85 @@ uint16_t GraphicsILI9341::getTextWidth(const char* text, Font font)
     return ili9341Canvas.textWidth(text);
 }
 
-void GraphicsILI9341::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h, uint8_t spriteScale,  Color transparentColor, bool flipX, bool flipY)
+void GraphicsILI9341::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h)
 {
-    if (bitmap == nullptr || spriteScale == 0) return;
+    drawSprite(bitmap, x, y, w, h, SpriteOptions{});
+}
 
-    if (spriteScale == 1 && !flipX && !flipY)
+void GraphicsILI9341::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h, const SpriteOptions& options)
+{
+    if (bitmap == nullptr || options.scale == 0) return;
+
+    constexpr auto sourceDepth = lgfx::color_depth_t::rgb565_nonswapped;
+    const auto* palette = static_cast<const lgfx::rgb888_t*>(nullptr);
+    const bool transformed = options.scale != 1 || options.angle != 0.0f || options.flipX || options.flipY;
+
+    if (!transformed)
     {
-        ili9341Canvas.pushImage(x, localY(y), w, h, bitmap, transparentColor);
+        if (options.transparent)
+        {
+            ili9341Canvas.pushImage(
+                x, localY(y), w, h,
+                bitmap,
+                static_cast<uint16_t>(options.transparentColor),
+                sourceDepth,
+                palette);
+        }
+        else
+        {
+            ili9341Canvas.pushImage(x, localY(y), w, h, bitmap, sourceDepth, palette);
+        }
     }
     else
     {
-        const float zoomX = flipX ? -static_cast<float>(spriteScale)
-                                  :  static_cast<float>(spriteScale);
-        const float zoomY = flipY ? -static_cast<float>(spriteScale)
-                                  :  static_cast<float>(spriteScale);
+        const float zoomX = options.flipX ? -static_cast<float>(options.scale) : static_cast<float>(options.scale);
+        const float zoomY = options.flipY ? -static_cast<float>(options.scale) : static_cast<float>(options.scale);
+        const float destinationX = x + (w * options.scale) * 0.5f;
+        const float destinationY = localY(y + static_cast<int32_t>((h * options.scale) / 2));
 
-        ili9341Canvas.pushImageRotateZoom(
-            x + static_cast<int16_t>((w * spriteScale) / 2),
-            localY(y + static_cast<int16_t>((h * spriteScale) / 2)),
-            w / 2, h / 2,
-            0.0f,
-            zoomX, zoomY,
-            w, h,
-            bitmap,
-            transparentColor
-        );
+        if (options.transparent)
+        {
+            ili9341Canvas.pushImageRotateZoom(
+                destinationX, destinationY,
+                w * 0.5f, h * 0.5f,
+                options.angle,
+                zoomX, zoomY,
+                w, h,
+                bitmap,
+                static_cast<uint16_t>(options.transparentColor),
+                sourceDepth,
+                palette);
+        }
+        else
+        {
+            ili9341Canvas.pushImageRotateZoom(
+                destinationX, destinationY,
+                w * 0.5f, h * 0.5f,
+                options.angle,
+                zoomX, zoomY,
+                w, h,
+                bitmap,
+                sourceDepth,
+                palette);
+        }
     }
 
+    screenDirty = true;
+}
+
+void GraphicsILI9341::drawImage(const Image::ImageData& image, int16_t x, int16_t y)
+{
+    const uint16_t* buffer = image.getBuffer();
+    if (buffer == nullptr || image.getWidth() == 0 || image.getHeight() == 0) return;
+
+    ili9341Canvas.pushImage(
+        x,
+        localY(y),
+        image.getWidth(),
+        image.getHeight(),
+        buffer,
+        lgfx::color_depth_t::rgb565_nonswapped,
+        static_cast<const lgfx::rgb888_t*>(nullptr));
     screenDirty = true;
 }
 
@@ -717,36 +769,66 @@ uint16_t GraphicsSSD1306::getTextWidth(const char* text, Font font)
     return ssd1306Canvas.textWidth(text);
 }
 
-void GraphicsSSD1306::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h, uint8_t scale, Color transparentColor, bool flipX, bool flipY)
+void GraphicsSSD1306::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h)
 {
-    if (bitmap == nullptr || scale == 0) return;
+    drawSprite(bitmap, x, y, w, h, SpriteOptions{});
+}
 
-    for (uint16_t sy = 0; sy < h; ++sy)
+void GraphicsSSD1306::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h, const SpriteOptions& options)
+{
+    if (bitmap == nullptr || options.scale == 0) return;
+
+    constexpr auto sourceDepth = lgfx::color_depth_t::rgb565_nonswapped;
+    const auto* palette = static_cast<const lgfx::rgb888_t*>(nullptr);
+    const bool transformed = options.scale != 1 || options.angle != 0.0f || options.flipX || options.flipY;
+
+    if (!transformed)
     {
-        const uint16_t srcY = flipY ? (h - 1 - sy) : sy;
-
-        for (uint16_t sx = 0; sx < w; ++sx)
+        if (options.transparent)
         {
-            const uint16_t srcX = flipX ? (w - 1 - sx) : sx;
-            const Graphics::Color c = static_cast<Graphics::Color>(bitmap[static_cast<uint32_t>(srcY) * w + srcX]);
+            ssd1306Canvas.pushImage(
+                x, y, w, h,
+                bitmap,
+                static_cast<uint16_t>(options.transparentColor),
+                sourceDepth,
+                palette);
+        }
+        else
+        {
+            ssd1306Canvas.pushImage(x, y, w, h, bitmap, sourceDepth, palette);
+        }
+    }
+    else
+    {
+        const float zoomX = options.flipX ? -static_cast<float>(options.scale) : static_cast<float>(options.scale);
+        const float zoomY = options.flipY ? -static_cast<float>(options.scale) : static_cast<float>(options.scale);
+        const float destinationX = x + (w * options.scale) * 0.5f;
+        const float destinationY = y + (h * options.scale) * 0.5f;
 
-            if (c == transparentColor) continue;
-
-            const int32_t dx = static_cast<int32_t>(x) + static_cast<int32_t>(sx) * scale;
-            const int32_t dy = static_cast<int32_t>(y) + static_cast<int32_t>(sy) * scale;
-
-            if (dx >= ssd1306Canvas.width() || dy >= ssd1306Canvas.height() || dx + scale <= 0 || dy + scale <= 0)
-            {
-                continue;
-            }
-
-            for (uint16_t yy = 0; yy < scale; ++yy)
-            {
-                for (uint16_t xx = 0; xx < scale; ++xx)
-                {
-                    ssd1306Canvas.drawPixel(dx + xx, dy + yy, 1);
-                }
-            }
+        if (options.transparent)
+        {
+            ssd1306Canvas.pushImageRotateZoom(
+                destinationX, destinationY,
+                w * 0.5f, h * 0.5f,
+                options.angle,
+                zoomX, zoomY,
+                w, h,
+                bitmap,
+                static_cast<uint16_t>(options.transparentColor),
+                sourceDepth,
+                palette);
+        }
+        else
+        {
+            ssd1306Canvas.pushImageRotateZoom(
+                destinationX, destinationY,
+                w * 0.5f, h * 0.5f,
+                options.angle,
+                zoomX, zoomY,
+                w, h,
+                bitmap,
+                sourceDepth,
+                palette);
         }
     }
 
