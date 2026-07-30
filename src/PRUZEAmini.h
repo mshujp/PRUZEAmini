@@ -59,6 +59,11 @@ namespace Math {
     void rotate(float x, float y, float radians, float& outX, float& outY);
     void normalize(float& x, float& y); // Normalize the vector. If the vector is zero, it is left unchanged.
     float angle(float x, float y); /// Returns the absolute angle of vector (x, y), in radians. Equivalent to atan2f(y, x). Return range: -PI to PI.
+    constexpr float Pi      = 3.14159265358979323846f;
+    constexpr float HalfPi = Pi * 0.5f;
+    constexpr float TwoPi  = Pi * 2.0f;
+    float degToRad(float degrees);
+    float radToDeg(float radians);
 }
 namespace Collision {
     // =========================================================================

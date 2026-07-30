@@ -469,7 +469,7 @@ void GraphicsILI9341::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, u
             ili9341Canvas.pushImageRotateZoom(
                 destinationX, destinationY,
                 w * 0.5f, h * 0.5f,
-                options.angle,
+                Math::radToDeg(options.angle),
                 zoomX, zoomY,
                 w, h,
                 bitmap,
@@ -480,7 +480,7 @@ void GraphicsILI9341::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, u
             ili9341Canvas.pushImageRotateZoom(
                 destinationX, destinationY,
                 w * 0.5f, h * 0.5f,
-                options.angle,
+                Math::radToDeg(options.angle),
                 zoomX, zoomY,
                 w, h,
                 bitmap);
@@ -788,10 +788,9 @@ void GraphicsSSD1306::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, u
 
         if (options.transparent)
         {
-            ssd1306Canvas.pushImageRotateZoom(
-                destinationX, destinationY,
+            ssd1306Canvas.pushImageRotateZoom(destinationX, destinationY,
                 w * 0.5f, h * 0.5f,
-                options.angle,
+                Math::radToDeg(options.angle),
                 zoomX, zoomY,
                 w, h,
                 bitmap,
@@ -804,7 +803,7 @@ void GraphicsSSD1306::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, u
             ssd1306Canvas.pushImageRotateZoom(
                 destinationX, destinationY,
                 w * 0.5f, h * 0.5f,
-                options.angle,
+                Math::radToDeg(options.angle),
                 zoomX, zoomY,
                 w, h,
                 bitmap,

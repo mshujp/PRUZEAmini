@@ -283,7 +283,7 @@ private:
 
         Graphics::SpriteOptions options;
         options.scale = 1;
-        options.angle = characterAngle;
+        options.angle = Math::degToRad(characterAngle);
         options.flipX = false;
         options.flipY = false;
         options.transparent = transparencyEnabled;

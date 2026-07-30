@@ -129,5 +129,15 @@ float angle(float x, float y)
     return atan2f(y, x);
 }
 
+float degToRad(float degrees)
+{
+    return degrees * (Math::Pi / 180.0f);
+}
+
+float radToDeg(float radians)
+{
+    return radians * (180.0f / Math::Pi);
+}
+
 } // namespace Math
 } // namespace PRUZEAmini
