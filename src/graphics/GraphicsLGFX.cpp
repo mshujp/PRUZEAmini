@@ -441,8 +441,6 @@ void GraphicsILI9341::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, u
 {
     if (bitmap == nullptr || options.scale == 0) return;
 
-    constexpr auto sourceDepth = lgfx::color_depth_t::rgb565_nonswapped;
-    const auto* palette = static_cast<const lgfx::rgb888_t*>(nullptr);
     const bool transformed = options.scale != 1 || options.angle != 0.0f || options.flipX || options.flipY;
 
     if (!transformed)
@@ -452,13 +450,11 @@ void GraphicsILI9341::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, u
             ili9341Canvas.pushImage(
                 x, localY(y), w, h,
                 bitmap,
-                static_cast<uint16_t>(options.transparentColor),
-                sourceDepth,
-                palette);
+                static_cast<uint16_t>(options.transparentColor));
         }
         else
         {
-            ili9341Canvas.pushImage(x, localY(y), w, h, bitmap, sourceDepth, palette);
+            ili9341Canvas.pushImage(x, localY(y), w, h, bitmap);
         }
     }
     else
@@ -477,9 +473,7 @@ void GraphicsILI9341::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, u
                 zoomX, zoomY,
                 w, h,
                 bitmap,
-                static_cast<uint16_t>(options.transparentColor),
-                sourceDepth,
-                palette);
+                static_cast<uint16_t>(options.transparentColor));
         }
         else
         {
@@ -489,9 +483,7 @@ void GraphicsILI9341::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, u
                 options.angle,
                 zoomX, zoomY,
                 w, h,
-                bitmap,
-                sourceDepth,
-                palette);
+                bitmap);
         }
     }
 
@@ -500,18 +492,7 @@ void GraphicsILI9341::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, u
 
 void GraphicsILI9341::drawImage(const Image::ImageData& image, int16_t x, int16_t y)
 {
-    const uint16_t* buffer = image.getBuffer();
-    if (buffer == nullptr || image.getWidth() == 0 || image.getHeight() == 0) return;
-
-    ili9341Canvas.pushImage(
-        x,
-        localY(y),
-        image.getWidth(),
-        image.getHeight(),
-        buffer,
-        lgfx::color_depth_t::rgb565_nonswapped,
-        static_cast<const lgfx::rgb888_t*>(nullptr));
-    screenDirty = true;
+    drawSprite(image.getBuffer(), x, y, image.getWidth(), image.getHeight());
 }
 
 void GraphicsILI9341::setViewport(int16_t x, int16_t y)
