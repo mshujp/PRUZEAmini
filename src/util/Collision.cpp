@@ -39,3 +39,49 @@ bool Collision::circleRect(float cx, float cy, float radius, float rx, float ry,
 
     return distanceSq <= (radius * radius);
 }
+
+bool Collision::pointCircle(float px, float py, float cx, float cy, float radius)
+{
+    float dx = px - cx;
+    float dy = py - cy;
+    return (dx * dx + dy * dy) <= (radius * radius);
+}
+
+bool Collision::lineLine(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
+{
+    float denominator = ((x2 - x1) * (y4 - y3)) - ((y2 - y1) * (x4 - x3));
+    if (denominator == 0.0f)
+    {
+        return false;
+    }
+
+    float uA = (((x4 - x3) * (y1 - y3)) - ((y4 - y3) * (x1 - x3))) / denominator;
+    float uB = (((x2 - x1) * (y1 - y3)) - ((y2 - y1) * (x1 - x3))) / denominator;
+
+    return (uA >= 0.0f && uA <= 1.0f && uB >= 0.0f && uB <= 1.0f);
+}
+
+bool Collision::lineRect(float x1, float y1, float x2, float y2, float rx, float ry, float rw, float rh)
+{
+    bool left   = lineLine(x1, y1, x2, y2, rx,      ry,      rx,      ry + rh);
+    bool right  = lineLine(x1, y1, x2, y2, rx + rw, ry,      rx + rw, ry + rh);
+    bool top    = lineLine(x1, y1, x2, y2, rx,      ry,      rx + rw, ry);
+    bool bottom = lineLine(x1, y1, x2, y2, rx,      ry + rh, rx + rw, ry + rh);
+
+    if (left || right || top || bottom)  return true;
+    if (pointRect(x1, y1, rx, ry, rw, rh) || pointRect(x2, y2, rx, ry, rw, rh)) return true;
+
+    return false;
+}
+
+bool Collision::lineCircle(float x1, float y1, float x2, float y2, float cx, float cy, float radius)
+{
+    float dx = x2 - x1, dy = y2 - y1;
+    float len2 = dx * dx + dy * dy;
+    float t = len2 > 0.0f ? ((cx - x1) * dx + (cy - y1) * dy) / len2 : 0.0f;
+    t = t < 0.0f ? 0.0f : (t > 1.0f ? 1.0f : t);
+    float closestX = x1 + t * dx;
+    float closestY = y1 + t * dy;
+    float ddx = cx - closestX, ddy = cy - closestY;
+    return (ddx * ddx + ddy * ddy) <= (radius * radius);
+}
