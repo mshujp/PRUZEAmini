@@ -490,9 +490,9 @@ void GraphicsILI9341::drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, u
     screenDirty = true;
 }
 
-void GraphicsILI9341::drawImage(const Image::ImageData& image, int16_t x, int16_t y)
+void GraphicsILI9341::drawImage(const Image& image, int16_t x, int16_t y)
 {
-    drawSprite(image.getBuffer(), x, y, image.getWidth(), image.getHeight());
+    drawSprite(image.getBitmap(), x, y, image.getWidth(), image.getHeight());
 }
 
 void GraphicsILI9341::setViewport(int16_t x, int16_t y)

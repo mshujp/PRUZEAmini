@@ -101,19 +101,19 @@ protected:
         characterAngle = 0.0f;
         transparencyEnabled = true;
 
-        backgroundImage = Image::loadJpeg(
+        backgroundImage = Graphics::Image::loadJpeg(
             sampleBackgroundJpeg,
             sampleBackgroundJpegSize,
             BACKGROUND_W,
             BACKGROUND_H,
-            Image::ImageFit::STRETCH);
+            Graphics::Image::Fit::STRETCH);
 
-        characterImage = Image::loadPng(
+        characterImage = Graphics::Image::loadPng(
             sampleCharacterPng,
             sampleCharacterPngSize,
             CHARACTER_W,
             CHARACTER_H,
-            Image::ImageFit::STRETCH);
+            Graphics::Image::Fit::STRETCH);
 
         loadSucceeded = backgroundImage != nullptr && characterImage != nullptr;
         if (!loadSucceeded) closeImages();
@@ -212,8 +212,8 @@ private:
     static constexpr float CHARACTER_MIN_Y = 34.0f;
     static constexpr float CHARACTER_MAX_Y = 224.0f - CHARACTER_H;
 
-    Image::ImageData* backgroundImage = nullptr;
-    Image::ImageData* characterImage = nullptr;
+    Graphics::Image* backgroundImage = nullptr;
+    Graphics::Image* characterImage = nullptr;
 
     float characterX = CHARACTER_START_X;
     float characterY = CHARACTER_START_Y;
@@ -290,7 +290,7 @@ private:
         options.transparentColor = Graphics::MAGENTA;
 
         graphics.drawSprite(
-            characterImage->getBuffer(),
+            characterImage->getBitmap(),
             static_cast<int16_t>(characterX),
             static_cast<int16_t>(characterY),
             characterImage->getWidth(),

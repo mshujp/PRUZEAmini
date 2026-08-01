@@ -44,7 +44,7 @@ public:
     uint16_t getTextWidth(const char* text, Font font) override;
     void drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h) override;
     void drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h, const SpriteOptions& options) override;
-    void drawImage(const Image::ImageData& image, int16_t x, int16_t y) override;
+    void drawImage(const Image& image, int16_t x, int16_t y) override;
     void setViewport(int16_t viewportX, int16_t viewportY) override;
     bool readScreenLine(uint16_t y, uint16_t* outPixels, uint16_t pixelCount) override;
 

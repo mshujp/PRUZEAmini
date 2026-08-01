@@ -278,42 +278,6 @@ using InputConfig = std::variant<
 >;
 
 // --- =================================================================
-// # Image: Graphics helper
-// [PROVIDED BY SYSTEM]
-//  These APIs are already implemented by the PRUZEA mini runtime.
-//  These declarations define existing APIs.
-//  Do NOT implement or redefine them. Use them directly from your game code.
-// =====================================================================
-namespace Image {
-    class ImageData
-    {
-    public:
-        virtual const uint16_t* getBuffer() const = 0;
-        virtual uint16_t getWidth() const = 0;
-        virtual uint16_t getHeight() const = 0;
-        virtual void close() = 0;
-    protected:
-        virtual ~ImageData() {}
-    };
-    enum class ImageFit : uint8_t
-    {
-        STRETCH,
-        CONTAIN,
-        COVER
-    };
-
-    // Returns a decoded reusable image.
-    // Returns nullptr when:
-    // - the active graphics backend does not support this image format,
-    // - the image data is invalid,
-    // - the output size is invalid, or
-    // - memory allocation or decoding fails.
-    // The returned image must be explicitly closed by calling Image::close().
-    ImageData* loadJpeg(const uint8_t* jpegData, uint32_t jpegSize, uint16_t outputWidth, uint16_t outputHeight, ImageFit fit);
-    ImageData* loadPng(const uint8_t* pngData, uint32_t pngSize, uint16_t outputWidth, uint16_t outputHeight, ImageFit fit);
-} 
-
-// --- =================================================================
 // # Graphics
 //   - All graphics operations must be performed through this class.
 //   - Supported displays:
@@ -437,10 +401,43 @@ public:
     // Passing an image created by another backend is not supported.
     // Image loading may be unsupported by some display backends.
     // drawImage() uses the transparency information stored in the Image.
-    // Draws the image as opaque.
-    // PNG alpha transparency is not supported.
-    // For color-key transparency, scaling, rotation, or flipping, use drawSprite() with Image::getBuffer(), getWidth(), and getHeight().
-    virtual void drawImage(const Image::ImageData& image, int16_t x, int16_t y) {}
+    // PNG alpha transparency is not supported; PNG images are drawn as opaque.
+    // To specify a different transparent color, scale, or flip direction, use drawSprite() with Image::getBitmap(), getWidth(), and getHeight().
+    // Images are created by the graphics backend. Never construct or subclass Image in game code.
+    // Games only ever obtain instances via loadJpeg()/loadPng(); never construct or subclass Image directly.
+    // Always call Image::close() when finished with the image. Forgetting to call close() will cause a memory leak.
+    class Image
+    {
+    public:
+        // Returns a decoded reusable image.
+        // Returns nullptr when:
+        // - the active graphics backend does not support this image format,
+        // - the image data is invalid,
+        // - the output size is invalid, or
+        // - memory allocation or decoding fails.
+        // The returned image must be explicitly closed by calling Image::close().
+        enum class Fit : uint8_t
+        {
+            STRETCH,
+            CONTAIN,
+            COVER
+        };
+        static Image* loadJpeg(const uint8_t* jpegData, uint32_t jpegSize, uint16_t outputWidth, uint16_t outputHeight, Fit fit);
+        static Image* loadPng(const uint8_t* pngData, uint32_t pngSize, uint16_t outputWidth, uint16_t outputHeight, Fit fit);
+
+        virtual const uint16_t* getBitmap() const = 0;
+        virtual uint16_t getWidth() const = 0;
+        virtual uint16_t getHeight() const = 0;
+        virtual void close();
+
+    protected:
+        Image() = default;
+        virtual ~Image() = default;
+     private:
+        Image(const Image&) = delete;
+        Image& operator=(const Image&) = delete;
+    };
+    virtual void drawImage(const Image& image, int16_t x, int16_t y) {}
 
     // ## Viewport control
     //   - The default viewport position is (0, 0).
