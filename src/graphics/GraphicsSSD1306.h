@@ -12,6 +12,9 @@ private:
     uint16_t mono(Graphics::Color color) const;
     void setFont(const char* str, Font font);
 
+    uint16_t* spriteSheetBuf = nullptr;
+    uint32_t spriteSheetBufSize = 0;
+
 public:
     explicit GraphicsSSD1306(const GraphicsSSD1306Config& config);
 
@@ -37,6 +40,7 @@ public:
     uint16_t getTextWidth(const char* text, Font font) override;
     void drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h) override;
     void drawSprite(const uint16_t* bitmap, int16_t x, int16_t y, uint16_t w, uint16_t h, const SpriteOptions& options) override;
+    void drawSprite(const SpriteSheet& sheet, uint16_t column, uint16_t row, int16_t x, int16_t y, const SpriteOptions& options) override;
 
     bool readScreenLine(uint16_t y, uint16_t* outPixels, uint16_t pixelCount) override;
     bool push() override;

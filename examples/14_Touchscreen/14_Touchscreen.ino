@@ -63,7 +63,7 @@ AudioConfig audioConfig = AudioStubConfig{};
 StorageConfig storageConfig = StorageStubConfig{};
 
 // =============================================================================
-// App
+// Application
 // =============================================================================
 
 class TouchscreenApp : public App

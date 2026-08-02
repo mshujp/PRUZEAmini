@@ -60,7 +60,7 @@ StorageConfig storageConfig = StorageStubConfig{};
 
 
 // =============================================================================
-// App
+// Application
 // =============================================================================
 
 class AnalogStickApp : public App

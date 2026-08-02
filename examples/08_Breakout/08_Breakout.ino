@@ -61,7 +61,7 @@ AudioConfig audioConfig = AudioStubConfig{};
 StorageConfig storageConfig = StorageStubConfig{};
 
 // =============================================================================
-// Game
+// Application
 // =============================================================================
 
 class BreakoutGame : public App

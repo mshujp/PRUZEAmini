@@ -65,7 +65,7 @@ StorageConfig storageConfig = StorageEEPROMConfig{
 };
 
 // =============================================================================
-// Game
+// Application
 // =============================================================================
 
 class SaveDataGame : public App

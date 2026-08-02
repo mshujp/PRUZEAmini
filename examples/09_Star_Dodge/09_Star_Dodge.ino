@@ -64,7 +64,7 @@ AudioConfig audioConfig = AudioStubConfig{};
 StorageConfig storageConfig = StorageStubConfig{};
 
 // =============================================================================
-// Game
+// Application
 // =============================================================================
 
 class StarDodgeGame : public App

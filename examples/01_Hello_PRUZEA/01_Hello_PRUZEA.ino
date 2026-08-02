@@ -51,7 +51,7 @@ AudioConfig audioConfig = AudioStubConfig{};
 StorageConfig storageConfig = StorageStubConfig{};
 
 // =============================================================================
-// Game
+// Application
 // =============================================================================
 
 class HelloPRUZEAGame : public App
