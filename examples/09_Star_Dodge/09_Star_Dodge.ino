@@ -35,14 +35,14 @@ using namespace PRUZEAmini;
 
 GraphicsConfig graphicsConfig = GraphicsILI9341Config{
     .spiHost         = 0,
-    .spiWriteFreq    = 60000000,
+    .spiWriteFreq    = 62500000,
     .clkPin          = -1,
     .dataPin         = -1,
     .dcPin           = -1,
     .csPin           = -1,
     .resetPin        = -1,
     .backlightPin    = -1,
-    .lcdRotate       = 0,
+    .lcdRotate       = 1,
 };
 
 InputConfig inputConfig = InputGpioButtonsConfig{

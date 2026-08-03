@@ -44,8 +44,8 @@ using namespace PRUZEAmini;
 // Unused or unconnected pins may remain -1.
 // -----------------------------------------------------------------------------
 GraphicsConfig graphicsConfig = GraphicsILI9341Config{
-    .spiHost = 1,
-    .spiWriteFreq = 60000000,
+    .spiHost = 0,
+    .spiWriteFreq = 62500000,
     .clkPin = -1,
     .dataPin = -1,
     .dcPin = -1,

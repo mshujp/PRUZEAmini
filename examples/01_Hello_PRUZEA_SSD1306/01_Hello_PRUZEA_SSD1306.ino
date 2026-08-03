@@ -27,7 +27,7 @@ GraphicsConfig graphicsConfig = GraphicsSSD1306Config{
     .sdaPin    = -1,
     .sclPin    = -1,
     .resetPin  = -1,
-    .oledRotate = 0,
+    .oledRotate = 2,
 };
 
 InputConfig inputConfig = InputGpioButtonsConfig{

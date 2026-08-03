@@ -37,7 +37,7 @@ GraphicsConfig graphicsConfig = GraphicsILI9341Config{
     .csPin           = -1,
     .resetPin        = -1,
     .backlightPin    = -1,
-    .lcdRotate  = 0,  // 0: Normal  3: Rotated 180 degrees
+    .lcdRotate  = 1,  // 1: Normal  3: Rotated 180 degrees
 };
 
 // -----------------------------------------------------------------------------
@@ -71,7 +71,7 @@ GraphicsConfig graphicsConfig = GraphicsSSD1306Config{
     .sdaPin     = -1,
     .sclPin     = -1,
     .resetPin   = -1,
-    .oledRotate = 0,  // 0: Normal  2: Rotated 180 degrees
+    .oledRotate = 2,  // 0: Normal  2: Rotated 180 degrees
 };
 */
 
