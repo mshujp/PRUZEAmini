@@ -465,6 +465,17 @@ public:
     virtual void setViewport(int16_t viewportX, int16_t viewportY) = 0;
     virtual void resetViewport() = 0;
 
+    struct Camera
+    {
+        int16_t x = 0;
+        int16_t y = 0;
+        float zoom = 1.0f;
+        int16_t zoomCenterX = 0;
+        int16_t zoomCenterY = 0;
+    };
+    virtual void setCamera(const Camera& camera) = 0;
+    virtual void resetCamera() = 0;
+
 protected:
     virtual ~Graphics() {};
 };

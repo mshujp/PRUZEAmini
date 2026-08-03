@@ -216,7 +216,7 @@ private:
             Graphics::MAGENTA,
             Graphics::SIZE_18,
             Graphics::HorizontalAlign::RIGHT,
-            Graphics::VerticalAlign::MIDDLE);
+            Graphics::VerticalAlign::BOTTOM);
 
         graphics.drawString(
             "PRUZEAmini",

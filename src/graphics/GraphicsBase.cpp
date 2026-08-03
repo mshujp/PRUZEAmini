@@ -1,5 +1,6 @@
 #include "GraphicsBase.h"
 #include <algorithm>
+#include <cmath>
 
 using namespace PRUZEAmini;
 
@@ -8,18 +9,25 @@ uint16_t GraphicsBase::getTextHeight(const char* text, Font font)
     uint16_t size = 0;
     switch (font)
     {
-        case Font::SIZE_10:  return 10;
-        case Font::SIZE_13:  return 13;
-        case Font::SIZE_18:  return 18;
-        case Font::SIZE_22B: return 22;
-        case Font::SIZE_25:  return 25;
-        case Font::SIZE_25B: return 25;
-        case Font::SIZE_32:  return 32;
-        case Font::SIZE_32B: return 32;
-        case Font::SIZE_42:  return 42;
-        case Font::SIZE_42B: return 42;
+        case Font::SIZE_10:  size = 10; break;
+        case Font::SIZE_13:  size = 13; break;
+        case Font::SIZE_18:  size = 18; break;
+        case Font::SIZE_22B: size = 22; break;
+        case Font::SIZE_25:  size = 25; break;
+        case Font::SIZE_25B: size = 25; break;
+        case Font::SIZE_32:  size = 32; break;
+        case Font::SIZE_32B: size = 32; break;
+        case Font::SIZE_42:  size = 42; break;
+        case Font::SIZE_42B: size = 42; break;
         default: return 0;
      }
+
+     if (zoom != 1.0)
+     {
+        size *= zoom;
+     }
+
+     return size;
 }
 
 void GraphicsBase::drawRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t t, Graphics::Color color)
@@ -58,8 +66,8 @@ void GraphicsBase::drawString(const char* str, int16_t cx, int16_t cy, Color col
     if (str == nullptr) return;
     int x = cx;
     int y = cy;
-    const int w = getTextWidth(str, font);
-    const int h = getTextHeight(str, font);
+    const int w = zoom == 1.0f ? getTextWidth(str, font) : static_cast<int>(roundf(getTextWidth(str, font) / zoom));
+    const int h = zoom == 1.0f ? getTextHeight(str, font) : static_cast<int>(roundf(getTextHeight(str, font) / zoom));
 
     switch (ha)
     {
@@ -98,4 +106,75 @@ void GraphicsBase::setViewport(int16_t x, int16_t y)
 void GraphicsBase::resetViewport()
 {
     setViewport(0, 0);
+}
+
+int16_t GraphicsBase::toScreenX(int16_t x) const
+{
+    if (cameraSuspended) return x;
+    if (zoom == 1.0f) return x + offsetX;
+    return static_cast<int16_t>(roundf(x * zoom + offsetX));
+}
+
+int16_t GraphicsBase::toScreenY(int16_t y) const
+{
+    if (cameraSuspended) return y;
+    if (zoom == 1.0f) return y + offsetY;
+    return static_cast<int16_t>(roundf(y * zoom + offsetY));
+}
+
+uint16_t GraphicsBase::toScreenW(uint16_t w) const
+{
+    if (cameraSuspended) return w;
+    if (zoom == 1.0f) return w;
+    return static_cast<uint16_t>(roundf(w * zoom));
+}
+
+uint16_t GraphicsBase::toScreenH(uint16_t h) const
+{
+    if (cameraSuspended) return h;
+    if (zoom == 1.0f) return h;
+    return static_cast<uint16_t>(roundf(h * zoom));
+}
+
+float GraphicsBase::toScreenScale(float scale) const
+{
+    if (cameraSuspended) return scale;
+    if (zoom == 1.0f) return scale;
+    return scale * zoom;
+}
+
+void GraphicsBase::setCamera(const Camera& camera)
+{
+    if (camera.zoom == 0.0f) return;
+
+    if (camera.zoom== 1.0f)
+    {
+        offsetX = -camera.x;
+        offsetY = -camera.y;
+        zoom = camera.zoom;
+     }
+    else
+    {
+        offsetX = camera.zoomCenterX * (1.0f - camera.zoom) - camera.x * camera.zoom;
+        offsetY = camera.zoomCenterY * (1.0f - camera.zoom) - camera.y * camera.zoom;
+        zoom = camera.zoom;
+    }
+}
+
+void GraphicsBase::resetCamera()
+{
+    offsetX = 0;
+    offsetY = 0;
+    zoom = 1.0f;
+    zoomCenterX = 0;
+    zoomCenterY = 0;
+}
+ 
+void GraphicsBase::suspendCamera()
+{
+    cameraSuspended = true;
+}
+void GraphicsBase::resumeCamera()
+{
+    cameraSuspended = false;
 }
