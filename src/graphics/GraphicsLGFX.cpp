@@ -360,6 +360,12 @@ void GraphicsILI9341::fillRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Gra
     screenDirty = true;
 }
 
+void GraphicsILI9341::fillRectAlpha(int16_t x, int16_t y, uint16_t w, uint16_t h, uint8_t alpha, Graphics::Color color)
+{
+    ili9341Canvas.fillRectAlpha(toScreenX(x), localY(toScreenY(y)), toScreenW(w), toScreenH(h), alpha, color);
+    screenDirty = true;
+}
+
 void GraphicsILI9341::fillRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, int16_t r, Graphics::Color color)
 {
     ili9341Canvas.fillRoundRect(toScreenX(x), localY(toScreenY(y)), toScreenW(w), toScreenH(h), toScreenW(r), color);

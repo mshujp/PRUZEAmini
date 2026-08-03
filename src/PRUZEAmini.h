@@ -331,6 +331,7 @@ public:
     virtual void drawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t radius, Color color) = 0;
     virtual void drawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t radius, uint16_t thickness, Color color) = 0;
     virtual void fillRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Color color) = 0;
+    virtual void fillRectAlpha(int16_t x, int16_t y, uint16_t w, uint16_t h, uint8_t alpha, Color color) = 0; // alpha: 255 = fully visible
     virtual void fillRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, int16_t r, Color color) = 0;
     virtual void drawCircle(int16_t x, int16_t y, uint16_t r, Color color) = 0;
     virtual void drawCircle(int16_t x, int16_t y, uint16_t rx, uint16_t ry, Color color) = 0;
