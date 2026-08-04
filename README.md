@@ -18,7 +18,8 @@ For the full feature set, use PRUZEA instead.
 -   Supports games, UI applications, sensor monitoring, and data logging.
 -   Fixed 30 FPS application loop
 -   Built-in SaveData helper
--   2D viewport and scrolling support
+-   2D camera, viewport, and scrolling support
+-   SpriteSheet rendering support
 -   PWM / I2S audio support
 -   ILI9341 (SPI / Parallel) and SSD1306 display support
 -   AI-oriented documentation and API design
