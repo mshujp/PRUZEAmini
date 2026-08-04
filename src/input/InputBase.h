@@ -60,6 +60,7 @@ public:
     virtual void end() = 0;
 
     virtual void update();
+    bool hasInput();
     void reset();
 
     bool pressed(Button b) const override;

@@ -23,7 +23,7 @@
 namespace PRUZEAmini
 {
 
-constexpr char PRUZEA_MINI_VERSION[] = "1.0";
+constexpr char PRUZEA_MINI_VERSION[] = "1.2";
 
 namespace Platform {
     // =========================================================================
@@ -64,6 +64,11 @@ namespace Math {
     constexpr float TwoPi  = Pi * 2.0f;
     float degToRad(float degrees);
     float radToDeg(float radians);
+    int random(int max);          // [0, max)
+    int random(int min, int max); // [min, max)
+    float randomFloat();          // [0.0f, 1.0f)
+    float randomFloat(float max); // [0.0f, max)
+    float randomFloat(float min, float max); // [min, max)
 }
 namespace Collision {
     // =========================================================================
@@ -320,6 +325,8 @@ public:
         return static_cast<Color>( ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3) );
     }
 
+    virtual uint16_t getWidth() const = 0;
+    virtual uint16_t getHeight() const = 0;
     virtual void clearScreen() = 0;
     virtual void fillScreen(Color color) = 0;
     virtual void drawPixel(int16_t x, int16_t y, Color color) = 0;

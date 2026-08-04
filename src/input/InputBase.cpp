@@ -67,6 +67,11 @@ void InputBase::update()
     }
 }
 
+bool InputBase::hasInput()
+{
+    return current != 0;
+}
+
 bool InputBase::pressed(Button b) const
 {
     return (current & static_cast<uint32_t>(b)) != 0;

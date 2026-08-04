@@ -29,6 +29,8 @@ public:
     bool begin() override;
     void end() override;
  
+    uint16_t getWidth() const override { return Display::ILI9341_SCREEN_W; }
+    uint16_t getHeight() const override { return Display::ILI9341_SCREEN_H; }
     void clearScreen() override;
     void fillScreen(Graphics::Color color) override;
     void drawPixel(int16_t x, int16_t y, Graphics::Color color) override;

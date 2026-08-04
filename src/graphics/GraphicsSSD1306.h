@@ -21,9 +21,10 @@ public:
     bool begin() override;
     void end() override;
 
+    uint16_t getWidth() const override { return Display::SSD1306_SCREEN_W; }
+    uint16_t getHeight() const override { return Display::SSD1306_SCREEN_H; }
     void clearScreen() override;
     void fillScreen(Graphics::Color color) override;
-
     void drawPixel(int16_t x, int16_t y, Graphics::Color color) override;
     void drawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2, Graphics::Color color) override;
     void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, Graphics::Color color) override;

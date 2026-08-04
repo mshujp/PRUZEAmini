@@ -1,5 +1,6 @@
 #include "../PRUZEAmini.h"
 #include <cmath>
+#include <Arduino.h>
 
 namespace PRUZEAmini
 {
@@ -137,6 +138,31 @@ float degToRad(float degrees)
 float radToDeg(float radians)
 {
     return radians * (180.0f / Math::Pi);
+}
+
+int random(int max)
+{
+    if (max <= 0) return 0;
+    return static_cast<int>(::random(max));
+}
+
+int random(int min, int max) {
+    if (min >= max) return min;
+    return static_cast<int>(::random(min, max));
+}
+
+float randomFloat() {
+    return static_cast<float>(::random(0x7FFFFFFF)) / 2147483648.0f;
+}
+
+float randomFloat(float max) {
+    if (max <= 0.0f) return 0.0f;
+    return randomFloat() * max;
+}
+
+float randomFloat(float min, float max) {
+    if (min >= max) return min;
+    return min + randomFloat() * (max - min);
 }
 
 } // namespace Math

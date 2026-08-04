@@ -59,6 +59,8 @@ private:
     uint32_t lastFrameMsec = 0;
     bool requestFullRedraw = true;
 
+    bool randomSeedInitialized = false;
+
     bool initialize();
     bool launchAudioWorker();
     void audioWorker();
@@ -99,6 +101,15 @@ void SystemMini::setScreenShotContext(GraphicsILI9341* gi, StorageSD* sd)
     storageSD = sd;
 }
 
+void initRandom()
+{
+    uint32_t seed = micros();
+    seed ^= seed << 13;
+    seed ^= seed >> 17;
+    seed ^= seed << 5;
+    randomSeed(seed);
+}
+
 bool SystemMini::initialize()
 {
     if (!graphics.begin() || !input.begin()) return false;
@@ -108,6 +119,7 @@ bool SystemMini::initialize()
     audio.setVolumeLevel(loadVolume());
     app.init(storage);
     requestFullRedraw = true;
+    initRandom();
     return true;
 }
 
@@ -188,6 +200,11 @@ void SystemMini::runFrame()
     const float delta = float(deltaMsec) / 1000.0f;
     lastFrameMsec = now;
     input.update();
+    if (!randomSeedInitialized && input.hasInput())
+    {
+        initRandom();
+        randomSeedInitialized = true;
+    }
     updateSystem();
     app.update(input, audio, storage, delta);
 
