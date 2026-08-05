@@ -21,6 +21,7 @@ input_files_sdk = (
     (project_dir / "examples" / "03_Graphics_Basics" / "03_Graphics_Basics.ino", "examples/03_Graphics_Basics/03_Graphics_Basics.ino"),
     (project_dir / "examples" / "04_Audio_Basics" / "04_Audio_Basics.ino", "examples/04_Audio_Basics/04_Audio_Basics.ino"),
     (project_dir / "examples" / "05_Save_Data" / "05_Save_Data.ino", "examples/05_Save_Data/05_Save_Data.ino"),
+    (project_dir / "examples" / "Template" / "Template.ino", "examples/Template/Template.ino"),
 )
 output_path_sdk.parent.mkdir(parents=True, exist_ok=True)
 with ZipFile(output_path_sdk, "w", compression=ZIP_DEFLATED) as archive:

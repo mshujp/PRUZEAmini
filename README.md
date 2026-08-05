@@ -166,6 +166,7 @@ See the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_
 | [16_MP3_Deck](examples/16_MP3_Deck/16_MP3_Deck.ino) | Touch-controlled MP3 player with SD card and I2S audio |
 | [17_Image_Showcase](examples/17_Image_Showcase/17_Image_Showcase.ino) | JPEG and PNG image rendering |
 | [18_MIDI_Music_Box](examples/18_MIDI_Music_Box/18_MIDI_Music_Box.ino) | Embedded SMF Format 0 / 1 MIDI playback |
+| [Application Template](examples/Template/Template.ino) | Blank application template for creating new games or applications |
 
 Each sample is placed under the [`examples`](examples) directory.
 
