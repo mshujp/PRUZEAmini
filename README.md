@@ -296,7 +296,7 @@ const int16_t moveY = input.axis(Input::Axis::LEFT_Y);
 
 ## PRUZEAmini Hardware Compatibility
 
-| Platform | ILI9341 SPI | ILI9341 Parallel | SSD1306 | PWM Audio | I2S Audio | GPIO Buttons | SNES Pad | PS Pad | Emulated EEPROM | SD |
+| Platform | ILI9341 SPI | ILI9341 Parallel | SSD1306 | PWM Audio | I2S Audio | GPIO Buttons | SNES Pad | PS Pad | Emulated EEPROM | SD Card |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | RP2040 | ✅ | ✅ | ✅ | ✅ |  | ✅ |  |  | ✅ | ✅ |
 | RP2350 | ✅ |  |  |  | ✅ |  | ✅ | ✅ | ✅ *1 | ✅ |
