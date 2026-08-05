@@ -71,11 +71,7 @@ protected:
         dirty = true;
     }
 
-    void onUpdate(
-        Input& input,
-        Audio& audio,
-        Storage& storage,
-        float deltaSec) override
+    void onUpdate(Input& input, Audio& audio, Storage& storage, float deltaSec) override
     {
         (void)audio;
         (void)storage;
