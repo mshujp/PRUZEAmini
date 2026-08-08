@@ -325,6 +325,17 @@ public:
         return static_cast<Color>( ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3) );
     }
 
+    enum class HorizontalAlign : uint8_t {
+        LEFT,
+        CENTER,
+        RIGHT
+    };
+    enum class VerticalAlign : uint8_t {
+        TOP,
+        MIDDLE,
+        BOTTOM
+    };
+
     virtual uint16_t getWidth() const = 0;
     virtual uint16_t getHeight() const = 0;
     virtual void clearScreen() = 0;
@@ -334,12 +345,19 @@ public:
     virtual void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, Color color) = 0;
     virtual void fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, Color color) = 0;
     virtual void drawRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Color color) = 0;
+    virtual void drawRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Color color, HorizontalAlign ha, VerticalAlign va) = 0;
     virtual void drawRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t thickness, Color color) = 0;
+    virtual void drawRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t thickness, Color color, HorizontalAlign ha, VerticalAlign va) = 0;
     virtual void drawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t radius, Color color) = 0;
+    virtual void drawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t radius, Color color, HorizontalAlign ha, VerticalAlign va) = 0;
     virtual void drawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t radius, uint16_t thickness, Color color) = 0;
+    virtual void drawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t radius, uint16_t thickness, Color color, HorizontalAlign ha, VerticalAlign va) = 0;
     virtual void fillRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Color color) = 0;
+    virtual void fillRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Color color, HorizontalAlign ha, VerticalAlign va) = 0;
     virtual void fillRectAlpha(int16_t x, int16_t y, uint16_t w, uint16_t h, uint8_t alpha, Color color) = 0; // alpha: 255 = fully visible
+    virtual void fillRectAlpha(int16_t x, int16_t y, uint16_t w, uint16_t h, uint8_t alpha, Color color, HorizontalAlign ha, VerticalAlign va) = 0; // alpha: 255 = fully visible
     virtual void fillRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, int16_t r, Color color) = 0;
+    virtual void fillRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, int16_t r, Color color, HorizontalAlign ha, VerticalAlign va) = 0;   
     virtual void drawCircle(int16_t x, int16_t y, uint16_t r, Color color) = 0;
     virtual void drawCircle(int16_t x, int16_t y, uint16_t rx, uint16_t ry, Color color) = 0;
     virtual void fillCircle(int16_t x, int16_t y, uint16_t r, Color color) = 0;
@@ -355,6 +373,7 @@ public:
         SIZE_10,  // very small / debug                   (height: 10px) English only
         SIZE_13,  // HUD                                  (height: 13px) English only
         SIZE_18,  // normal menu text                     (height: 18px) English only
+        SIZE_22,  // normal menu text                     (height: 22px) English only
         SIZE_22B, // Bold normal menu text                (height: 22px) English only
         SIZE_25,  // large text / pause / game over       (height: 25px) English only
         SIZE_25B, // Bold  large text / pause / game over (height: 25px) English only
@@ -365,16 +384,6 @@ public:
     };
     virtual uint16_t getTextWidth(const char* text, Font font) = 0;
     virtual uint16_t getTextHeight(const char* text, Font font) = 0;
-    enum class HorizontalAlign : uint8_t {
-        LEFT,
-        CENTER,
-        RIGHT
-    };
-    enum class VerticalAlign : uint8_t {
-        TOP,
-        MIDDLE,
-        BOTTOM
-    };
     virtual void drawString(const char* str, int16_t x, int16_t y, Color color, Font font) = 0;
     virtual void drawString(const char* str, int16_t x, int16_t y, Color color, Font font, HorizontalAlign ha, VerticalAlign va) = 0;
 

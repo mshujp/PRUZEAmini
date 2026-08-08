@@ -1,6 +1,7 @@
 #include "GraphicsBase.h"
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 
 using namespace PRUZEAmini;
 
@@ -21,6 +22,7 @@ uint16_t GraphicsBase::getTextHeight(const char* text, Font font)
         case Font::SIZE_42B: size = 42; break;
         default: return 0;
      }
+     if (std::strpbrk(text, "gjpqy_") == nullptr) size *= 0.8;
 
      if (zoom != 1.0)
      {
@@ -61,38 +63,67 @@ void GraphicsBase::drawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, u
     }
 }
 
-void GraphicsBase::drawString(const char* str, int16_t cx, int16_t cy, Color color, Font font, HorizontalAlign ha, VerticalAlign va)
+int16_t GraphicsBase::alignedX(int16_t x, uint16_t w, HorizontalAlign ha)
 {
-    if (str == nullptr) return;
-    int x = cx;
-    int y = cy;
-    const int w = zoom == 1.0f ? getTextWidth(str, font) : static_cast<int>(roundf(getTextWidth(str, font) / zoom));
-    const int h = zoom == 1.0f ? getTextHeight(str, font) : static_cast<int>(roundf(getTextHeight(str, font) / zoom));
-
     switch (ha)
     {
-    case HorizontalAlign::CENTER:
-        x -= w / 2;
-        break;
-    case HorizontalAlign::RIGHT:
-        x -= w;
-        break;
-    default:
-        break;
+    case HorizontalAlign::CENTER: return x - w / 2;
+    case HorizontalAlign::RIGHT:  return x - w;
+    default:                      return x;
     }
+}
+
+int16_t GraphicsBase::alignedY(int16_t y, uint16_t h, VerticalAlign va)
+{
     switch (va)
     {
-    case VerticalAlign::MIDDLE:
-        y -= h / 2;
-        break;
-    case VerticalAlign::BOTTOM:
-        y -= h;
-        break;
-    default:
-        break;
+    case VerticalAlign::MIDDLE: return y - h / 2;
+    case VerticalAlign::BOTTOM: return y - h;
+    default:                    return y;
     }
+}
 
-    drawString(str, x, y, color, font);
+void GraphicsBase::drawRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Color color, HorizontalAlign ha, VerticalAlign va)
+{
+    drawRect(alignedX(x, w, ha), alignedY(y, h, va), w, h, color);
+}
+
+void GraphicsBase::drawRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t thickness, Color color, HorizontalAlign ha, VerticalAlign va)
+{
+    drawRect(alignedX(x, w, ha), alignedY(y, h, va), w,h, thickness, color);
+}
+
+void GraphicsBase::drawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t radius, Color color, HorizontalAlign ha, VerticalAlign va)
+{
+    drawRoundRect(alignedX(x, w, ha), alignedY(y, h, va), w, h, radius, color);
+}
+
+void GraphicsBase::drawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t radius, uint16_t thickness, Color color, HorizontalAlign ha, VerticalAlign va)
+{
+    drawRoundRect(alignedX(x, w, ha), alignedY(y, h, va), w, h, radius, thickness, color);
+}
+
+void GraphicsBase::fillRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Color color, HorizontalAlign ha, VerticalAlign va)
+{
+    fillRect(alignedX(x, w, ha), alignedY(y, h, va), w, h, color);
+}
+
+void GraphicsBase::fillRectAlpha(int16_t x, int16_t y, uint16_t w, uint16_t h, uint8_t alpha, Color color, HorizontalAlign ha, VerticalAlign va)
+{
+    fillRectAlpha(alignedX(x, w, ha), alignedY(y, h, va), w, h, alpha, color);
+}
+
+void GraphicsBase::fillRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, int16_t r, Color color, HorizontalAlign ha, VerticalAlign va)
+{
+    fillRoundRect(alignedX(x, w, ha), alignedY(y, h, va), w, h, r, color);
+}
+
+void GraphicsBase::drawString(const char* str, int16_t x, int16_t y, Color color, Font font, HorizontalAlign ha, VerticalAlign va)
+{
+    if (str == nullptr) return;
+    const int w = zoom == 1.0f ? getTextWidth(str, font) : static_cast<int>(roundf(getTextWidth(str, font) / zoom));
+    const int h = zoom == 1.0f ? getTextHeight(str, font) : static_cast<int>(roundf(getTextHeight(str, font) / zoom));
+    drawString(str, alignedX(x, w, ha), alignedY(y, h, va), color, font);
 }
 
 void GraphicsBase::setViewport(int16_t x, int16_t y)

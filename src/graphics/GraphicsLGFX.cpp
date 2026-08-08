@@ -406,13 +406,14 @@ void GraphicsILI9341::setFont(const char* str, Font font)
         case Font::SIZE_10:  targetFont = &fonts::DejaVu9; break;
         case Font::SIZE_13:  targetFont = &fonts::DejaVu12; break;
         case Font::SIZE_18:  targetFont = &fonts::DejaVu18; break;
-        case Font::SIZE_22B: targetFont = &fonts::FreeSansBold9pt7b; break;
-        case Font::SIZE_25:  targetFont = &fonts::DejaVu24; break;
-        case Font::SIZE_25B: targetFont = &fonts::FreeSansBold9pt7b; scaleS = 1.13; break;
-        case Font::SIZE_32:  targetFont = &fonts::DejaVu24; scaleS = 1.33; break;
-        case Font::SIZE_32B: targetFont = &fonts::FreeSansBold12pt7b; scaleS = 1.10; break;
-        case Font::SIZE_42:  targetFont = &fonts::DejaVu40; break;
-        case Font::SIZE_42B: targetFont = &fonts::FreeSansBold18pt7b; break;
+        case Font::SIZE_22:  targetFont = &fonts::DejaVu18; scaleS = 1.2; break;
+        case Font::SIZE_22B: targetFont = &fonts::FreeSansBold9pt7b; scaleS = 1.2; break;
+        case Font::SIZE_25:  targetFont = &fonts::DejaVu24; scaleS = 1.0; break;
+        case Font::SIZE_25B: targetFont = &fonts::FreeSansBold18pt7b; scaleS = 0.7; break;
+        case Font::SIZE_32:  targetFont = &fonts::DejaVu40; scaleS = 0.8; break;
+        case Font::SIZE_32B: targetFont = &fonts::FreeSansBold18pt7b; scaleS = 0.911; break;
+        case Font::SIZE_42:  targetFont = &fonts::DejaVu40; scaleS = 1.04; break;
+        case Font::SIZE_42B: targetFont = &fonts::FreeSansBold18pt7b; scaleS = 1.25; break;
 #ifdef PRUZEA_JAPANESE_FONT
         case Font::SIZE_16J: targetFont = &fonts::DejaVu18; break;
         case Font::SIZE_20J: targetFont = &fonts::DejaVu18; break;
@@ -756,13 +757,14 @@ void GraphicsSSD1306::setFont(const char* str, Font font)
         case Font::SIZE_10:  targetFont = &fonts::DejaVu9; break;
         case Font::SIZE_13:  targetFont = &fonts::DejaVu12; break;
         case Font::SIZE_18:  targetFont = &fonts::DejaVu18; break;
-        case Font::SIZE_22B: targetFont = &fonts::FreeSansBold9pt7b; break;
-        case Font::SIZE_25:  targetFont = &fonts::DejaVu24; break;
-        case Font::SIZE_25B: targetFont = &fonts::FreeSansBold9pt7b; scaleS = 1.13; break;
-        case Font::SIZE_32:  targetFont = &fonts::DejaVu24; scaleS = 1.33; break;
-        case Font::SIZE_32B: targetFont = &fonts::FreeSansBold12pt7b; scaleS = 1.10; break;
-        case Font::SIZE_42:  targetFont = &fonts::DejaVu40; break;
-        case Font::SIZE_42B: targetFont = &fonts::FreeSansBold18pt7b; break;
+        case Font::SIZE_22:  targetFont = &fonts::DejaVu18; scaleS = 1.2; break;
+        case Font::SIZE_22B: targetFont = &fonts::FreeSansBold9pt7b; scaleS = 1.2; break;
+        case Font::SIZE_25:  targetFont = &fonts::DejaVu24; scaleS = 1.0; break;
+        case Font::SIZE_25B: targetFont = &fonts::FreeSansBold18pt7b; scaleS = 0.7; break;
+        case Font::SIZE_32:  targetFont = &fonts::DejaVu40; scaleS = 0.8; break;
+        case Font::SIZE_32B: targetFont = &fonts::FreeSansBold18pt7b; scaleS = 0.911; break;
+        case Font::SIZE_42:  targetFont = &fonts::DejaVu40; scaleS = 1.04; break;
+        case Font::SIZE_42B: targetFont = &fonts::FreeSansBold18pt7b; scaleS = 1.25; break;
 #ifdef PRUZEA_JAPANESE_FONT
         case Font::SIZE_16J: targetFont = &fonts::DejaVu18; break;
         case Font::SIZE_20J: targetFont = &fonts::DejaVu18; break;

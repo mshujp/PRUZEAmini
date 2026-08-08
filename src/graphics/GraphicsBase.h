@@ -14,6 +14,9 @@ private:
     int16_t zoomCenterY = 0;
     bool cameraSuspended = false;
 
+    static int16_t alignedX(int16_t x, uint16_t w, HorizontalAlign ha);
+    static int16_t alignedY(int16_t y, uint16_t h, VerticalAlign va);
+
 protected:
     int16_t viewportX = 0;
     int16_t viewportY = 0;
@@ -37,6 +40,9 @@ public:
     using Graphics::drawString;
     using Graphics::drawRect;
     using Graphics::drawRoundRect;
+    using Graphics::fillRect;
+    using Graphics::fillRectAlpha;
+    using Graphics::fillRoundRect;
     uint16_t getTextHeight(const char* text, Font font) override;
     void setViewport(int16_t x, int16_t y) override;
     int16_t getViewportX() const { return viewportX; }
@@ -44,6 +50,13 @@ public:
     void resetViewport() override;
     void drawRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t thickness, Graphics::Color color) override;
     void drawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t radius, uint16_t thickness, Graphics::Color color) override;
+    void drawRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Color color, HorizontalAlign ha, VerticalAlign va) override;
+    void drawRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t thickness, Color color, HorizontalAlign ha, VerticalAlign va) override;
+    void drawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t radius, Color color, HorizontalAlign ha, VerticalAlign va) override;
+    void drawRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t radius, uint16_t thickness, Color color, HorizontalAlign ha, VerticalAlign va) override;
+    void fillRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Color color, HorizontalAlign ha, VerticalAlign va) override;
+    void fillRectAlpha(int16_t x, int16_t y, uint16_t w, uint16_t h, uint8_t alpha, Color color, HorizontalAlign ha, VerticalAlign va) override;
+    void fillRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, int16_t r, Color color, HorizontalAlign ha, VerticalAlign va) override;
     void drawString(const char* str, int16_t x, int16_t y, Color color, Font font, HorizontalAlign ha, VerticalAlign va) override;
     void setCamera(const Camera& camera) override;
     void resetCamera() override;
