@@ -211,6 +211,8 @@ void SystemMini::runFrame()
     const bool drew = app.draw(graphics, requestFullRedraw);
     if (drew)
     {
+        graphics.suspendCamera();
+
         drawOSD();
         while(graphics.push())
         {
@@ -218,6 +220,8 @@ void SystemMini::runFrame()
             drawOSD();
         }
         requestFullRedraw = false;
+
+        graphics.resumeCamera();
     }
 }
 

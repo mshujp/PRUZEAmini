@@ -22,14 +22,9 @@ uint16_t GraphicsBase::getTextHeight(const char* text, Font font)
         case Font::SIZE_42B: size = 42; break;
         default: return 0;
      }
-     if (std::strpbrk(text, "gjpqy_") == nullptr) size *= 0.8;
+     if (std::strpbrk(text, "gjpqy_") == nullptr) size = static_cast<uint16_t>(roundf(size * 0.8));
 
-     if (zoom != 1.0)
-     {
-        size *= zoom;
-     }
-
-     return size;
+     return zoom == 1.0f || cameraSuspended ? size : static_cast<uint16_t>(roundf(size * zoom));
 }
 
 void GraphicsBase::drawRect(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t t, Graphics::Color color)
