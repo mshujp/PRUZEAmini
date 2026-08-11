@@ -778,12 +778,10 @@ private:
             visibleTitle[23] = '\0';
         }
 
-        // Move the marquee/text start about 10 px inward from the display edge.
+        // Keep the scrolling title inside the display window.
+        graphics.setClipRect(46, 100, 232, 20);
         graphics.drawString(visibleTitle, 50, 101, DISPLAY_TEXT, Graphics::SIZE_18);
-        // Right-side clipping
-        graphics.fillRect(282, 100, 10, 20, DISPLAY_EDGE);
-        graphics.fillRect(285, 100, 5, 20, PANEL_DARK);
-        graphics.fillRect(290, 90, 20, 30, PANEL);
+        graphics.resetClipRect();
 
         char timeText[12];
         formatTime(view.elapsedMsec, timeText, sizeof(timeText));
