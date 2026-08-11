@@ -18,7 +18,8 @@ For the full feature set, use PRUZEA instead.
 -   Supports games, UI applications, sensor monitoring, and data logging.
 -   Fixed 30 FPS application loop
 -   Built-in SaveData helper
--   2D camera, viewport, and scrolling support
+-   2D camera, zoom, clipping, viewport, and scrolling support
+-   2D game utilities for vectors, animation, tweening, math, and collision detection
 -   SpriteSheet rendering support
 -   PWM / I2S audio support
 -   ILI9341 (SPI / Parallel) and SSD1306 display support
@@ -166,6 +167,8 @@ See the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_
 | [16_MP3_Deck](examples/16_MP3_Deck/16_MP3_Deck.ino) | Touch-controlled MP3 player with SD card and I2S audio |
 | [17_Image_Showcase](examples/17_Image_Showcase/17_Image_Showcase.ino) | JPEG and PNG image rendering |
 | [18_MIDI_Music_Box](examples/18_MIDI_Music_Box/18_MIDI_Music_Box.ino) | Embedded SMF Format 0 / 1 MIDI playback |
+| [19_SpriteSheet](examples/19_SpriteSheet/19_SpriteSheet.ino) | Draws individual sprites from a single sprite sheet image. |
+| [20_Maze_Escape](examples/20_Maze_Escape/) | Advanced gameplay and visual effects |
 | [Application Template](examples/Template/Template.ino) | Blank application template for creating new games or applications |
 
 Each sample is placed under the [`examples`](examples) directory.
