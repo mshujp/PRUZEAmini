@@ -75,6 +75,27 @@ namespace Math {
     void reflect(float inX, float inY, float normalX, float normalY, float& outX, float& outY);
     float smoothDamp(float current, float target, float& currentVelocity, float smoothTime, float maxSpeed, float deltaSec);
 }
+class Vector2 {
+public:
+    float x;
+    float y;
+    Vector2(float x = 0.0f, float y = 0.0f);
+    float length() const;
+    Vector2 normalized() const;
+    float dot(const Vector2& other) const;
+    float cross(const Vector2& other) const;
+    float distance(const Vector2& other) const;
+
+    Vector2 operator+(const Vector2& other) const;
+    Vector2 operator-(const Vector2& other) const;
+    Vector2& operator+=(const Vector2& other);
+    Vector2& operator-=(const Vector2& other);
+    Vector2 operator*(float scalar) const;
+    Vector2 operator/(float scalar) const;
+    Vector2& operator*=(float scalar);
+    Vector2& operator/=(float scalar);
+};
+Vector2 operator*(float scalar, const Vector2& vector);
 namespace Collision {
     bool pointRect(float px, float py, float rx, float ry, float rw, float rh);
     bool rectRect(float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh);
