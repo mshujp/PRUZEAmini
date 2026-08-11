@@ -50,9 +50,16 @@ namespace Math {
     float wrap(float value, float min, float max);
     float sin(float radians);
     float cos(float radians);
+    float tan(float radians);
+    float asin(float value);
+    float acos(float value);
+    float atan(float value);
+    float atan2(float y, float x);
     void rotate(float x, float y, float radians, float& outX, float& outY);
     void normalize(float& x, float& y); // Normalize the vector. If the vector is zero, it is left unchanged.
     float angle(float x, float y); /// Returns the absolute angle of vector (x, y), in radians. Equivalent to atan2f(y, x). Return range: -PI to PI.
+    float deltaAngle(float current, float target);
+    float lerpAngle(float current, float target, float t);
     constexpr float Pi      = 3.14159265358979323846f;
     constexpr float HalfPi = Pi * 0.5f;
     constexpr float TwoPi  = Pi * 2.0f;
@@ -63,6 +70,10 @@ namespace Math {
     float randomFloat();          // [0.0f, 1.0f)
     float randomFloat(float max); // [0.0f, max)
     float randomFloat(float min, float max); // [min, max)
+    bool chance(float probability); // 0.0: 0%, 1.0: 100% (Returns true with the given probability (0.0f to 1.0f).)
+    float map(float value, float inMin, float inMax, float outMin, float outMax);
+    void reflect(float inX, float inY, float normalX, float normalY, float& outX, float& outY);
+    float smoothDamp(float current, float target, float& currentVelocity, float smoothTime, float maxSpeed, float deltaSec);
 }
 namespace Collision {
     bool pointRect(float px, float py, float rx, float ry, float rw, float rh);
