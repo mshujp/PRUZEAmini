@@ -117,12 +117,16 @@ Vector2 operator*(float scalar, const Vector2& vector);
 namespace Collision {
     bool pointRect(float px, float py, float rx, float ry, float rw, float rh);
     bool rectRect(float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh);
+    bool rectRect(float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh, Vector2& pushOut);
     bool circleCircle(float ax, float ay, float ar, float bx, float by, float br);
+    bool circleCircle(float ax, float ay, float ar, float bx, float by, float br, Vector2& pushOut);
     bool circleRect(float cx, float cy, float radius, float rx, float ry, float rw, float rh);
+    bool circleRect(float cx, float cy, float radius, float rx, float ry, float rw, float rh, Vector2& pushOut);
     bool pointCircle(float px, float py, float cx, float cy, float radius);
     bool lineLine(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
     bool lineRect(float x1, float y1, float x2, float y2, float rx, float ry, float rw, float rh);
     bool lineCircle(float x1, float y1, float x2, float y2, float cx, float cy, float radius);
+    bool raycast(float x, float y, float dx, float dy, float rx, float ry, float rw, float rh, float& outHitX, float& outHitY);
 }
 namespace Display {
     // Physical display resolutions.
