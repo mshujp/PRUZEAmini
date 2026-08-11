@@ -542,6 +542,29 @@ void GraphicsILI9341::setViewport(int16_t x, int16_t y)
     screenDirty = true;
 }
 
+void GraphicsILI9341::setClipRect(int16_t x, int16_t y, uint16_t w, uint16_t h)
+{
+    ili9341Canvas.setClipRect(x, localY(y), w, h);
+}
+
+void GraphicsILI9341::getClipRect(int16_t& x, int16_t& y, uint16_t& w, uint16_t& h)
+{
+    int32_t cx;
+    int32_t cy;
+    int32_t cw;
+    int32_t ch;
+    ili9341Canvas.getClipRect(&cx, &cy, &cw, &ch);
+    x = static_cast<int16_t>(cx);
+    y = static_cast<int16_t>(cy);
+    w = static_cast<uint16_t>(cw);
+    h = static_cast<uint16_t>(ch);
+}
+
+void GraphicsILI9341::resetClipRect()
+{
+    ili9341Canvas.clearClipRect();
+}
+
 bool GraphicsILI9341::push()
 {
     if (!screenDirty) return false;
@@ -877,6 +900,29 @@ void GraphicsSSD1306::drawSprite(const SpriteSheet& sheet, uint16_t column, uint
     }
 
     drawSprite(spriteSheetBuf, x, y, sheet.spriteWidth, sheet.spriteHeight, options);
+}
+
+void GraphicsSSD1306::setClipRect(int16_t x, int16_t y, uint16_t w, uint16_t h)
+{
+    ssd1306Canvas.setClipRect(x, y, w, h);
+}
+
+void GraphicsSSD1306::getClipRect(int16_t& x, int16_t& y, uint16_t& w, uint16_t& h)
+{
+    int32_t cx;
+    int32_t cy;
+    int32_t cw;
+    int32_t ch;
+    ssd1306Canvas.getClipRect(&cx, &cy, &cw, &ch);
+    x = static_cast<int16_t>(cx);
+    y = static_cast<int16_t>(cy);
+    w = static_cast<uint16_t>(cw);
+    h = static_cast<uint16_t>(ch);
+}
+
+void GraphicsSSD1306::resetClipRect()
+{
+    ssd1306Canvas.clearClipRect();
 }
 
 bool GraphicsSSD1306::readScreenLine(uint16_t y, uint16_t* outPixels, uint16_t pixelCount)

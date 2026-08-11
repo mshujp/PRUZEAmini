@@ -13,6 +13,11 @@ private:
     int16_t zoomCenterX = 0;
     int16_t zoomCenterY = 0;
     bool cameraSuspended = false;
+    int16_t clipRectX = 0;
+    int16_t clipRectY = 0;
+    uint16_t clipRectW = 0;
+    uint16_t clipRectH = 0;
+    bool clipRectSuspended = false;
 
     static int16_t alignedX(int16_t x, uint16_t w, HorizontalAlign ha);
     static int16_t alignedY(int16_t y, uint16_t h, VerticalAlign va);
@@ -27,6 +32,7 @@ protected:
     uint16_t toScreenW(uint16_t w) const; 
     uint16_t toScreenH(uint16_t h) const; 
     float toScreenScale(float scale) const;
+    virtual void getClipRect(int16_t& x, int16_t& y, uint16_t& w, uint16_t& h) = 0;
 
 public:
     virtual ~GraphicsBase() = default;
@@ -43,6 +49,7 @@ public:
     using Graphics::fillRect;
     using Graphics::fillRectAlpha;
     using Graphics::fillRoundRect;
+    using Graphics::setClipRect;
     uint16_t getTextHeight(const char* text, Font font) override;
     void setViewport(int16_t x, int16_t y) override;
     int16_t getViewportX() const { return viewportX; }
@@ -62,6 +69,9 @@ public:
     void resetCamera() override;
     void suspendCamera();
     void resumeCamera();
+    void setClipRect(int16_t x, int16_t y, uint16_t w, uint16_t h, HorizontalAlign ha, VerticalAlign va) override;
+    void suspendClipRect();
+    void resumeClipRect();
 };
 
 } // namespace

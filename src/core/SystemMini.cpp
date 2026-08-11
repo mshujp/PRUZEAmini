@@ -306,7 +306,9 @@ void SystemMini::drawVolume()
 
 void SystemMini::drawOSD()
 {
+    graphics.suspendClipRect();
     drawVolume();
+    graphics.resumeClipRect();
 }
 
 void SystemMini::saveVolume(uint8_t volume)
