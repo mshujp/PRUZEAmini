@@ -366,6 +366,19 @@ void GraphicsILI9341::fillRectAlpha(int16_t x, int16_t y, uint16_t w, uint16_t h
     screenDirty = true;
 }
 
+void GraphicsILI9341::fillRectGradient(int16_t x, int16_t y, uint16_t w, uint16_t h, Color color0, Color color1, FillStyle style)
+{
+    lgfx::gradient_fill_styles::fill_style_t fillStyle;
+    switch (style)
+    {
+        case VERTICAL_LINEAR: fillStyle = lgfx::gradient_fill_styles::vertical_linear; break;
+        case RADIAL_CENTER:   fillStyle = lgfx::gradient_fill_styles::radial_center; break;
+        default:              fillStyle = lgfx::gradient_fill_styles::horizontal_linear; break;
+    }
+    ili9341Canvas.fillGradientRect(toScreenX(x), localY(toScreenY(y)), toScreenW(w), toScreenH(h), color0, color1, fillStyle);
+    screenDirty = true;
+}
+
 void GraphicsILI9341::fillRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, int16_t r, Graphics::Color color)
 {
     ili9341Canvas.fillRoundRect(toScreenX(x), localY(toScreenY(y)), toScreenW(w), toScreenH(h), toScreenW(r), color);
@@ -820,6 +833,11 @@ void GraphicsSSD1306::fillRect(int16_t x, int16_t y, uint16_t w, uint16_t h, Gra
 {
     ssd1306Canvas.fillRect(toScreenX(x), toScreenY(y), toScreenW(w), toScreenH(h), mono(color));
     screenDirty = true;
+}
+
+void GraphicsSSD1306::fillRectGradient(int16_t x, int16_t y, uint16_t w, uint16_t h, Color color0, Color color1, FillStyle style)
+{
+    fillRect(x, y, w, h, color0);
 }
 
 void GraphicsSSD1306::fillRoundRect(int16_t x, int16_t y, uint16_t w, uint16_t h, int16_t r, Graphics::Color color)
