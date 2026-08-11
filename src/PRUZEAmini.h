@@ -75,6 +75,24 @@ namespace Math {
     void reflect(float inX, float inY, float normalX, float normalY, float& outX, float& outY);
     float smoothDamp(float current, float target, float& currentVelocity, float smoothTime, float maxSpeed, float deltaSec);
 }
+class Animation {
+public:
+    Animation(float duration, int totalFrames, bool loop = false);
+    void start();
+    void stop();
+    void reset();
+    void update(float deltaSec);
+    bool isPlaying() const;
+    float progress() const;
+    bool isFinished() const;
+    int frame() const;
+private:
+    float currentTime = 0.0f;
+    float duration = 1.0f;
+    int totalFrames = 1;
+    bool playing = false;
+    bool loop = false;
+};
 class Vector2 {
 public:
     float x;
