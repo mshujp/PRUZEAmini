@@ -120,37 +120,21 @@ private:
     float spawnTimer = 0.0f;
     float survivalTime = 0.0f;
 
-    uint32_t randomState = 0x9E3779B9u;
-
-    uint32_t nextRandom()
-    {
-        randomState = randomState * 1664525u + 1013904223u;
-        return randomState;
-    }
-
-    float randomRange(float minValue, float maxValue)
-    {
-        const float unit =
-            static_cast<float>(nextRandom() & 0xFFFFu) / 65535.0f;
-
-        return minValue + (maxValue - minValue) * unit;
-    }
-
     void initializeBackgroundStars()
     {
         for (uint8_t i = 0; i < BACKGROUND_STAR_COUNT; ++i)
         {
             backgroundStars[i].x =
-                randomRange(FIELD_LEFT, FIELD_RIGHT);
+                Math::randomFloat(FIELD_LEFT, FIELD_RIGHT);
 
             backgroundStars[i].y =
-                randomRange(FIELD_TOP, FIELD_BOTTOM);
+                Math::randomFloat(FIELD_TOP, FIELD_BOTTOM);
 
             backgroundStars[i].speed =
-                randomRange(18.0f, 52.0f);
+                Math::randomFloat(18.0f, 52.0f);
 
             backgroundStars[i].size =
-                static_cast<uint8_t>(1u + nextRandom() % 2u);
+                static_cast<uint8_t>(Math::random(1, 3));
         }
     }
 
@@ -211,9 +195,9 @@ private:
                 continue;
             }
 
-            meteors[i].radius = randomRange(5.0f, 11.0f);
+            meteors[i].radius = Math::randomFloat(5.0f, 11.0f);
 
-            meteors[i].x = randomRange(
+            meteors[i].x = Math::randomFloat(
                 FIELD_LEFT + meteors[i].radius,
                 FIELD_RIGHT - meteors[i].radius);
 
@@ -221,7 +205,7 @@ private:
                 FIELD_TOP - meteors[i].radius - 2.0f;
 
             meteors[i].speed =
-                currentMeteorSpeed() * randomRange(0.85f, 1.18f);
+                currentMeteorSpeed() * Math::randomFloat(0.85f, 1.18f);
 
             meteors[i].active = true;
             return;
@@ -239,7 +223,7 @@ private:
             if (star.y > FIELD_BOTTOM)
             {
                 star.y = FIELD_TOP;
-                star.x = randomRange(FIELD_LEFT, FIELD_RIGHT);
+                star.x = Math::randomFloat(FIELD_LEFT, FIELD_RIGHT);
             }
         }
     }

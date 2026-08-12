@@ -178,11 +178,11 @@ private:
         gyroY = gyroEvent.gyro.y * 57.2957795f;
         gyroZ = gyroEvent.gyro.z * 57.2957795f;
 
-        const float accelPitch = atan2f(
+        const float accelPitch = Math::atan2(
             -accX,
-            sqrtf(accY * accY + accZ * accZ)) * 57.2957795f;
+            Math::sqrt(accY * accY + accZ * accZ)) * 57.2957795f;
 
-        const float accelRoll = atan2f(accY, accZ) * 57.2957795f;
+        const float accelRoll = Math::atan2(accY, accZ) * 57.2957795f;
 
         if (!filterInitialized || deltaSec <= 0.0f)
         {
@@ -200,9 +200,9 @@ private:
         }
 
         // Maximum absolute acceleration on any axis. Gravity is included.
-        maxAcc = maximum(maxAcc, maximum(fabsf(accX), maximum(fabsf(accY), fabsf(accZ))));
-        maxGyro = maximum(maxGyro, maximum(fabsf(gyroX), maximum(fabsf(gyroY), fabsf(gyroZ))));
-        maxTilt = maximum(maxTilt, maximum(fabsf(pitch - zeroPitch), fabsf(roll - zeroRoll)));
+        maxAcc = maximum(maxAcc, maximum(Math::abs(accX), maximum(Math::abs(accY), Math::abs(accZ))));
+        maxGyro = maximum(maxGyro, maximum(Math::abs(gyroX), maximum(Math::abs(gyroY), Math::abs(gyroZ))));
+        maxTilt = maximum(maxTilt, maximum(Math::abs(pitch - zeroPitch), Math::abs(roll - zeroRoll)));
     }
 
 
@@ -223,9 +223,9 @@ private:
         filterInitialized = true;
 
         // Maximum absolute acceleration on any axis. Gravity is included.
-        maxAcc = maximum(maxAcc, maximum(fabsf(accX), maximum(fabsf(accY), fabsf(accZ))));
-        maxGyro = maximum(maxGyro, maximum(fabsf(gyroX), maximum(fabsf(gyroY), fabsf(gyroZ))));
-        maxTilt = maximum(maxTilt, maximum(fabsf(pitch - zeroPitch), fabsf(roll - zeroRoll)));
+        maxAcc = maximum(maxAcc, maximum(Math::abs(accX), maximum(Math::abs(accY), Math::abs(accZ))));
+        maxGyro = maximum(maxGyro, maximum(Math::abs(gyroX), maximum(Math::abs(gyroY), Math::abs(gyroZ))));
+        maxTilt = maximum(maxTilt, maximum(Math::abs(pitch - zeroPitch), Math::abs(roll - zeroRoll)));
     }
 
     void drawBar(
@@ -306,7 +306,7 @@ private:
         const int16_t bubbleY = cy + static_cast<int16_t>(clamp(shownPitch, -30.0f, 30.0f) / 30.0f * 60.0f);
 
         graphics.fillCircle(bubbleX, bubbleY, 10,
-            (fabsf(shownPitch) < 2.0f && fabsf(shownRoll) < 2.0f)
+            (Math::abs(shownPitch) < 2.0f && Math::abs(shownRoll) < 2.0f)
                 ? Graphics::GREEN : Graphics::YELLOW);
         graphics.drawCircle(bubbleX, bubbleY, 10, Graphics::WHITE);
 

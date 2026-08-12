@@ -4,10 +4,12 @@
  07_Animation
 ===============================================================================
 
-This example combines three basic animation techniques:
+Demonstrates PRUZEAmini animation helpers together with ordinary game motion:
 
+- Animation : two-frame walking cycle
+- Tween     : expanding burst ring
+- Math      : randomFloat(), sin(), cos(), normalize(), clamp()
 - A scrolling starfield
-- A simple two-frame walking character
 - Short-lived particles
 
 Controls:
@@ -24,11 +26,6 @@ Before compiling:
 #include <PRUZEAmini.h>
 
 using namespace PRUZEAmini;
-
-
-// =============================================================================
-// Hardware configuration
-// =============================================================================
 
 GraphicsConfig graphicsConfig = GraphicsILI9341Config{
     .spiHost         = 0,
@@ -59,10 +56,6 @@ InputConfig inputConfig = InputGpioButtonsConfig{
 AudioConfig audioConfig = AudioStubConfig{};
 StorageConfig storageConfig = StorageStubConfig{};
 
-// =============================================================================
-// Application
-// =============================================================================
-
 class AnimationGame : public App
 {
 public:
@@ -71,15 +64,14 @@ public:
 private:
     static constexpr uint8_t STAR_COUNT = 28;
     static constexpr uint8_t PARTICLE_COUNT = 24;
-
     static constexpr float FIELD_LEFT = 8.0f;
     static constexpr float FIELD_TOP = 36.0f;
     static constexpr float FIELD_RIGHT = 312.0f;
     static constexpr float FIELD_BOTTOM = 196.0f;
-
     static constexpr float PLAYER_SPEED = 110.0f;
     static constexpr float PLAYER_HALF_W = 8.0f;
     static constexpr float PLAYER_HALF_H = 10.0f;
+    static constexpr float BURST_TWEEN_SEC = 0.45f;
 
     struct Star
     {
@@ -105,37 +97,24 @@ private:
 
     float playerX = 160.0f;
     float playerY = 116.0f;
-
     bool facingRight = true;
     bool moving = false;
     bool paused = false;
 
-    uint32_t randomState = 0x13572468u;
-    float walkTimer = 0.0f;
-    uint8_t walkFrame = 0;
+    // Animation owns the frame timing instead of a hand-written timer.
+    Animation walkAnimation{0.28f, 2, true};
 
-    uint32_t nextRandom()
-    {
-        randomState = randomState * 1664525u + 1013904223u;
-        return randomState;
-    }
-
-    float randomRange(float minValue, float maxValue)
-    {
-        const float unit =
-            static_cast<float>(nextRandom() & 0xFFFFu) / 65535.0f;
-
-        return minValue + (maxValue - minValue) * unit;
-    }
+    // Tween uses a simple elapsed value as its input and controls the ring size.
+    float burstTweenTime = BURST_TWEEN_SEC;
 
     void initializeStars()
     {
         for (uint8_t i = 0; i < STAR_COUNT; ++i)
         {
-            stars[i].x = randomRange(FIELD_LEFT, FIELD_RIGHT);
-            stars[i].y = randomRange(FIELD_TOP, FIELD_BOTTOM);
-            stars[i].speed = randomRange(18.0f, 58.0f);
-            stars[i].size = static_cast<uint8_t>(1u + (nextRandom() % 2u));
+            stars[i].x = Math::randomFloat(FIELD_LEFT, FIELD_RIGHT);
+            stars[i].y = Math::randomFloat(FIELD_TOP, FIELD_BOTTOM);
+            stars[i].speed = Math::randomFloat(18.0f, 58.0f);
+            stars[i].size = static_cast<uint8_t>(Math::random(1, 3));
         }
     }
 
@@ -143,18 +122,14 @@ private:
     {
         playerX = 160.0f;
         playerY = 116.0f;
-
         facingRight = true;
         moving = false;
         paused = false;
-
-        walkTimer = 0.0f;
-        walkFrame = 0;
+        walkAnimation.reset();
+        burstTweenTime = BURST_TWEEN_SEC;
 
         for (uint8_t i = 0; i < PARTICLE_COUNT; ++i)
-        {
             particles[i].active = false;
-        }
 
         initializeStars();
         dirty = true;
@@ -162,23 +137,22 @@ private:
 
     void createBurst()
     {
-        static constexpr float TWO_PI_VALUE = 6.28318531f;
-
         for (uint8_t i = 0; i < PARTICLE_COUNT; ++i)
         {
             const float angle =
-                (static_cast<float>(i) / PARTICLE_COUNT) * TWO_PI_VALUE;
-
-            const float speed = randomRange(36.0f, 82.0f);
+                (static_cast<float>(i) / PARTICLE_COUNT) * Math::TwoPi;
+            const float speed = Math::randomFloat(36.0f, 82.0f);
 
             particles[i].x = playerX;
             particles[i].y = playerY;
             particles[i].vx = Math::cos(angle) * speed;
             particles[i].vy = Math::sin(angle) * speed;
-            particles[i].life = randomRange(0.45f, 0.85f);
+            particles[i].life = Math::randomFloat(0.45f, 0.85f);
             particles[i].maxLife = particles[i].life;
             particles[i].active = true;
         }
+
+        burstTweenTime = 0.0f;
     }
 
     void updateStars(float deltaSec)
@@ -186,11 +160,10 @@ private:
         for (uint8_t i = 0; i < STAR_COUNT; ++i)
         {
             stars[i].x -= stars[i].speed * deltaSec;
-
             if (stars[i].x < FIELD_LEFT)
             {
                 stars[i].x = FIELD_RIGHT;
-                stars[i].y = randomRange(FIELD_TOP, FIELD_BOTTOM);
+                stars[i].y = Math::randomFloat(FIELD_TOP, FIELD_BOTTOM);
             }
         }
     }
@@ -200,14 +173,9 @@ private:
         for (uint8_t i = 0; i < PARTICLE_COUNT; ++i)
         {
             Particle& particle = particles[i];
-
-            if (!particle.active)
-            {
-                continue;
-            }
+            if (!particle.active) continue;
 
             particle.life -= deltaSec;
-
             if (particle.life <= 0.0f)
             {
                 particle.active = false;
@@ -216,7 +184,6 @@ private:
 
             particle.x += particle.vx * deltaSec;
             particle.y += particle.vy * deltaSec;
-
             particle.vx *= 0.97f;
             particle.vy *= 0.97f;
         }
@@ -232,54 +199,34 @@ private:
             dx -= 1.0f;
             facingRight = false;
         }
-
         if (input.pressed(Input::RIGHT))
         {
             dx += 1.0f;
             facingRight = true;
         }
-
-        if (input.pressed(Input::UP))
-        {
-            dy -= 1.0f;
-        }
-
-        if (input.pressed(Input::DOWN))
-        {
-            dy += 1.0f;
-        }
+        if (input.pressed(Input::UP))   dy -= 1.0f;
+        if (input.pressed(Input::DOWN)) dy += 1.0f;
 
         moving = dx != 0.0f || dy != 0.0f;
 
         if (moving)
         {
             Math::normalize(dx, dy);
-
             playerX += dx * PLAYER_SPEED * deltaSec;
             playerY += dy * PLAYER_SPEED * deltaSec;
+            playerX = Math::clamp(playerX,
+                                  FIELD_LEFT + PLAYER_HALF_W,
+                                  FIELD_RIGHT - PLAYER_HALF_W);
+            playerY = Math::clamp(playerY,
+                                  FIELD_TOP + PLAYER_HALF_H,
+                                  FIELD_BOTTOM - PLAYER_HALF_H);
 
-            playerX = Math::clamp(
-                playerX,
-                FIELD_LEFT + PLAYER_HALF_W,
-                FIELD_RIGHT - PLAYER_HALF_W);
-
-            playerY = Math::clamp(
-                playerY,
-                FIELD_TOP + PLAYER_HALF_H,
-                FIELD_BOTTOM - PLAYER_HALF_H);
-
-            walkTimer += deltaSec;
-
-            if (walkTimer >= 0.14f)
-            {
-                walkTimer = 0.0f;
-                walkFrame ^= 1u;
-            }
+            if (!walkAnimation.isPlaying()) walkAnimation.start();
+            walkAnimation.update(deltaSec);
         }
         else
         {
-            walkTimer = 0.0f;
-            walkFrame = 0;
+            walkAnimation.reset();
         }
     }
 
@@ -289,15 +236,10 @@ private:
         {
             const int16_t x = static_cast<int16_t>(stars[i].x);
             const int16_t y = static_cast<int16_t>(stars[i].y);
-
             if (stars[i].size == 1)
-            {
                 graphics.drawPixel(x, y, Graphics::LIGHTGRAY);
-            }
             else
-            {
                 graphics.fillRect(x, y, 2, 2, Graphics::WHITE);
-            }
         }
     }
 
@@ -306,39 +248,39 @@ private:
         for (uint8_t i = 0; i < PARTICLE_COUNT; ++i)
         {
             const Particle& particle = particles[i];
-
-            if (!particle.active)
-            {
-                continue;
-            }
+            if (!particle.active) continue;
 
             const float lifeRatio = particle.life / particle.maxLife;
-
             const Graphics::Color color =
                 lifeRatio > 0.66f ? Graphics::WHITE :
-                lifeRatio > 0.33f ? Graphics::YELLOW :
-                                    Graphics::ORANGE;
+                lifeRatio > 0.33f ? Graphics::YELLOW : Graphics::ORANGE;
 
             const int16_t x = static_cast<int16_t>(particle.x);
             const int16_t y = static_cast<int16_t>(particle.y);
-
             if (lifeRatio > 0.5f)
-            {
                 graphics.fillCircle(x, y, 2, color);
-            }
             else
-            {
                 graphics.drawPixel(x, y, color);
-            }
         }
+    }
+
+    void drawBurstTween(Graphics& graphics)
+    {
+        if (burstTweenTime >= BURST_TWEEN_SEC) return;
+
+        const float t = Math::clamp(burstTweenTime / BURST_TWEEN_SEC, 0.0f, 1.0f);
+        const float radius = Tween::value(5.0f, 34.0f, t, Tween::EASE_OUT);
+        graphics.drawCircle(static_cast<int16_t>(playerX),
+                            static_cast<int16_t>(playerY),
+                            static_cast<uint16_t>(radius),
+                            Graphics::YELLOW);
     }
 
     void drawPlayer(Graphics& graphics)
     {
         const int16_t x = static_cast<int16_t>(playerX);
         const int16_t y = static_cast<int16_t>(playerY);
-
-        const int16_t step = moving && walkFrame != 0 ? 2 : 0;
+        const int16_t step = moving && walkAnimation.frame() != 0 ? 2 : 0;
 
         graphics.fillCircle(x, y - 6, 5, Graphics::YELLOW);
         graphics.fillRect(x - 5, y - 1, 10, 10, Graphics::CYAN);
@@ -346,25 +288,10 @@ private:
         const int16_t eyeX = facingRight ? x + 2 : x - 2;
         graphics.drawPixel(eyeX, y - 7, Graphics::BLACK);
 
-        graphics.drawLine(
-            x - 3, y + 9,
-            x - 5 - step, y + 13,
-            Graphics::WHITE);
-
-        graphics.drawLine(
-            x + 3, y + 9,
-            x + 5 + step, y + 13,
-            Graphics::WHITE);
-
-        graphics.drawLine(
-            x - 5, y + 2,
-            x - 9, y + 5 + step,
-            Graphics::CYAN);
-
-        graphics.drawLine(
-            x + 5, y + 2,
-            x + 9, y + 5 - step,
-            Graphics::CYAN);
+        graphics.drawLine(x - 3, y + 9, x - 5 - step, y + 13, Graphics::WHITE);
+        graphics.drawLine(x + 3, y + 9, x + 5 + step, y + 13, Graphics::WHITE);
+        graphics.drawLine(x - 5, y + 2, x - 9, y + 5 + step, Graphics::CYAN);
+        graphics.drawLine(x + 5, y + 2, x + 9, y + 5 - step, Graphics::CYAN);
     }
 
 protected:
@@ -374,11 +301,7 @@ protected:
         reset();
     }
 
-    void onUpdate(
-        Input& input,
-        Audio& audio,
-        Storage& storage,
-        float deltaSec) override
+    void onUpdate(Input& input, Audio& audio, Storage& storage, float deltaSec) override
     {
         (void)audio;
         (void)storage;
@@ -395,120 +318,69 @@ protected:
             return;
         }
 
-        if (paused)
-        {
-            return;
-        }
+        if (paused) return;
 
-        if (input.justPressed(Input::A))
-        {
-            createBurst();
-        }
+        if (input.justPressed(Input::A)) createBurst();
 
         updatePlayer(input, deltaSec);
         updateStars(deltaSec);
         updateParticles(deltaSec);
+        if (burstTweenTime < BURST_TWEEN_SEC)
+            burstTweenTime += deltaSec;
 
         dirty = true;
     }
 
     bool onDraw(Graphics& graphics, bool requestFullRedraw) override
     {
-        if (!requestFullRedraw && !dirty)
-        {
-            return false;
-        }
+        if (!requestFullRedraw && !dirty) return false;
 
         graphics.fillScreen(Graphics::BLACK);
-
         graphics.fillRect(0, 0, 320, 34, Graphics::BLUE);
+        graphics.drawString("ANIMATION", 12, 17, Graphics::WHITE, Graphics::SIZE_22B,
+                            Graphics::HorizontalAlign::LEFT,
+                            Graphics::VerticalAlign::MIDDLE);
+        graphics.drawString(paused ? "PAUSED" : "RUNNING", 308, 17,
+                            paused ? Graphics::YELLOW : Graphics::GREEN,
+                            Graphics::SIZE_13,
+                            Graphics::HorizontalAlign::RIGHT,
+                            Graphics::VerticalAlign::MIDDLE);
 
-        graphics.drawString(
-            "ANIMATION",
-            12, 17,
-            Graphics::WHITE,
-            Graphics::SIZE_22B,
-            Graphics::HorizontalAlign::LEFT,
-            Graphics::VerticalAlign::MIDDLE);
-
-        graphics.drawString(
-            paused ? "PAUSED" : "RUNNING",
-            308, 17,
-            paused ? Graphics::YELLOW : Graphics::GREEN,
-            Graphics::SIZE_13,
-            Graphics::HorizontalAlign::RIGHT,
-            Graphics::VerticalAlign::MIDDLE);
-
-        graphics.drawRoundRect(
-            8, 36, 304, 160, 10, 2,
-            Graphics::DARKGRAY);
-
+        graphics.drawRoundRect(8, 36, 304, 160, 10, 2, Graphics::DARKGRAY);
         drawStars(graphics);
         drawParticles(graphics);
+        drawBurstTween(graphics);
         drawPlayer(graphics);
 
         if (paused)
         {
-            graphics.fillRoundRect(
-                105, 92, 110, 48, 8,
-                Graphics::DARKGRAY);
-
-            graphics.drawRoundRect(
-                105, 92, 110, 48, 8, 2,
-                Graphics::WHITE);
-
-            graphics.drawString(
-                "PAUSE",
-                160, 116,
-                Graphics::YELLOW,
-                Graphics::SIZE_25B,
-                Graphics::HorizontalAlign::CENTER,
-                Graphics::VerticalAlign::MIDDLE);
+            graphics.fillRectAlpha(0, 36, 320, 160, 150, Graphics::BLACK);
+            graphics.drawString("PAUSE", 160, 116, Graphics::YELLOW, Graphics::SIZE_25B,
+                                Graphics::HorizontalAlign::CENTER,
+                                Graphics::VerticalAlign::MIDDLE);
         }
 
-        graphics.drawString(
-            "D-PAD: MOVE   A: BURST",
-            160, 207,
-            Graphics::LIGHTGRAY,
-            Graphics::SIZE_10,
-            Graphics::HorizontalAlign::CENTER,
-            Graphics::VerticalAlign::MIDDLE);
-
-        graphics.drawString(
-            "B: RESET   START: PAUSE",
-            160, 219,
-            Graphics::LIGHTGRAY,
-            Graphics::SIZE_10,
-            Graphics::HorizontalAlign::CENTER,
-            Graphics::VerticalAlign::MIDDLE);
+        graphics.drawString("ANIMATION: WALK   TWEEN: BURST", 160, 205,
+                            Graphics::LIGHTGRAY, Graphics::SIZE_10,
+                            Graphics::HorizontalAlign::CENTER,
+                            Graphics::VerticalAlign::MIDDLE);
+        graphics.drawString("D-PAD: MOVE  A: BURST  START: PAUSE", 160, 218,
+                            Graphics::LIGHTGRAY, Graphics::SIZE_10,
+                            Graphics::HorizontalAlign::CENTER,
+                            Graphics::VerticalAlign::MIDDLE);
 
         dirty = false;
         return true;
     }
 
-    void onTerminate(Storage& storage) override
-    {
-        (void)storage;
-    }
+    void onTerminate(Storage& storage) override { (void)storage; }
 };
 
-
-// =============================================================================
-// PRUZEAmini objects
-// =============================================================================
-
 AnimationGame app;
-
-
-// =============================================================================
-// Arduino entry points
-// =============================================================================
 
 void setup()
 {
     PRUZEAmini::start(graphicsConfig, inputConfig, audioConfig, storageConfig, app);
 }
 
-void loop()
-{
-}
+void loop() {}

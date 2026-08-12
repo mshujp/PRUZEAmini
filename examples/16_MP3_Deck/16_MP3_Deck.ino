@@ -248,7 +248,7 @@ static void publishView(PlayerState state, const char* message = nullptr)
 
     if (state == PlayerState::PLAYING)
     {
-        view.elapsedMsec = pausedElapsedMsec + (millis() - playbackStartedMsec);
+        view.elapsedMsec = pausedElapsedMsec + (Platform::getMsec() - playbackStartedMsec);
     }
     else
     {
@@ -457,7 +457,7 @@ static bool startSelectedTrack()
         return false;
     }
 
-    playbackStartedMsec = millis();
+    playbackStartedMsec = Platform::getMsec();
     publishView(PlayerState::PLAYING, "PLAY");
     return true;
 }
@@ -498,12 +498,12 @@ static void processCommand(PlayerCommand command)
         case PlayerCommand::PLAY_PAUSE:
             if (current.state == PlayerState::PLAYING)
             {
-                pausedElapsedMsec += millis() - playbackStartedMsec;
+                pausedElapsedMsec += Platform::getMsec() - playbackStartedMsec;
                 publishView(PlayerState::PAUSED, "PAUSE");
             }
             else if (current.state == PlayerState::PAUSED && mp3)
             {
-                playbackStartedMsec = millis();
+                playbackStartedMsec = Platform::getMsec();
                 publishView(PlayerState::PLAYING, "PLAY");
             }
             else
@@ -586,8 +586,8 @@ static void updateAudioWorker()
         else
         {
             static uint32_t lastStatusMsec = 0;
-            const uint32_t now = millis();
-            if (now - lastStatusMsec >= 250)
+            const uint32_t now = Platform::getMsec();
+            if (Platform::elapsed(now, lastStatusMsec, 250))
             {
                 lastStatusMsec = now;
                 publishView(PlayerState::PLAYING, "PLAY");
@@ -903,8 +903,8 @@ public:
         updateTouchControls(input);
 #endif
 
-        const uint32_t now = millis();
-        if (now - lastViewReadMsec >= 100)
+        const uint32_t now = Platform::getMsec();
+        if (Platform::elapsed(now, lastViewReadMsec, 100))
         {
             lastViewReadMsec = now;
             view = readPlayerView();
@@ -925,7 +925,7 @@ public:
             }
         }
 
-        if (strlen(view.title) > 23 && now - lastMarqueeMsec >= 150)
+        if (strlen(view.title) > 23 && Platform::elapsed(now, lastMarqueeMsec, 150))
         {
             lastMarqueeMsec = now;
             ++marqueeOffset;

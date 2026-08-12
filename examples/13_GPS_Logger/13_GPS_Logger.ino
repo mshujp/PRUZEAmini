@@ -170,10 +170,10 @@ private:
     {
         const float timeSec = Platform::getMsec() * 0.001f;
         // A small walking loop around Hakata Station for display and logging tests.
-        demoLatitude = DEMO_BASE_LATITUDE + sinf(timeSec * 0.08f) * 0.000060;
-        demoLongitude = DEMO_BASE_LONGITUDE + cosf(timeSec * 0.08f) * 0.000075;
-        demoAltitude = 8.4 + sinf(timeSec * 0.12f) * 0.6;
-        demoSpeedKmh = 4.2 + sinf(timeSec * 0.18f) * 0.7;
+        demoLatitude = DEMO_BASE_LATITUDE + Math::sin(timeSec * 0.08f) * 0.000060;
+        demoLongitude = DEMO_BASE_LONGITUDE + Math::cos(timeSec * 0.08f) * 0.000075;
+        demoAltitude = 8.4 + Math::sin(timeSec * 0.12f) * 0.6;
+        demoSpeedKmh = 4.2 + Math::sin(timeSec * 0.18f) * 0.7;
         receivedCharacters += 6;
     }
 

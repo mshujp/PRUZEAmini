@@ -222,7 +222,7 @@ private:
         offset = Math::clamp(offset, -1.0f, 1.0f);
 
         ballVX = offset * BALL_SPEED;
-        ballVY = -BALL_SPEED * (1.0f - 0.30f * fabsf(offset));
+        ballVY = -BALL_SPEED * (1.0f - 0.30f * Math::abs(offset));
 
         ballY = PADDLE_Y - BALL_RADIUS - 0.5f;
     }
@@ -238,18 +238,18 @@ private:
         if (ballX - BALL_RADIUS < FIELD_LEFT)
         {
             ballX = FIELD_LEFT + BALL_RADIUS;
-            ballVX = fabsf(ballVX);
+            ballVX = Math::abs(ballVX);
         }
         else if (ballX + BALL_RADIUS > FIELD_RIGHT)
         {
             ballX = FIELD_RIGHT - BALL_RADIUS;
-            ballVX = -fabsf(ballVX);
+            ballVX = -Math::abs(ballVX);
         }
 
         if (ballY - BALL_RADIUS < FIELD_TOP)
         {
             ballY = FIELD_TOP + BALL_RADIUS;
-            ballVY = fabsf(ballVY);
+            ballVY = Math::abs(ballVY);
         }
 
         if (ballVY > 0.0f &&

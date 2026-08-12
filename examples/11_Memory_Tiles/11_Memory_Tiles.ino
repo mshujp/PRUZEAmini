@@ -117,14 +117,7 @@ private:
 
     Mode mode = MODE_PLAYING;
     uint32_t waitStart = 0;
-    uint32_t randomState = 0x2468ACE1u;
     bool bgmStarted = false;
-
-    uint32_t nextRandom()
-    {
-        randomState = randomState * 1664525u + 1013904223u;
-        return randomState;
-    }
 
     void shuffleTiles()
     {
@@ -137,7 +130,7 @@ private:
         for (int i = TILE_COUNT - 1; i > 0; --i)
         {
             const uint8_t j =
-                static_cast<uint8_t>(nextRandom() % (i + 1));
+                static_cast<uint8_t>(Math::random(i + 1));
 
             const uint8_t temp = values[i];
             values[i] = values[j];
