@@ -140,7 +140,10 @@ Never generate those APIs for PRUZEAmini.
 
 ## Standard Arduino Sketch Structure
 
-Unless the user explicitly requests multiple files, generate **one complete `.ino` file**.
+- Prefer a **single-file `.ino`** structure by default.
+- If the implementation becomes very large, splitting it into `.h` and `.cpp` files is allowed.
+- Additional `.cpp` files may also be used when necessary.
+- Keep exactly one `.ino` file as the Arduino sketch entry point.
 
 The normal structure is:
 
@@ -567,6 +570,8 @@ Include required standard headers explicitly, such as:
 - `<cmath>`
 
 Use the C functions directly (`snprintf`, `memset`, `memcpy`), matching the style of the supplied framework.
+
+- Unless otherwise specified, prefer wrapping source code lines at approximately 130 characters for readability.
 
 The PRUZEAmini runtime initializes random state. Do not call `srand()` unless the supplied version explicitly requires it.
 
