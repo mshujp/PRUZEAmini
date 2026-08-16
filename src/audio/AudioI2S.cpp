@@ -34,7 +34,7 @@ bool AudioI2S::begin()
     i2s->setBCLK(bclkPin);
     i2s->setDATA(dataPin);
     i2s->setBitsPerSample(16);
-    i2s->setBuffers(3, 128);
+    i2s->setBuffers(8, 256);
     if (!i2s->begin(SAMPLE_RATE))
     {
         delete i2s;
