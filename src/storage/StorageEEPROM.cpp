@@ -1,4 +1,5 @@
 #include "StorageEEPROM.h"
+#include "../util/Platform.h"
 
 #include <EEPROM.h>
 #include <algorithm>
@@ -168,8 +169,11 @@ void StorageEEPROM::end()
 
 bool StorageEEPROM::commit()
 {
+    const bool flashLocked = Platform::beginManualCoreFlashWrite();
     EEPROM.put(0, image);
-    return EEPROM.commit();
+    const bool result = EEPROM.commit();
+    Platform::endManualCoreFlashWrite(flashLocked);
+    return result;
 }
 
 Storage::File* StorageEEPROM::openRead(const char* path)

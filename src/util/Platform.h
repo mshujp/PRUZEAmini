@@ -13,5 +13,9 @@ namespace Platform {
 void sleepMsec(uint32_t msec);
 void sleepUsec(uint32_t usec);
 
+void initializeManualCoreFlashLockout();
+bool beginManualCoreFlashWrite();
+void endManualCoreFlashWrite(bool locked);
+
 } // namespace
 } // namespace

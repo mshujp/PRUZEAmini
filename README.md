@@ -302,7 +302,7 @@ const int16_t moveY = input.axis(Input::Axis::LEFT_Y);
 | Platform | ILI9341 SPI | ILI9341 Parallel | SSD1306 | PWM Audio | I2S Audio | GPIO Buttons | SNES Pad | PS Pad | Emulated EEPROM | SD Card |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | RP2040 | ✅ | ✅ | ✅ | ✅ |  | ✅ |  |  | ✅ | ✅ |
-| RP2350 | ✅ |  |  |  | ✅ |  | ✅ | ✅ | ✅ *1 | ✅ |
+| RP2350 | ✅ |  |  |  | ✅ |  | ✅ | ✅ | ✅ | ✅ |
 | ESP32 | ✅ |  | ✅ | ✅ | ✅ | ✅ |  |  | ✅ | ✅ |
 | ESP32-S3 |  |  |  |  |  |  |  |  |  |  |
 | ESP32-C3/C6 |  |  |  |  |  |  |  |  |  |  |
@@ -310,8 +310,6 @@ const int16_t moveY = input.axis(Input::Axis::LEFT_Y);
 - ✅: Verified on actual hardware
 - Blank: Not yet tested. A blank cell does **not** mean unsupported or incompatible.
   Some untested combinations may already be supported by the implementation, but they have not yet been verified on physical hardware.
-
-*1: When emulated EEPROM is written while I2S audio is playing on RP2350, audible noise may occur. Using I2S and emulated EEPROM together is therefore not recommended.
 
 Hardware test reports are welcome, especially for currently unverified boards such as ESP32-S3, ESP32-C3, and ESP32-C6.
 

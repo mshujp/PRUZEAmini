@@ -86,6 +86,7 @@ constexpr const char* CONFIG_FILE = "config.ini";
 
 #if defined(ARDUINO_ARCH_RP2040)
 SystemMini* picoSystem = nullptr;
+alignas(8) uint32_t audioWorkerStack[2048 / sizeof(uint32_t)];
 #endif
 
 } // namespace
@@ -144,7 +145,7 @@ bool SystemMini::launchAudioWorker()
 
 #if defined(ARDUINO_ARCH_RP2040)
     picoSystem = this;
-    multicore_launch_core1(&SystemMini::picoAudioEntry);
+    multicore_launch_core1_with_stack(&SystemMini::picoAudioEntry, audioWorkerStack, sizeof(audioWorkerStack));
 #elif defined(ARDUINO_ARCH_ESP32)
     BaseType_t result;
 #if CONFIG_FREERTOS_UNICORE
@@ -164,6 +165,9 @@ bool SystemMini::launchAudioWorker()
 
 void SystemMini::audioWorker()
 {
+#if defined(ARDUINO_ARCH_RP2040)
+    Platform::initializeManualCoreFlashLockout();
+#endif
     audioAvailable.store(audio.begin());
     audioReady.store(true);
     if (audioAvailable.load())
