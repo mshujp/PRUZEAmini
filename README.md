@@ -170,6 +170,7 @@ See the example [00A_AI_Game_Generation](examples/00A_AI_Game_Generation/00A_AI_
 | [19_SpriteSheet](examples/19_SpriteSheet/19_SpriteSheet.ino) | Draws individual sprites from a single sprite sheet image. |
 | [20_Maze_Escape](examples/20_Maze_Escape/) | Advanced gameplay and visual effects |
 | [Application Template](examples/Template/Template.ino) | Blank application template for creating new games or applications |
+| [Games](examples/Games/) | Complete game examples built with PRUZEAmini |
 
 Each sample is placed under the [`examples`](examples) directory.
 
