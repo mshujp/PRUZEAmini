@@ -161,6 +161,8 @@ AudioConfig audioConfig = AudioI2SConfig{
 /*
 AudioConfig audioConfig = AudioPWMConfig{
     .pwmPin = -1,
+    // Use BUZZER when driving a buzzer directly. Use DAC when routing PWM audio through an amplifier.
+    .mode = AudioPWMMode::BUZZER,
 };
 */
 

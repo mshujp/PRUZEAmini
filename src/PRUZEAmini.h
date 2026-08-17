@@ -748,9 +748,15 @@ protected:
     virtual ~Audio() {};
 };
 
+enum class AudioPWMMode : uint8_t
+{
+    BUZZER,
+    DAC
+};
 struct AudioPWMConfig
 {
     int8_t pwmPin = -1;
+    AudioPWMMode mode = AudioPWMMode::BUZZER;
 };
 struct AudioI2SConfig
 {

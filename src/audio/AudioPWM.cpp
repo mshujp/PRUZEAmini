@@ -55,21 +55,33 @@ bool AudioPWM::begin()
     if (pin < 0) return false;
 
 #if defined(ARDUINO_ARCH_RP2040)
-    auto* pwmAudio = new PWMAudio(static_cast<pin_size_t>(pin), false);
-    if (pwmAudio == nullptr) return false;
-    pwmAudio->setBuffers(3, 128);
-    if (!pwmAudio->begin(SAMPLE_RATE))
+    if (mode == AudioPWMMode::DAC)
     {
-        delete pwmAudio;
-        return false;
+        auto* pwmAudio = new PWMAudio(static_cast<pin_size_t>(pin), false);
+        if (pwmAudio == nullptr) return false;
+        pwmAudio->setBuffers(3, 128);
+        if (!pwmAudio->begin(SAMPLE_RATE))
+        {
+            delete pwmAudio;
+            return false;
+        }
+        device = pwmAudio;
     }
-    device = pwmAudio;
 #elif defined(ARDUINO_ARCH_ESP32)
-    if (!beginEspPwm(pin)) return false;
-    writeEspPwm(pin, 128);
+    if (mode == AudioPWMMode::DAC)
+    {
+        if (!beginEspPwm(pin)) return false;
+        writeEspPwm(pin, 128);
+    }
 #else
     return false;
 #endif
+
+    if (mode == AudioPWMMode::BUZZER)
+    {
+        pinMode(pin, OUTPUT);
+        digitalWrite(pin, LOW);
+    }
 
     started = true;
     return true;
@@ -80,14 +92,21 @@ void AudioPWM::end()
     if (!started) return;
 
 #if defined(ARDUINO_ARCH_RP2040)
-    static_cast<PWMAudio*>(device)->end();
-    delete static_cast<PWMAudio*>(device);
-    device = nullptr;
+    if (mode == AudioPWMMode::DAC && device != nullptr)
+    {
+        static_cast<PWMAudio*>(device)->end();
+        delete static_cast<PWMAudio*>(device);
+        device = nullptr;
+    }
 #elif defined(ARDUINO_ARCH_ESP32)
-    writeEspPwm(pin, 128);
-    endEspPwm(pin);
+    if (mode == AudioPWMMode::DAC)
+    {
+        writeEspPwm(pin, 128);
+        endEspPwm(pin);
+    }
 #endif
 
+    if (mode == AudioPWMMode::BUZZER) noTone(pin);
     pinMode(pin, OUTPUT);
     digitalWrite(pin, LOW);
     started = false;
@@ -125,6 +144,37 @@ bool AudioPWM::toneSamples(int from, int to, uint32_t total, uint32_t& written, 
 
 bool AudioPWM::pcmSamples(const int16_t* samples, uint32_t sampleCount)
 {
+    return mode == AudioPWMMode::BUZZER
+        ? pcmSamplesBuzzer(samples, sampleCount)
+        : pcmSamplesDAC(samples, sampleCount);
+}
+
+bool AudioPWM::pcmSamplesBuzzer(const int16_t* samples, uint32_t sampleCount)
+{
+    if (!started || samples == nullptr || sampleCount == 0) return true;
+
+    const bool audible = getVolumeLevel() > 0;
+    uint32_t deadlineUsec = micros();
+    uint32_t timingRemainder = 0;
+
+    for (uint32_t i = 0; i < sampleCount; ++i)
+    {
+        digitalWrite(pin, audible && samples[i] > 0 ? HIGH : LOW);
+
+        timingRemainder += 1000000u;
+        deadlineUsec += timingRemainder / SAMPLE_RATE;
+        timingRemainder %= SAMPLE_RATE;
+        while (static_cast<int32_t>(micros() - deadlineUsec) < 0)
+        {
+        }
+    }
+
+    digitalWrite(pin, LOW);
+    return true;
+}
+
+bool AudioPWM::pcmSamplesDAC(const int16_t* samples, uint32_t sampleCount)
+{
     if (!started || samples == nullptr || sampleCount == 0) return true;
 
 #if defined(ARDUINO_ARCH_RP2040)
@@ -133,7 +183,7 @@ bool AudioPWM::pcmSamples(const int16_t* samples, uint32_t sampleCount)
     for (uint32_t i = 0; i < sampleCount; ++i)
     {
         const int16_t sample = audible
-            ? static_cast<int16_t>(static_cast<int32_t>(samples[i]) * 3 / 4)
+            ? samples[i]
             : 0;
         if (pwmAudio->write(sample, true) == 0) return false;
     }
@@ -146,7 +196,7 @@ bool AudioPWM::pcmSamples(const int16_t* samples, uint32_t sampleCount)
     for (uint32_t i = 0; i < sampleCount; ++i)
     {
         const int32_t scaled = audible
-            ? static_cast<int32_t>(static_cast<float>(samples[i]) * 0.75f)
+            ? static_cast<int32_t>(samples[i])
             : 0;
         const int32_t duty = 128 + (scaled >> 8);
         writeEspPwm(pin, static_cast<uint32_t>(std::clamp<int32_t>(duty, 0, 255)));
